@@ -57,22 +57,28 @@ class Tw06(ARCBaseGame):
 
     @staticmethod
     def _load_json_levels() -> Optional[list]:
+        """Load levels from JSON file.
+
+        Returns a list of dicts with keys 'config' and 'validated',
+        or None if loading fails.
+        """
         try:
             import json
             levels_path = os.path.join(_code_dir, "levels", "tw06_levels.json")
             if os.path.exists(levels_path):
                 with open(levels_path) as f:
                     data = json.load(f)
-                return [entry["config"] for entry in data["levels"]]
+                return [{"config": entry["config"], "validated": entry.get("validated", True)} for entry in data["levels"]]
         except Exception:
             pass
         return None
 
     def _create_levels(self) -> List[Level]:
-        json_configs = self._load_json_levels()
-        if json_configs:
+        json_entries = self._load_json_levels()
+        if json_entries:
             level_configs = []
-            for cfg in json_configs:
+            for entry in json_entries:
+                cfg = entry["config"]
                 config = {
                     "cols": cfg["cols"],
                     "rows": cfg["rows"],
@@ -82,6 +88,7 @@ class Tw06(ARCBaseGame):
                         tuple(int(x) for x in k.split(",")): v
                         for k, v in cfg["triangles"].items()
                     },
+                    "validated": entry.get("validated", True),
                 }
                 level_configs.append(config)
         else:
@@ -110,6 +117,9 @@ class Tw06(ARCBaseGame):
             for cell, count in config["triangles"].items():
                 grid.draw_triangle(frame, cell, count, TRI_COLOR)
 
+            if not config.get("validated", True):
+                grid.draw_unvalidated_indicator(frame)
+
             bg_sprite = Sprite(
                 pixels=frame, name="grid_bg",
                 x=0, y=0, layer=-10,
@@ -135,6 +145,7 @@ class Tw06(ARCBaseGame):
                     "start": config["start"],
                     "end": config["end"],
                     "triangles": {f"{k[0]},{k[1]}": v for k, v in config["triangles"].items()},
+                    "validated": config.get("validated", True),
                 },
                 name=f"Level {i + 1}",
             )
@@ -230,6 +241,10 @@ class Tw06(ARCBaseGame):
 
         if self._path:
             self._grid.draw_dot(frame, self._path[-1], CURSOR_COLOR)
+
+        # 未验证标记
+        if not self.current_level._data.get("validated", True):
+            self._grid.draw_unvalidated_indicator(frame)
 
         bg_sprites = self.current_level.get_sprites_by_name("grid_bg")
         if bg_sprites:

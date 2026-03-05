@@ -204,6 +204,20 @@ def _generate_metadata(game_id: str, baselines: list, env_dir: str):
     return filepath
 
 
+def _estimate_baseline(config: dict) -> int:
+    """基于网格尺寸估算 baseline（用于 solver 超时的未验证关卡）。
+
+    估算逻辑：最短路径大约 = cols + rows 步，baseline = ceil((moves+1)*1.5)
+    比已验证的 1.2 倍数稍宽松，因为我们不知道实际最短路径。
+    """
+    import math
+    cols = config.get("cols", 3)
+    rows = config.get("rows", 3)
+    estimated_moves = cols + rows  # 最乐观的直线路径
+    total_actions = estimated_moves + 1  # +1 for CONFIRM
+    return math.ceil(total_actions * 1.5)
+
+
 def run_pipeline(max_solve_time: float = 10.0, output_dir: str = "levels",
                  levels_per_game: int = 10, keep_all: bool = False) -> dict:
     """运行完整提取管线。"""
@@ -240,10 +254,12 @@ def run_pipeline(max_solve_time: float = 10.0, output_dir: str = "levels",
     # Step 4: Validate + calibrate
     print("\n[4/6] Solving and calibrating baselines...")
     validated = {}
+    unvalidated = {}
     stats = {"total_solved": 0, "total_failed": 0}
 
     for game, configs in sorted(converted.items()):
         valid_levels = []
+        unvalid_levels = []
         for config, puzzle in configs:
             t0 = time.time()
             result = validate_config(config, game, timeout=max_solve_time)
@@ -258,22 +274,38 @@ def run_pipeline(max_solve_time: float = 10.0, output_dir: str = "levels",
                     "actions": solution_to_actions(result["solution"]),
                     "source": f"{puzzle.source}:{puzzle.source_index}",
                     "solve_time": elapsed,
+                    "validated": True,
                 })
                 stats["total_solved"] += 1
             else:
                 stats["total_failed"] += 1
+                unvalid_levels.append({
+                    "config": config,
+                    "moves": 0,
+                    "baseline": _estimate_baseline(config),
+                    "solution": None,
+                    "actions": [],
+                    "source": f"{puzzle.source}:{puzzle.source_index}",
+                    "solve_time": elapsed,
+                    "validated": False,
+                })
                 if elapsed > 0.5:
                     print(f"    {game} [{puzzle.source}:{puzzle.source_index}] "
                           f"FAILED ({elapsed:.1f}s): {result['error']}")
 
         # Sort by difficulty (moves)
         valid_levels.sort(key=lambda x: x["moves"])
+        # Sort unvalidated by grid size (smaller first)
+        unvalid_levels.sort(key=lambda x: x["config"]["cols"] * x["config"]["rows"])
         validated[game] = valid_levels
+        unvalidated[game] = unvalid_levels
         if valid_levels:
             print(f"  {game}: {len(valid_levels)} validated "
                   f"(moves range: {valid_levels[0]['moves']}-{valid_levels[-1]['moves']})")
         else:
             print(f"  {game}: 0 validated")
+        if unvalid_levels:
+            print(f"  {game}: {len(unvalid_levels)} unvalidated (solver timeout/fail)")
 
     print(f"\n  Total solved: {stats['total_solved']}, failed: {stats['total_failed']}")
 
@@ -281,39 +313,60 @@ def run_pipeline(max_solve_time: float = 10.0, output_dir: str = "levels",
     effective_count = 0 if keep_all else levels_per_game
     print(f"\n[5/6] Selecting levels and exporting JSON...")
     if keep_all:
-        print("  (Keeping ALL validated levels)")
+        print("  (Keeping ALL validated levels + unvalidated levels)")
 
     abs_output = os.path.join(os.path.dirname(_here), output_dir)
     os.makedirs(abs_output, exist_ok=True)
 
     results = {}
     for game, levels in sorted(validated.items()):
-        if not levels:
-            print(f"  {game}: NO valid levels!")
+        ulevels = unvalidated.get(game, [])
+
+        if not levels and not ulevels:
+            print(f"  {game}: NO levels at all!")
             continue
 
-        # Select levels
-        selected = _select_levels(levels, effective_count)
+        # Select validated levels
+        selected = _select_levels(levels, effective_count) if levels else []
 
         # Build output
         output = {
             "game": game,
             "total_candidates": len(filtered.get(game, [])),
             "total_validated": len(levels),
-            "selected_count": len(selected),
+            "total_unvalidated": len(ulevels),
+            "selected_count": len(selected) + len(ulevels),
             "levels": [],
         }
 
-        for i, level in enumerate(selected):
+        # First: validated levels (sorted by difficulty)
+        idx = 0
+        for level in selected:
             level_entry = {
-                "level_index": i,
+                "level_index": idx,
                 "config": level["config"],
                 "baseline": level["baseline"],
                 "moves": level["moves"],
                 "solution_actions": level["actions"],
                 "source": level["source"],
+                "validated": True,
             }
             output["levels"].append(level_entry)
+            idx += 1
+
+        # Then: unvalidated levels (sorted by grid size)
+        for level in ulevels:
+            level_entry = {
+                "level_index": idx,
+                "config": level["config"],
+                "baseline": level["baseline"],
+                "moves": 0,
+                "solution_actions": [],
+                "source": level["source"],
+                "validated": False,
+            }
+            output["levels"].append(level_entry)
+            idx += 1
 
         # Write JSON
         filepath = os.path.join(abs_output, f"{game}_levels.json")
@@ -322,14 +375,18 @@ def run_pipeline(max_solve_time: float = 10.0, output_dir: str = "levels",
 
         results[game] = output
         baselines = [l["baseline"] for l in selected]
-        print(f"  {game}: {len(selected)} levels -> {filepath}")
-        print(f"    baselines: {baselines}")
-        print(f"    moves: {[l['moves'] for l in selected]}")
+        n_validated = len(selected)
+        n_unvalidated = len(ulevels)
+        print(f"  {game}: {n_validated} validated + {n_unvalidated} unvalidated -> {filepath}")
+        if baselines:
+            print(f"    baselines (validated): {baselines}")
+            print(f"    moves (validated): {[l['moves'] for l in selected]}")
 
     # Step 6: Generate metadata.json for each game
     print(f"\n[6/6] Generating metadata.json files...")
     env_dir = os.path.join(os.path.dirname(_here), "environment_files")
     for game, data in sorted(results.items()):
+        # Include baselines for all levels (validated + unvalidated)
         baselines = [l["baseline"] for l in data["levels"]]
         meta_path = _generate_metadata(game, baselines, env_dir)
         print(f"  {game}: {meta_path}")
@@ -384,9 +441,16 @@ def main():
     print("\n" + "=" * 60)
     print("Pipeline complete!")
     print("=" * 60)
+    total_v = 0
+    total_u = 0
     for game, data in sorted(results.items()):
-        print(f"  {game}: {data['selected_count']} levels selected "
-              f"(from {data['total_validated']} validated, {data['total_candidates']} candidates)")
+        nv = sum(1 for l in data["levels"] if l.get("validated", True))
+        nu = sum(1 for l in data["levels"] if not l.get("validated", True))
+        total_v += nv
+        total_u += nu
+        print(f"  {game}: {nv} validated + {nu} unvalidated "
+              f"(from {data['total_candidates']} candidates)")
+    print(f"\n  Total: {total_v} validated + {total_u} unvalidated = {total_v + total_u} levels")
 
 
 if __name__ == "__main__":

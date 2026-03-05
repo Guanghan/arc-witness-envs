@@ -341,6 +341,26 @@ class WitnessGrid:
             if 0 <= px < 64 and 0 <= py < 64:
                 frame[py][px] = color
 
+    def draw_unvalidated_indicator(self, frame: List[List[int]]) -> None:
+        """在帧右上角绘制橙色 '?' 标记，表示此关卡未经 solver 验证。"""
+        # 在 (58,2) 位置绘制 5×5 像素的 '?' 形状
+        COLOR = 12  # COLOR_ORANGE
+        # ? pattern:
+        #  .XX.
+        #  ...X
+        #  ..X.
+        #  ....
+        #  ..X.
+        pixels = [
+            (59, 2), (60, 2),
+            (61, 3),
+            (60, 4),
+            (60, 6),
+        ]
+        for px, py in pixels:
+            if 0 <= px < 64 and 0 <= py < 64:
+                frame[py][px] = COLOR
+
     def cell_edge_count(self, cell: Tuple[int, int],
                         path_edges: Set[Tuple[Tuple[int, int], Tuple[int, int]]]) -> int:
         """计算单元格边界被路径经过的边数。"""

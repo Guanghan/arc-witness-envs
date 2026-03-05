@@ -106,22 +106,24 @@ class Tw03(ARCBaseGame):
 
     @staticmethod
     def _load_json_levels() -> Optional[list]:
+        """加载 JSON 关卡文件，返回包含 config 和 validated 字段的字典列表。"""
         try:
             import json
             levels_path = os.path.join(_code_dir, "levels", "tw03_levels.json")
             if os.path.exists(levels_path):
                 with open(levels_path) as f:
                     data = json.load(f)
-                return [entry["config"] for entry in data["levels"]]
+                return [{"config": entry["config"], "validated": entry.get("validated", True)} for entry in data["levels"]]
         except Exception:
             pass
         return None
 
     def _create_levels(self) -> List[Level]:
-        json_configs = self._load_json_levels()
-        if json_configs:
+        json_entries = self._load_json_levels()
+        if json_entries:
             level_configs = []
-            for cfg in json_configs:
+            for entry in json_entries:
+                cfg = entry["config"]
                 tetris = {}
                 for k, v in cfg["tetris"].items():
                     parts = k.split(",")
@@ -137,6 +139,7 @@ class Tw03(ARCBaseGame):
                     "start": tuple(cfg["start"]),
                     "end": tuple(cfg["end"]),
                     "tetris": tetris,
+                    "validated": entry.get("validated", True),
                 }
                 level_configs.append(config)
         else:
@@ -162,6 +165,9 @@ class Tw03(ARCBaseGame):
 
             for cell, t in config["tetris"].items():
                 grid.draw_polyomino(frame, cell, t["shape"], POLY_COLOR)
+
+            if not config.get("validated", True):
+                grid.draw_unvalidated_indicator(frame)
 
             bg_sprite = Sprite(
                 pixels=frame, name="grid_bg",
@@ -197,6 +203,7 @@ class Tw03(ARCBaseGame):
                     "start": config["start"],
                     "end": config["end"],
                     "tetris": tetris_data,
+                    "validated": config.get("validated", True),
                 },
                 name=f"Level {i + 1}",
             )
@@ -324,6 +331,10 @@ class Tw03(ARCBaseGame):
 
         if self._path:
             self._grid.draw_dot(frame, self._path[-1], CURSOR_COLOR)
+
+        # 未验证标记
+        if not self.current_level._data.get("validated", True):
+            self._grid.draw_unvalidated_indicator(frame)
 
         bg_sprites = self.current_level.get_sprites_by_name("grid_bg")
         if bg_sprites:

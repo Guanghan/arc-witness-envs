@@ -32,7 +32,11 @@ def act(game, action_id):
 
 
 def load_solutions_from_json(game_id):
-    """Load test solutions from JSON levels file."""
+    """Load test solutions from JSON levels file.
+
+    Only loads validated levels (skips unvalidated ones).
+    Returns (solutions, total_levels) tuple or None.
+    """
     filepath = os.path.join(LEVELS_DIR, f"{game_id}_levels.json")
     if not os.path.exists(filepath):
         return None
@@ -41,19 +45,35 @@ def load_solutions_from_json(game_id):
         data = json.load(f)
 
     solutions = []
+    total_levels = len(data["levels"])
     for entry in data["levels"]:
+        # Skip unvalidated levels (no solution to test against)
+        if not entry.get("validated", True):
+            continue
         actions = entry["solution_actions"]
+        if not actions:
+            continue
         cfg = entry["config"]
         desc = (f"{cfg['cols']}x{cfg['rows']}, "
                 f"moves={entry['moves']}, source={entry['source']}")
         solutions.append((actions, desc))
 
-    return solutions
+    return (solutions, total_levels)
 
 
-def test_game(game_class, game_name, level_solutions):
+def test_game(game_class, game_name, level_solutions, total_levels=None):
+    """Test a game with known solutions.
+
+    Args:
+        total_levels: total levels in game (including unvalidated).
+            When there are unvalidated levels, we don't expect WIN state.
+    """
+    n_tested = len(level_solutions)
+    extra = ""
+    if total_levels and total_levels > n_tested:
+        extra = f", {total_levels - n_tested} unvalidated skipped"
     print(f"\n{'='*60}")
-    print(f"Testing {game_name} ({len(level_solutions)} levels)")
+    print(f"Testing {game_name} ({n_tested} validated levels{extra})")
     print(f"{'='*60}")
 
     game = game_class(seed=0)
@@ -87,15 +107,20 @@ def test_game(game_class, game_name, level_solutions):
     print(f"\n  Final: levels_completed={frame.levels_completed}, state={frame.state}")
     if frame.state == GameState.WIN:
         print(f"  Game WON")
+    else:
+        has_unvalidated = total_levels and total_levels > n_tested
+        if has_unvalidated:
+            print(f"  Validated levels all passed (game not WON due to unvalidated levels)")
     return True
 
 
 def test_tw01():
     from tw01_pathdots import Tw01
-    json_solutions = load_solutions_from_json("tw01")
-    if json_solutions:
-        print("  (Using JSON level solutions)")
-        return test_game(Tw01, "tw01_pathdots", json_solutions)
+    result = load_solutions_from_json("tw01")
+    if result:
+        solutions, total = result
+        print(f"  (Using JSON level solutions: {len(solutions)} validated / {total} total)")
+        return test_game(Tw01, "tw01_pathdots", solutions, total)
     level1 = ([RIGHT, RIGHT, RIGHT, CONFIRM], "3x3, 1 dot on straight path")
     level2 = ([DOWN, RIGHT, RIGHT, UP, RIGHT, CONFIRM], "3x3, 1 dot needs detour")
     level3 = ([RIGHT, RIGHT, DOWN, DOWN, DOWN, DOWN, RIGHT, RIGHT, CONFIRM], "4x4, 2 dots")
@@ -107,42 +132,45 @@ def test_tw01():
 
 def test_tw02():
     from tw02_colorsplit import Tw02
-    json_solutions = load_solutions_from_json("tw02")
-    if json_solutions:
-        print("  (Using JSON level solutions)")
-        return test_game(Tw02, "tw02_colorsplit", json_solutions)
+    result = load_solutions_from_json("tw02")
+    if result:
+        solutions, total = result
+        print(f"  (Using JSON level solutions: {len(solutions)} validated / {total} total)")
+        return test_game(Tw02, "tw02_colorsplit", solutions, total)
     level1 = ([RIGHT, DOWN, DOWN, DOWN, LEFT, CONFIRM], "3x3, 2 colors")
     return test_game(Tw02, "tw02_colorsplit", [level1])
 
 
 def test_tw03():
     from tw03_shapefill import Tw03
-    json_solutions = load_solutions_from_json("tw03")
-    if json_solutions:
-        print("  (Using JSON level solutions)")
-        return test_game(Tw03, "tw03_shapefill", json_solutions)
+    result = load_solutions_from_json("tw03")
+    if result:
+        solutions, total = result
+        print(f"  (Using JSON level solutions: {len(solutions)} validated / {total} total)")
+        return test_game(Tw03, "tw03_shapefill", solutions, total)
     print("  (No JSON levels, using hardcoded fallback)")
-    # Hardcoded fallback has limited levels
     level1 = ([DOWN, DOWN, RIGHT, DOWN, RIGHT, RIGHT, CONFIRM], "3x3, 2 shapes")
     return test_game(Tw03, "tw03_shapefill", [level1])
 
 
 def test_tw04():
     from tw04_symdraw import Tw04
-    json_solutions = load_solutions_from_json("tw04")
-    if json_solutions:
-        print("  (Using JSON level solutions)")
-        return test_game(Tw04, "tw04_symdraw", json_solutions)
+    result = load_solutions_from_json("tw04")
+    if result:
+        solutions, total = result
+        print(f"  (Using JSON level solutions: {len(solutions)} validated / {total} total)")
+        return test_game(Tw04, "tw04_symdraw", solutions, total)
     level1 = ([DOWN, DOWN, DOWN, CONFIRM], "4x3, horizontal mirror")
     return test_game(Tw04, "tw04_symdraw", [level1])
 
 
 def test_tw05():
     from tw05_starpair import Tw05
-    json_solutions = load_solutions_from_json("tw05")
-    if json_solutions:
-        print("  (Using JSON level solutions)")
-        return test_game(Tw05, "tw05_starpair", json_solutions)
+    result = load_solutions_from_json("tw05")
+    if result:
+        solutions, total = result
+        print(f"  (Using JSON level solutions: {len(solutions)} validated / {total} total)")
+        return test_game(Tw05, "tw05_starpair", solutions, total)
     print("  (No JSON levels, using hardcoded fallback)")
     level1 = ([DOWN, DOWN, DOWN, RIGHT, RIGHT, RIGHT, CONFIRM], "3x3, 2 color pairs")
     return test_game(Tw05, "tw05_starpair", [level1])
@@ -150,10 +178,11 @@ def test_tw05():
 
 def test_tw06():
     from tw06_tricount import Tw06
-    json_solutions = load_solutions_from_json("tw06")
-    if json_solutions:
-        print("  (Using JSON level solutions)")
-        return test_game(Tw06, "tw06_tricount", json_solutions)
+    result = load_solutions_from_json("tw06")
+    if result:
+        solutions, total = result
+        print(f"  (Using JSON level solutions: {len(solutions)} validated / {total} total)")
+        return test_game(Tw06, "tw06_tricount", solutions, total)
     print("  (No JSON levels, using hardcoded fallback)")
     level1 = ([DOWN, RIGHT, DOWN, RIGHT, DOWN, RIGHT, CONFIRM], "3x3, 1 triangle")
     return test_game(Tw06, "tw06_tricount", [level1])
@@ -161,10 +190,11 @@ def test_tw06():
 
 def test_tw07():
     from tw07_eraserlogic import Tw07
-    json_solutions = load_solutions_from_json("tw07")
-    if json_solutions:
-        print("  (Using JSON level solutions)")
-        return test_game(Tw07, "tw07_eraserlogic", json_solutions)
+    result = load_solutions_from_json("tw07")
+    if result:
+        solutions, total = result
+        print(f"  (Using JSON level solutions: {len(solutions)} validated / {total} total)")
+        return test_game(Tw07, "tw07_eraserlogic", solutions, total)
     print("  (No JSON levels, using hardcoded fallback)")
     level1 = ([DOWN, DOWN, DOWN, RIGHT, RIGHT, RIGHT, CONFIRM], "3x3, 1 eraser")
     return test_game(Tw07, "tw07_eraserlogic", [level1])
@@ -172,10 +202,11 @@ def test_tw07():
 
 def test_tw08():
     from tw08_combobasic import Tw08
-    json_solutions = load_solutions_from_json("tw08")
-    if json_solutions:
-        print("  (Using JSON level solutions)")
-        return test_game(Tw08, "tw08_combobasic", json_solutions)
+    result = load_solutions_from_json("tw08")
+    if result:
+        solutions, total = result
+        print(f"  (Using JSON level solutions: {len(solutions)} validated / {total} total)")
+        return test_game(Tw08, "tw08_combobasic", solutions, total)
     print("  (No JSON levels, using hardcoded fallback)")
     level1 = ([DOWN, DOWN, RIGHT, RIGHT, DOWN, DOWN, RIGHT, RIGHT, CONFIRM], "4x4, combo")
     return test_game(Tw08, "tw08_combobasic", [level1])
@@ -183,20 +214,22 @@ def test_tw08():
 
 def test_tw09():
     from tw09_cylinderwrap import Tw09
-    json_solutions = load_solutions_from_json("tw09")
-    if json_solutions:
-        print("  (Using JSON level solutions)")
-        return test_game(Tw09, "tw09_cylinderwrap", json_solutions)
+    result = load_solutions_from_json("tw09")
+    if result:
+        solutions, total = result
+        print(f"  (Using JSON level solutions: {len(solutions)} validated / {total} total)")
+        return test_game(Tw09, "tw09_cylinderwrap", solutions, total)
     print("  (No JSON levels available)")
     return True  # Skip if no levels
 
 
 def test_tw10():
     from tw10_colorfilter import Tw10
-    json_solutions = load_solutions_from_json("tw10")
-    if json_solutions:
-        print("  (Using JSON level solutions)")
-        return test_game(Tw10, "tw10_colorfilter", json_solutions)
+    result = load_solutions_from_json("tw10")
+    if result:
+        solutions, total = result
+        print(f"  (Using JSON level solutions: {len(solutions)} validated / {total} total)")
+        return test_game(Tw10, "tw10_colorfilter", solutions, total)
     print("  (No JSON levels available)")
     return True  # Skip if no levels
 

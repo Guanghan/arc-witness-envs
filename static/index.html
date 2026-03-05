@@ -69,6 +69,14 @@ let guid = null;
 let busy = false;
 let actionCount = 0;
 
+// Validation tracking
+let levelStatuses = {};       // {level_index: {validated, ...}}
+let currentLevelActions = []; // action IDs for current level
+let lastLevelsCompleted = 0;  // track level completion
+
+// ACTION name → action ID mapping
+const ACTION_ID = { ACTION1: 1, ACTION2: 2, ACTION3: 3, ACTION4: 4, ACTION5: 5 };
+
 function log(msg, cls='') {
   const d = document.createElement('div');
   d.className = cls;
@@ -106,6 +114,7 @@ async function sendAction(action) {
   if (action === 'RESET') {
     // RESET generates a new guid
     delete body.guid;
+    currentLevelActions = [];
   }
 
   try {
@@ -128,12 +137,34 @@ async function sendAction(action) {
     // Render
     if (data.frame) renderFrame(data.frame);
 
+    // Track action for validation
+    if (action !== 'RESET' && ACTION_ID[action]) {
+      currentLevelActions.push(ACTION_ID[action]);
+    }
+
     // Status
     const lc = data.levels_completed ?? 0;
     const wl = data.win_levels ?? '?';
     const state = data.state ?? '';
     actionCount++;
-    statusEl.textContent = `${currentGameId} | Levels: ${lc}/${wl} | Actions: ${actionCount} | ${state}`;
+
+    // Check if current level is unvalidated
+    const currentLevelIdx = lc;  // next level to play = levels_completed
+    const lvStatus = levelStatuses[lastLevelsCompleted] || {};
+    const unverifiedTag = (lvStatus.validated === false) ? ' [UNVERIFIED]' : '';
+    statusEl.textContent = `${currentGameId} | Levels: ${lc}/${wl} | Actions: ${actionCount} | ${state}${unverifiedTag}`;
+
+    // Detect level completion
+    if (lc > lastLevelsCompleted) {
+      const completedIdx = lastLevelsCompleted;
+      const completedStatus = levelStatuses[completedIdx];
+      if (completedStatus && !completedStatus.validated) {
+        // Auto-validate: POST actions to server
+        autoValidateLevel(completedIdx, currentLevelActions.slice());
+      }
+      currentLevelActions = [];
+      lastLevelsCompleted = lc;
+    }
 
     if (state === 'WIN') {
       statusEl.textContent += ' 🎉';
@@ -145,6 +176,49 @@ async function sendAction(action) {
     log(`Fetch error: ${e.message}`, 'err');
   }
   busy = false;
+}
+
+async function fetchLevelStatus(gameId) {
+  try {
+    const res = await fetch(`/api/custom/level_status/${gameId}`);
+    const data = await res.json();
+    if (data.levels) {
+      levelStatuses = {};
+      for (const lv of data.levels) {
+        levelStatuses[lv.level_index] = lv;
+      }
+      const uv = data.unvalidated_count || 0;
+      if (uv > 0) {
+        log(`${gameId}: ${data.validated_count} validated, ${uv} unvalidated levels`, 'info');
+      }
+    }
+  } catch(e) {
+    log(`Failed to fetch level status: ${e.message}`, 'err');
+  }
+}
+
+async function autoValidateLevel(levelIdx, actions) {
+  try {
+    const res = await fetch('/api/custom/validate_level', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        game_id: currentGameId,
+        level_index: levelIdx,
+        actions: actions,
+        moves: actions.length > 0 ? actions.length - 1 : 0,  // -1 for CONFIRM
+      }),
+    });
+    const data = await res.json();
+    if (data.status === 'validated') {
+      log(`Level ${levelIdx} VALIDATED! moves=${data.moves}, baseline=${data.baseline}`, 'ok');
+      levelStatuses[levelIdx] = { ...levelStatuses[levelIdx], validated: true };
+    } else if (data.status === 'already_validated') {
+      log(`Level ${levelIdx} was already validated`, 'info');
+    }
+  } catch(e) {
+    log(`Failed to validate level ${levelIdx}: ${e.message}`, 'err');
+  }
 }
 
 async function loadGames() {
@@ -187,10 +261,14 @@ async function startGame(gameId, btn) {
   currentGameId = gameId;
   guid = null;
   actionCount = 0;
+  lastLevelsCompleted = 0;
+  currentLevelActions = [];
+  levelStatuses = {};
   document.querySelectorAll('#game-select button').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   log(`Starting ${gameId}...`, 'info');
   statusEl.textContent = `Loading ${gameId}...`;
+  await fetchLevelStatus(gameId);
   await sendAction('RESET');
 }
 

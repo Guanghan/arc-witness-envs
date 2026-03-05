@@ -69,30 +69,34 @@ class Tw01(ARCBaseGame):
 
     @staticmethod
     def _load_json_levels() -> Optional[list]:
-        """尝试从 JSON 文件加载关卡。"""
+        """尝试从 JSON 文件加载关卡。返回 [{"config": ..., "validated": bool}]。"""
         try:
             import json
             levels_path = os.path.join(_code_dir, "levels", "tw01_levels.json")
             if os.path.exists(levels_path):
                 with open(levels_path) as f:
                     data = json.load(f)
-                return [entry["config"] for entry in data["levels"]]
+                return [{"config": entry["config"],
+                         "validated": entry.get("validated", True)}
+                        for entry in data["levels"]]
         except Exception:
             pass
         return None
 
     def _create_levels(self) -> List[Level]:
         """创建所有关卡。优先从 JSON 加载，回退到硬编码。"""
-        json_configs = self._load_json_levels()
-        if json_configs:
+        json_entries = self._load_json_levels()
+        if json_entries:
             level_configs = []
-            for cfg in json_configs:
+            for entry in json_entries:
+                cfg = entry["config"]
                 config = {
                     "cols": cfg["cols"],
                     "rows": cfg["rows"],
                     "start": tuple(cfg["start"]),
                     "end": tuple(cfg["end"]),
                     "dots": [tuple(d) for d in cfg["dots"]],
+                    "validated": entry.get("validated", True),
                 }
                 if "breakpoints" in cfg:
                     config["breakpoints"] = [
@@ -142,6 +146,10 @@ class Tw01(ARCBaseGame):
             for dot in config["dots"]:
                 grid.draw_dot(frame, dot, DOT_COLOR)
 
+            # 未验证标记
+            if not config.get("validated", True):
+                grid.draw_unvalidated_indicator(frame)
+
             # 创建背景 sprite
             bg_sprite = Sprite(
                 pixels=frame,
@@ -170,6 +178,7 @@ class Tw01(ARCBaseGame):
                 "start": config["start"],
                 "end": config["end"],
                 "dots": config["dots"],
+                "validated": config.get("validated", True),
             }
             if "breakpoints" in config:
                 level_data["breakpoints"] = config["breakpoints"]
@@ -339,6 +348,10 @@ class Tw01(ARCBaseGame):
         if self._path:
             cursor_node = self._path[-1]
             self._grid.draw_dot(frame, cursor_node, CURSOR_COLOR)
+
+        # 未验证标记
+        if not self.current_level._data.get("validated", True):
+            self._grid.draw_unvalidated_indicator(frame)
 
         # 更新背景 sprite
         bg_sprites = self.current_level.get_sprites_by_name("grid_bg")

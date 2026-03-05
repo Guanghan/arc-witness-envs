@@ -66,23 +66,24 @@ class Tw02(ARCBaseGame):
 
     @staticmethod
     def _load_json_levels() -> Optional[list]:
-        """尝试从 JSON 文件加载关卡。"""
+        """尝试从 JSON 文件加载关卡。返回 [{"config": ..., "validated": bool}, ...] 列表。"""
         try:
             import json
             levels_path = os.path.join(_code_dir, "levels", "tw02_levels.json")
             if os.path.exists(levels_path):
                 with open(levels_path) as f:
                     data = json.load(f)
-                return [entry["config"] for entry in data["levels"]]
+                return [{"config": entry["config"], "validated": entry.get("validated", True)} for entry in data["levels"]]
         except Exception:
             pass
         return None
 
     def _create_levels(self) -> List[Level]:
-        json_configs = self._load_json_levels()
-        if json_configs:
+        json_entries = self._load_json_levels()
+        if json_entries:
             level_configs = []
-            for cfg in json_configs:
+            for entry in json_entries:
+                cfg = entry["config"]
                 config = {
                     "cols": cfg["cols"],
                     "rows": cfg["rows"],
@@ -92,6 +93,7 @@ class Tw02(ARCBaseGame):
                         tuple(int(x) for x in k.split(",")): v
                         for k, v in cfg["squares"].items()
                     },
+                    "validated": entry.get("validated", True),
                 }
                 level_configs.append(config)
         else:
@@ -152,6 +154,9 @@ class Tw02(ARCBaseGame):
             for cell, color in config["squares"].items():
                 grid.draw_cell_symbol(frame, cell, color)
 
+            if not config.get("validated", True):
+                grid.draw_unvalidated_indicator(frame)
+
             bg_sprite = Sprite(
                 pixels=frame,
                 name="grid_bg",
@@ -179,6 +184,7 @@ class Tw02(ARCBaseGame):
                     "start": config["start"],
                     "end": config["end"],
                     "squares": {f"{k[0]},{k[1]}": v for k, v in config["squares"].items()},
+                    "validated": config.get("validated", True),
                 },
                 name=f"Level {i + 1}",
             )
@@ -282,6 +288,10 @@ class Tw02(ARCBaseGame):
 
         if self._path:
             self._grid.draw_dot(frame, self._path[-1], CURSOR_COLOR)
+
+        # 未验证标记
+        if not self.current_level._data.get("validated", True):
+            self._grid.draw_unvalidated_indicator(frame)
 
         bg_sprites = self.current_level.get_sprites_by_name("grid_bg")
         if bg_sprites:

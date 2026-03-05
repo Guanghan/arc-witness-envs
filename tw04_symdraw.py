@@ -82,23 +82,24 @@ class Tw04(ARCBaseGame):
 
     @staticmethod
     def _load_json_levels():
-        """尝试从 JSON 文件加载关卡。"""
+        """尝试从 JSON 文件加载关卡。返回 list[dict]，每个 dict 含 'config' 和 'validated' 字段。"""
         try:
             import json
             levels_path = os.path.join(_code_dir, "levels", "tw04_levels.json")
             if os.path.exists(levels_path):
                 with open(levels_path) as f:
                     data = json.load(f)
-                return [entry["config"] for entry in data["levels"]]
+                return [{"config": entry["config"], "validated": entry.get("validated", True)} for entry in data["levels"]]
         except Exception:
             pass
         return None
 
     def _create_levels(self) -> List[Level]:
-        json_configs = self._load_json_levels()
-        if json_configs:
+        json_entries = self._load_json_levels()
+        if json_entries:
             level_configs = []
-            for cfg in json_configs:
+            for entry in json_entries:
+                cfg = entry["config"]
                 config = {
                     "cols": cfg["cols"],
                     "rows": cfg["rows"],
@@ -109,6 +110,7 @@ class Tw04(ARCBaseGame):
                     "yellow_end": tuple(cfg["yellow_end"]),
                     "blue_dots": [tuple(d) for d in cfg["blue_dots"]],
                     "yellow_dots": [tuple(d) for d in cfg["yellow_dots"]],
+                    "validated": entry.get("validated", True),
                 }
                 level_configs.append(config)
         else:
@@ -172,6 +174,9 @@ class Tw04(ARCBaseGame):
             for dot in config["yellow_dots"]:
                 grid.draw_dot(frame, dot, COLOR_YELLOW)
 
+            if not config.get("validated", True):
+                grid.draw_unvalidated_indicator(frame)
+
             bg_sprite = Sprite(
                 pixels=frame,
                 name="grid_bg",
@@ -194,6 +199,7 @@ class Tw04(ARCBaseGame):
                     "yellow_end": config["yellow_end"],
                     "blue_dots": config["blue_dots"],
                     "yellow_dots": config["yellow_dots"],
+                    "validated": config.get("validated", True),
                 },
                 name=f"Level {i + 1}",
             )
@@ -343,6 +349,10 @@ class Tw04(ARCBaseGame):
             self._grid.draw_dot(frame, self._blue_path[-1], COLOR_BLUE)
         if self._yellow_path:
             self._grid.draw_dot(frame, self._yellow_path[-1], COLOR_YELLOW)
+
+        # 未验证标记
+        if not self.current_level._data.get("validated", True):
+            self._grid.draw_unvalidated_indicator(frame)
 
         bg_sprites = self.current_level.get_sprites_by_name("grid_bg")
         if bg_sprites:
