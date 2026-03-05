@@ -2,7 +2,8 @@
   "game": "tw04",
   "total_candidates": 28,
   "total_validated": 26,
-  "selected_count": 19,
+  "total_unvalidated": 2,
+  "selected_count": 21,
   "levels": [
     {
       "level_index": 0,
@@ -37,7 +38,8 @@
         4,
         5
       ],
-      "source": "windmill:261"
+      "source": "windmill:261",
+      "validated": true
     },
     {
       "level_index": 1,
@@ -73,7 +75,8 @@
         1,
         5
       ],
-      "source": "witness:27"
+      "source": "witness:27",
+      "validated": true
     },
     {
       "level_index": 2,
@@ -109,7 +112,8 @@
         3,
         5
       ],
-      "source": "witness:34"
+      "source": "witness:34",
+      "validated": true
     },
     {
       "level_index": 3,
@@ -146,7 +150,8 @@
         1,
         5
       ],
-      "source": "witness:29"
+      "source": "witness:29",
+      "validated": true
     },
     {
       "level_index": 4,
@@ -183,7 +188,8 @@
         4,
         5
       ],
-      "source": "windmill:254"
+      "source": "windmill:254",
+      "validated": true
     },
     {
       "level_index": 5,
@@ -220,7 +226,8 @@
         1,
         5
       ],
-      "source": "windmill:982"
+      "source": "windmill:982",
+      "validated": true
     },
     {
       "level_index": 6,
@@ -257,7 +264,8 @@
         1,
         5
       ],
-      "source": "windmill:1180"
+      "source": "windmill:1180",
+      "validated": true
     },
     {
       "level_index": 7,
@@ -295,7 +303,8 @@
         1,
         5
       ],
-      "source": "witness:30"
+      "source": "witness:30",
+      "validated": true
     },
     {
       "level_index": 8,
@@ -333,7 +342,8 @@
         3,
         5
       ],
-      "source": "witness:35"
+      "source": "witness:35",
+      "validated": true
     },
     {
       "level_index": 9,
@@ -371,7 +381,8 @@
         1,
         5
       ],
-      "source": "windmill:359"
+      "source": "windmill:359",
+      "validated": true
     },
     {
       "level_index": 10,
@@ -419,7 +430,8 @@
         3,
         5
       ],
-      "source": "windmill:615"
+      "source": "windmill:615",
+      "validated": true
     },
     {
       "level_index": 11,
@@ -458,7 +470,8 @@
         3,
         5
       ],
-      "source": "windmill:772"
+      "source": "windmill:772",
+      "validated": true
     },
     {
       "level_index": 12,
@@ -497,7 +510,8 @@
         1,
         5
       ],
-      "source": "windmill:961"
+      "source": "windmill:961",
+      "validated": true
     },
     {
       "level_index": 13,
@@ -574,7 +588,8 @@
         4,
         5
       ],
-      "source": "windmill:321"
+      "source": "windmill:321",
+      "validated": true
     },
     {
       "level_index": 14,
@@ -652,7 +667,8 @@
         4,
         5
       ],
-      "source": "windmill:2110"
+      "source": "windmill:2110",
+      "validated": true
     },
     {
       "level_index": 15,
@@ -731,7 +747,8 @@
         3,
         5
       ],
-      "source": "windmill:320"
+      "source": "windmill:320",
+      "validated": true
     },
     {
       "level_index": 16,
@@ -810,7 +827,8 @@
         3,
         5
       ],
-      "source": "windmill:322"
+      "source": "windmill:322",
+      "validated": true
     },
     {
       "level_index": 17,
@@ -882,7 +900,8 @@
         1,
         5
       ],
-      "source": "windmill:440"
+      "source": "windmill:440",
+      "validated": true
     },
     {
       "level_index": 18,
@@ -1082,7 +1101,362 @@
         1,
         5
       ],
-      "source": "windmill:270"
+      "source": "windmill:270",
+      "validated": true
+    },
+    {
+      "level_index": 19,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "symmetry": "rotational",
+        "blue_start": [
+          0,
+          0
+        ],
+        "blue_end": [
+          0,
+          1
+        ],
+        "yellow_start": [
+          5,
+          5
+        ],
+        "yellow_end": [
+          5,
+          4
+        ],
+        "blue_dots": [
+          [
+            2,
+            1
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "yellow_dots": [
+          [
+            3,
+            4
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            4,
+            2
+          ]
+        ]
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:700",
+      "validated": false
+    },
+    {
+      "level_index": 20,
+      "config": {
+        "cols": 7,
+        "rows": 7,
+        "symmetry": "rotational",
+        "blue_start": [
+          7,
+          0
+        ],
+        "blue_end": [
+          0,
+          0
+        ],
+        "yellow_start": [
+          0,
+          7
+        ],
+        "yellow_end": [
+          7,
+          7
+        ],
+        "blue_dots": [
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            5,
+            0
+          ],
+          [
+            6,
+            0
+          ],
+          [
+            7,
+            6
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            4,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            6,
+            1
+          ],
+          [
+            7,
+            1
+          ],
+          [
+            7,
+            5
+          ],
+          [
+            6,
+            5
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            3,
+            2
+          ],
+          [
+            4,
+            2
+          ],
+          [
+            5,
+            2
+          ],
+          [
+            6,
+            2
+          ],
+          [
+            7,
+            2
+          ],
+          [
+            7,
+            4
+          ],
+          [
+            6,
+            4
+          ],
+          [
+            5,
+            4
+          ],
+          [
+            3,
+            3
+          ],
+          [
+            4,
+            3
+          ],
+          [
+            5,
+            3
+          ],
+          [
+            6,
+            3
+          ],
+          [
+            7,
+            3
+          ],
+          [
+            4,
+            4
+          ],
+          [
+            5,
+            5
+          ],
+          [
+            6,
+            6
+          ]
+        ],
+        "yellow_dots": [
+          [
+            6,
+            7
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            6,
+            6
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            0,
+            6
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            5,
+            5
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            4,
+            4
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            3,
+            3
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            1,
+            1
+          ]
+        ]
+      },
+      "baseline": 23,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:56",
+      "validated": false
     }
   ]
 }

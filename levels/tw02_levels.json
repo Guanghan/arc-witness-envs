@@ -1,8 +1,9 @@
 {
   "game": "tw02",
   "total_candidates": 32,
-  "total_validated": 24,
-  "selected_count": 23,
+  "total_validated": 26,
+  "total_unvalidated": 6,
+  "selected_count": 31,
   "levels": [
     {
       "level_index": 0,
@@ -30,7 +31,8 @@
         1,
         5
       ],
-      "source": "witness:7"
+      "source": "witness:7",
+      "validated": true
     },
     {
       "level_index": 1,
@@ -60,7 +62,8 @@
         1,
         5
       ],
-      "source": "witness:8"
+      "source": "witness:8",
+      "validated": true
     },
     {
       "level_index": 2,
@@ -91,7 +94,8 @@
         1,
         5
       ],
-      "source": "witness:10"
+      "source": "witness:10",
+      "validated": true
     },
     {
       "level_index": 3,
@@ -123,7 +127,8 @@
         1,
         5
       ],
-      "source": "witness:9"
+      "source": "witness:9",
+      "validated": true
     },
     {
       "level_index": 4,
@@ -163,7 +168,8 @@
         1,
         5
       ],
-      "source": "witness:11"
+      "source": "witness:11",
+      "validated": true
     },
     {
       "level_index": 5,
@@ -199,7 +205,8 @@
         1,
         5
       ],
-      "source": "witness:126"
+      "source": "witness:126",
+      "validated": true
     },
     {
       "level_index": 6,
@@ -240,7 +247,8 @@
         3,
         5
       ],
-      "source": "witness:12"
+      "source": "witness:12",
+      "validated": true
     },
     {
       "level_index": 7,
@@ -277,7 +285,8 @@
         1,
         5
       ],
-      "source": "windmill:118"
+      "source": "windmill:118",
+      "validated": true
     },
     {
       "level_index": 8,
@@ -321,7 +330,8 @@
         1,
         5
       ],
-      "source": "windmill:13"
+      "source": "windmill:13",
+      "validated": true
     },
     {
       "level_index": 9,
@@ -369,7 +379,8 @@
         2,
         5
       ],
-      "source": "witness:15"
+      "source": "witness:15",
+      "validated": true
     },
     {
       "level_index": 10,
@@ -420,7 +431,8 @@
         4,
         5
       ],
-      "source": "windmill:1168"
+      "source": "windmill:1168",
+      "validated": true
     },
     {
       "level_index": 11,
@@ -475,7 +487,8 @@
         1,
         5
       ],
-      "source": "witness:13"
+      "source": "witness:13",
+      "validated": true
     },
     {
       "level_index": 12,
@@ -523,7 +536,8 @@
         1,
         5
       ],
-      "source": "windmill:697"
+      "source": "windmill:697",
+      "validated": true
     },
     {
       "level_index": 13,
@@ -575,10 +589,61 @@
         1,
         5
       ],
-      "source": "windmill:1889"
+      "source": "windmill:1889",
+      "validated": true
     },
     {
       "level_index": 14,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "squares": {
+          "0,0": 6,
+          "4,0": 10,
+          "1,1": 6,
+          "3,1": 10,
+          "1,3": 10,
+          "3,3": 6,
+          "0,4": 10,
+          "4,4": 6
+        }
+      },
+      "baseline": 23,
+      "moves": 18,
+      "solution_actions": [
+        4,
+        4,
+        1,
+        1,
+        3,
+        3,
+        1,
+        4,
+        4,
+        1,
+        1,
+        4,
+        2,
+        2,
+        4,
+        4,
+        1,
+        1,
+        5
+      ],
+      "source": "windmill:2253",
+      "validated": true
+    },
+    {
+      "level_index": 15,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -633,10 +698,11 @@
         2,
         5
       ],
-      "source": "witness:14"
+      "source": "witness:14",
+      "validated": true
     },
     {
-      "level_index": 15,
+      "level_index": 16,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -692,10 +758,11 @@
         4,
         5
       ],
-      "source": "witness:16"
+      "source": "witness:16",
+      "validated": true
     },
     {
-      "level_index": 16,
+      "level_index": 17,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -744,10 +811,11 @@
         1,
         5
       ],
-      "source": "windmill:520"
+      "source": "windmill:520",
+      "validated": true
     },
     {
-      "level_index": 17,
+      "level_index": 18,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -796,10 +864,11 @@
         4,
         5
       ],
-      "source": "windmill:798"
+      "source": "windmill:798",
+      "validated": true
     },
     {
-      "level_index": 18,
+      "level_index": 19,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -847,10 +916,11 @@
         3,
         5
       ],
-      "source": "windmill:1079"
+      "source": "windmill:1079",
+      "validated": true
     },
     {
-      "level_index": 19,
+      "level_index": 20,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -898,10 +968,11 @@
         4,
         5
       ],
-      "source": "windmill:1828"
+      "source": "windmill:1828",
+      "validated": true
     },
     {
-      "level_index": 20,
+      "level_index": 21,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -954,10 +1025,11 @@
         1,
         5
       ],
-      "source": "windmill:673"
+      "source": "windmill:673",
+      "validated": true
     },
     {
-      "level_index": 21,
+      "level_index": 22,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -1007,10 +1079,11 @@
         1,
         5
       ],
-      "source": "windmill:674"
+      "source": "windmill:674",
+      "validated": true
     },
     {
-      "level_index": 22,
+      "level_index": 23,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -1059,7 +1132,284 @@
         3,
         5
       ],
-      "source": "windmill:1258"
+      "source": "windmill:1258",
+      "validated": true
+    },
+    {
+      "level_index": 24,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          2,
+          3
+        ],
+        "end": [
+          4,
+          0
+        ],
+        "squares": {
+          "0,0": 6,
+          "1,0": 10,
+          "3,1": 6,
+          "0,2": 10,
+          "1,3": 6,
+          "4,3": 10,
+          "0,4": 6,
+          "1,4": 10,
+          "3,4": 6
+        }
+      },
+      "baseline": 34,
+      "moves": 27,
+      "solution_actions": [
+        4,
+        1,
+        4,
+        4,
+        2,
+        3,
+        2,
+        2,
+        3,
+        3,
+        1,
+        3,
+        2,
+        3,
+        1,
+        1,
+        4,
+        1,
+        3,
+        1,
+        1,
+        4,
+        2,
+        4,
+        4,
+        4,
+        1,
+        5
+      ],
+      "source": "windmill:80",
+      "validated": true
+    },
+    {
+      "level_index": 25,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "squares": {
+          "1,0": 6,
+          "3,0": 10,
+          "0,1": 6,
+          "2,1": 10,
+          "4,1": 12,
+          "1,2": 10,
+          "3,2": 12,
+          "0,3": 10,
+          "2,3": 12,
+          "4,3": 6,
+          "1,4": 12,
+          "3,4": 6
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:981",
+      "validated": false
+    },
+    {
+      "level_index": 26,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "squares": {
+          "1,0": 10,
+          "2,0": 10,
+          "1,1": 6,
+          "2,1": 6,
+          "0,3": 6,
+          "1,3": 10,
+          "3,3": 6,
+          "4,3": 10,
+          "0,4": 6,
+          "1,4": 10,
+          "3,4": 6
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:1264",
+      "validated": false
+    },
+    {
+      "level_index": 27,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "squares": {
+          "0,0": 6,
+          "1,0": 6,
+          "3,0": 10,
+          "0,1": 6,
+          "1,1": 6,
+          "0,2": 10,
+          "4,2": 6,
+          "1,3": 10,
+          "0,4": 10,
+          "2,4": 6,
+          "3,4": 10
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:1312",
+      "validated": false
+    },
+    {
+      "level_index": 28,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "squares": {
+          "0,0": 6,
+          "1,0": 10,
+          "2,0": 10,
+          "3,0": 6,
+          "4,0": 10,
+          "0,1": 10,
+          "4,1": 6,
+          "0,2": 6,
+          "2,2": 10,
+          "3,2": 6,
+          "4,2": 10,
+          "0,3": 10,
+          "0,4": 10,
+          "1,4": 6,
+          "2,4": 10,
+          "3,4": 10,
+          "4,4": 6
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:1486",
+      "validated": false
+    },
+    {
+      "level_index": 29,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "squares": {
+          "0,0": 6,
+          "1,0": 10,
+          "2,0": 6,
+          "0,1": 6,
+          "2,1": 10,
+          "3,1": 10,
+          "0,2": 10,
+          "4,2": 6,
+          "0,3": 6,
+          "1,3": 6,
+          "2,3": 10,
+          "3,3": 6,
+          "4,3": 10,
+          "0,4": 10,
+          "1,4": 6,
+          "2,4": 6,
+          "3,4": 6,
+          "4,4": 10
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:1887",
+      "validated": false
+    },
+    {
+      "level_index": 30,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          3,
+          0
+        ],
+        "squares": {
+          "0,0": 6,
+          "1,0": 10,
+          "3,0": 6,
+          "4,0": 10,
+          "0,1": 6,
+          "3,1": 6,
+          "4,1": 10,
+          "0,2": 10,
+          "0,3": 6,
+          "1,3": 10,
+          "3,3": 10,
+          "4,3": 10,
+          "0,4": 10,
+          "3,4": 6,
+          "4,4": 6
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:2335",
+      "validated": false
     }
   ]
 }
