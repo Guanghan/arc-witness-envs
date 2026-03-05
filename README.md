@@ -12,54 +12,136 @@ The Witness contains 523+ hand-crafted line-drawing puzzles that teach abstract 
 |---|---|---|
 | Hexagon dots (mandatory waypoints) | `tw01` PathDots | Objectness — preserving specific elements |
 | Colored squares (region partition) | `tw02` ColorSplit | Objectness + Numbers — classify by attribute |
+| Polyomino shapes (exact cover tiling) | `tw03` ShapeFill | Geometry — spatial composition |
 | Symmetry (mirrored line drawing) | `tw04` SymDraw | Geometry — symmetry transforms, mental simulation |
+| Stars (region pair counting) | `tw05` StarPair | Numbers — counting + classification |
+| Triangles (edge counting) | `tw06` TriCount | Numbers — local counting constraints |
+| Erasers (error absorption) | `tw07` EraserLogic | Meta-reasoning — constraint violation balancing |
+| Squares + Stars (dual constraint) | `tw08` ComboBasic | Composition — multiple simultaneous rules |
+| Cylinder wrap (topology) | `tw09` CylinderWrap | Topology — non-planar space |
+| Color filters (perception transform) | `tw10` ColorFilter | Perception — transform-then-apply |
 
 ## Games
 
 ### tw01 — PathDots
-
 Draw a path from start to end that passes through **all** marked waypoints (yellow dots).
-
-```
-S-+-E       Level 1: 2x2 grid, 2 dots
-| | |       8 moves to solve
-o-+-o
-| | |
-+-+-+
-```
-
-- 5 levels, progressively harder (8 → 22 moves)
-- Advanced levels include **breakpoints** (blocked edges)
+- 7 levels, progressively harder
+- Advanced levels include breakpoints (blocked edges)
 - Trains: path planning, constraint satisfaction
 
 ### tw02 — ColorSplit
-
 Draw a path that **partitions** the grid into regions where each region contains only one color of square.
-
-```
-S-+-+-+-+   Level 3: 4x4 grid, 12 squares
-|A|B|B|B|   16 moves to solve
-+-+-+-+-+
-|A| | |A|
-+-+-+-+-+
-|A| | |A|
-+-+-+-+-+
-|B|B|B|A|
-+-+-+-+-E
-```
-
-- 5 levels (3 → 20 moves)
-- Up to 3 colors (magenta / light-blue / orange)
+- 23 levels (up to 3 colors)
 - Trains: classification, spatial reasoning, region analysis
 
+### tw03 — ShapeFill
+Draw a path that partitions the grid; each region's polyomino pieces must **exactly tile** the region.
+- 40 levels
+- NP-complete tiling validation
+- Trains: spatial composition, geometric reasoning
+
 ### tw04 — SymDraw
-
 Control a **blue** line; a **yellow** line mirrors your moves automatically. Both must reach their respective endpoints simultaneously.
-
-- 5 levels (3 → 13 moves)
+- 19 levels
 - Symmetry types: horizontal, vertical, 180° rotational
-- Advanced levels add colored waypoints for both lines
 - Trains: symmetry transforms, dual-state mental simulation
+
+### tw05 — StarPair
+Draw a path that partitions the grid; each region must contain **exactly 2 stars** of each color present.
+- 22 levels
+- Trains: counting, classification, region analysis
+
+### tw06 — TriCount
+Each cell with N triangles requires the path to touch **exactly N edges** of that cell.
+- 92 levels
+- Trains: local counting, edge-cell relationship reasoning
+
+### tw07 — EraserLogic
+Eraser symbols absorb constraint violations. Each region must have `#erasers == #violations`.
+- 183 levels (largest game)
+- Combines with squares, stars, and triangle constraints
+- Trains: meta-reasoning, error balancing
+
+### tw08 — ComboBasic
+Simultaneous **ColorSplit** (squares) + **StarPair** (stars) constraints.
+- 28 levels
+- Trains: compositional reasoning, multi-constraint satisfaction
+
+### tw09 — CylinderWrap
+PathDots variant where the grid **wraps horizontally** (left edge = right edge).
+- 5 hand-crafted levels
+- Trains: topological reasoning, wrap-around navigation
+
+### tw10 — ColorFilter
+ColorSplit variant where **filter cells** change the perceived color of squares. Constraints apply to perceived colors.
+- 5 hand-crafted levels
+- Trains: perception transformation, transform-then-apply reasoning
+
+## Dataset Statistics
+
+### Coverage Summary
+
+| Game | Mechanism | TTWS Classified | Filtered | Validated | Final Levels | Coverage |
+|------|-----------|----------------|----------|-----------|-------------|----------|
+| tw01 | PathDots | 44 | 13 | 7 | **7** | 15.9% |
+| tw02 | ColorSplit | 76 | 32 | 24 | **23** | 30.3% |
+| tw03 | ShapeFill | 272 | 140 | 46 | **40** | 14.7% |
+| tw04 | SymDraw | 210 | 28 | 26 | **19** | 9.0% |
+| tw05 | StarPair | 88 | 50 | 27 | **22** | 25.0% |
+| tw06 | TriCount | 160 | 118 | 93 | **92** | 57.5% |
+| tw07 | EraserLogic | 625 | 256 | 185 | **183** | 29.3% |
+| tw08 | ComboBasic | 128 | 71 | 31 | **28** | 21.9% |
+| tw09 | CylinderWrap | 0 | — | — | **5** | hand-crafted |
+| tw10 | ColorFilter | 0 | — | — | **5** | hand-crafted |
+| **other** | multi-constraint | **1,002** | — | — | **0** | 0% |
+| **Total** | | **2,605** | **708** | **449** | **424** | |
+
+### TTWS Raw Constraint Distribution
+
+Each puzzle may contain multiple constraint types simultaneously:
+
+| Constraint | Count | Mapped To |
+|-----------|-------|-----------|
+| tetris (polyomino) | 1,195 | tw03 (solo), tw07/tw08 (combo) |
+| stars | 1,177 | tw05 (solo), tw07/tw08 (combo) |
+| missing_edges | 1,043 | Not supported (rejected by filter) |
+| triangles | 972 | tw06 (solo), tw07 (combo) |
+| squares | 936 | tw02 (solo), tw07/tw08 (combo) |
+| hex (hexagons) | 809 | tw01 (solo) |
+| eliminations | 776 | tw07 (combo only) |
+| symmetry | 258 | tw04 |
+| No constraints | 5 | — |
+
+### Pipeline Funnel
+
+```
+TTWS total puzzles:           2,605   (100%)
+ ├─ Classified (tw01-08):     1,603   (61.5%)
+ │  ├─ Passed filter:           708   (27.2%)
+ │  │  ├─ Solver validated:     449   (17.2%)
+ │  │  └─ Final levels:         424   (16.3%)  ← 414 from TTWS
+ │  └─ Filter rejected:         895
+ ├─ "other" (multi-constraint):1,002   (38.5%)
+ └─ Hand-crafted (tw09/10):     +10
+```
+
+### Major Loss Points
+
+| Bottleneck | Lost | Cause |
+|-----------|------|-------|
+| "other" unclassified | 1,002 | Multi-constraint combos (e.g., tetris+stars, hex+tetris) |
+| missing_edges rejected | ~400+ | Grid engine doesn't support broken edges |
+| multi-start rejected | ~180 | Especially tw04: 133 symmetry puzzles with 2+ starts |
+| Solver timeout | ~259 | NP-hard puzzles exceed BFS/DFS time limit |
+
+### Expansion Opportunities
+
+| Direction | Potential Levels | Effort |
+|----------|-----------------|--------|
+| Support missing_edges (broken edges) | ~400+ | Medium (grid engine change) |
+| Support multi-start (tw04 expansion) | ~133 | Medium |
+| Increase solver timeout / manual validation | ~259 | Low |
+| New games for multi-constraint combos | ~170+ | High |
 
 ## Project Structure
 
@@ -68,19 +150,34 @@ arc-witness-envs/
 ├── witness_grid.py            # Shared grid renderer (64x64, 16-color)
 ├── tw01_pathdots.py           # PathDots game (ARCBaseGame subclass)
 ├── tw02_colorsplit.py         # ColorSplit game
+├── tw03_shapefill.py          # ShapeFill game
 ├── tw04_symdraw.py            # SymDraw game
-├── test_games.py              # Automated test suite (all 15 levels)
+├── tw05_starpair.py           # StarPair game
+├── tw06_tricount.py           # TriCount game
+├── tw07_eraserlogic.py        # EraserLogic game
+├── tw08_combobasic.py         # ComboBasic game
+├── tw09_cylinderwrap.py       # CylinderWrap game
+├── tw10_colorfilter.py        # ColorFilter game
+├── test_games.py              # Automated test suite (424 levels)
 ├── play_human.py              # Local web server for browser play
 ├── environment_files/         # Game metadata (for SDK discovery)
 │   ├── tw01/metadata.json
 │   ├── tw02/metadata.json
-│   └── tw04/metadata.json
+│   ├── ...
+│   └── tw10/metadata.json
 ├── levels/                    # Level configs with verified solutions
-│   ├── tw01_levels.json       # 5 levels from Witness community data
-│   ├── tw02_levels.json
-│   └── tw04_levels.json
+│   ├── tw01_levels.json       # 7 levels
+│   ├── tw02_levels.json       # 23 levels
+│   ├── tw03_levels.json       # 40 levels
+│   ├── tw04_levels.json       # 19 levels
+│   ├── tw05_levels.json       # 22 levels
+│   ├── tw06_levels.json       # 92 levels
+│   ├── tw07_levels.json       # 183 levels
+│   ├── tw08_levels.json       # 28 levels
+│   ├── tw09_levels.json       # 5 levels (hand-crafted)
+│   └── tw10_levels.json       # 5 levels (hand-crafted)
 └── converters/                # Puzzle extraction pipeline
-    ├── unified_puzzle.py      # Intermediate data model
+    ├── unified_puzzle.py      # Intermediate data model + classifier
     ├── ingest_ttws.py         # Decode protobuf puzzles from ttws
     ├── filter.py              # Classify & filter by game type + grid size
     ├── to_level_config.py     # Convert to game-native level configs
@@ -131,35 +228,17 @@ print(f"State: {frame.state}")  # GameState.PLAYING or GameState.WIN
 
 ```bash
 python test_games.py
+# 10/10 games, 424 levels verified
 ```
 
-Verifies all 15 levels (5 per game) using solutions stored in `levels/*.json`.
-
-## Level Data
-
-Levels are sourced from real Witness community puzzles via the [ttws](https://github.com/barrycohen/ttws) project (2,605 decoded puzzles from the game and the Windmill fan community). Each level includes:
-
-- **config** — Grid dimensions, start/end positions, constraints (dots/squares/symmetry)
-- **solution_actions** — Verified optimal action sequence
-- **baseline** — Human-calibrated action budget: `ceil((shortest_moves + 1) * 1.2)`
-- **source** — Provenance (e.g., `witness:19` = puzzle #19 from the original game)
-
-### Extraction Pipeline
-
-Re-run to regenerate or expand levels:
+### Re-extract Levels
 
 ```bash
 cd converters
-python run_pipeline.py --levels-per-game 10
+python run_pipeline.py --keep-all
 ```
 
-Pipeline: decode protobuf → classify by game type → convert coordinates → solve with BFS/DFS → calibrate baselines → export JSON.
-
-| Game | Decoded | After Filter | Solved | Selected |
-|------|---------|-------------|--------|----------|
-| tw01 | 2,605 | 13 | 7 | 5 |
-| tw02 | 2,605 | 32 | 26 | 5 |
-| tw04 | 2,605 | 28 | 26 | 5 |
+Pipeline: decode protobuf -> classify by game type -> convert coordinates -> solve with BFS/DFS -> calibrate baselines -> export JSON.
 
 ## Architecture
 
@@ -181,7 +260,12 @@ WitnessGrid(cols, rows)
 ├── draw_path_segment()     → render path between nodes
 ├── draw_dot() / draw_start() / draw_end()
 ├── draw_cell_symbol()      → colored squares in cell centers
-└── path_splits_regions()   → BFS region extraction for tw02
+├── draw_star()             → diamond-shaped star symbols
+├── draw_triangle()         → 1-3 small triangles per cell
+├── draw_polyomino()        → tetris piece preview
+├── draw_eraser()           → Y-shaped eraser symbol
+├── path_splits_regions()   → BFS region extraction
+└── cell_edge_count()       → count path edges touching a cell
 ```
 
 ### Coordinate System

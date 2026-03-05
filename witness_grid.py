@@ -292,6 +292,55 @@ class WitnessGrid:
 
         return regions
 
+    def draw_star(self, frame: List[List[int]],
+                  cell: Tuple[int, int], color: int = STAR_COLOR):
+        """在单元格中心绘制星星符号（菱形）。与方块区分。"""
+        cx, cy = self.cell_center_pixel(*cell)
+        # Diamond shape
+        for dx, dy in [(-2, 0), (-1, -1), (-1, 0), (-1, 1),
+                       (0, -2), (0, -1), (0, 0), (0, 1), (0, 2),
+                       (1, -1), (1, 0), (1, 1), (2, 0)]:
+            px, py = cx + dx, cy + dy
+            if 0 <= px < 64 and 0 <= py < 64:
+                frame[py][px] = color
+
+    def draw_triangle(self, frame: List[List[int]],
+                      cell: Tuple[int, int], count: int,
+                      color: int = TRI_COLOR):
+        """在单元格中绘制 1-3 个小三角形标记。"""
+        cx, cy = self.cell_center_pixel(*cell)
+        offsets = [0] if count == 1 else [-2, 2] if count == 2 else [-3, 0, 3]
+        for ox in offsets[:count]:
+            px_base = cx + ox
+            # Small upward triangle: 3 pixels
+            for dy, dx in [(-1, 0), (0, -1), (0, 0), (0, 1)]:
+                ppx, ppy = px_base + dx, cy + dy
+                if 0 <= ppx < 64 and 0 <= ppy < 64:
+                    frame[ppy][ppx] = color
+
+    def draw_polyomino(self, frame: List[List[int]],
+                       cell: Tuple[int, int], shape: list,
+                       color: int = POLY_COLOR):
+        """在单元格中绘制多联骨牌形状预览。"""
+        cx, cy = self.cell_center_pixel(*cell)
+        for sx, sy in shape:
+            for dx in range(2):
+                for dy in range(2):
+                    px = cx - 2 + sx * 2 + dx
+                    py = cy - 2 + sy * 2 + dy
+                    if 0 <= px < 64 and 0 <= py < 64:
+                        frame[py][px] = color
+
+    def draw_eraser(self, frame: List[List[int]],
+                    cell: Tuple[int, int], color: int = ERASER_COLOR):
+        """在单元格中心绘制消除符号（Y形）。"""
+        cx, cy = self.cell_center_pixel(*cell)
+        # Y shape: stem + two branches
+        for dx, dy in [(0, 0), (0, 1), (0, 2), (-1, -1), (1, -1), (-2, -2), (2, -2)]:
+            px, py = cx + dx, cy + dy
+            if 0 <= px < 64 and 0 <= py < 64:
+                frame[py][px] = color
+
     def cell_edge_count(self, cell: Tuple[int, int],
                         path_edges: Set[Tuple[Tuple[int, int], Tuple[int, int]]]) -> int:
         """计算单元格边界被路径经过的边数。"""

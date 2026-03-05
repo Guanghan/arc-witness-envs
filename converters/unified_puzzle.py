@@ -38,7 +38,11 @@ class UnifiedPuzzle:
     source_index: int = 0  # 在源文件中的索引
 
     def classify(self) -> str:
-        """分类谜题类型，返回最匹配的游戏标识。"""
+        """分类谜题类型，返回最匹配的游戏标识。
+
+        优先级：tw07 (elim+other) > tw08 (sq+star) > tw01 (hex) > tw02 (sq) >
+                tw04 (sym) > tw05 (star) > tw06 (tri) > tw03 (tetris) > other
+        """
         has_hex = bool(self.hexagons or self.hex_edges)
         has_sq = bool(self.squares)
         has_star = bool(self.stars)
@@ -46,7 +50,14 @@ class UnifiedPuzzle:
         has_tetris = bool(self.tetris)
         has_elim = bool(self.eliminations)
         has_sym = self.symmetry is not None
-        has_missing = bool(self.missing_edges)
+
+        # tw07: 消除符号 + 至少一种其他约束
+        if has_elim and (has_sq or has_star or has_tri):
+            return "tw07"
+
+        # tw08: 方块 + 星星组合（无其他约束）
+        if has_sq and has_star and not has_hex and not has_tri and not has_tetris and not has_elim and not has_sym:
+            return "tw08"
 
         # tw01: 仅有 hexagon 约束（节点必经点）
         if has_hex and not has_sq and not has_star and not has_tri and not has_tetris and not has_elim and not has_sym:
@@ -60,13 +71,17 @@ class UnifiedPuzzle:
         if has_sym:
             return "tw04"
 
-        # 未来游戏类型
-        if has_star:
-            return "stars"
-        if has_tri:
-            return "triangles"
-        if has_tetris:
-            return "tetris"
+        # tw05: 仅有星星
+        if has_star and not has_sq and not has_hex and not has_tri and not has_tetris and not has_elim:
+            return "tw05"
+
+        # tw06: 仅有三角形
+        if has_tri and not has_sq and not has_hex and not has_star and not has_tetris and not has_elim:
+            return "tw06"
+
+        # tw03: 仅有多联骨牌
+        if has_tetris and not has_sq and not has_hex and not has_star and not has_tri and not has_elim:
+            return "tw03"
 
         return "other"
 

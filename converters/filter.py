@@ -2,53 +2,39 @@
 filter.py — 按游戏类型筛选和过滤谜题
 
 筛选条件：
-- tw01 PathDots: hex-only, max(cols,rows)<=7, 1 start, 1 end, 仅节点 hex（不含边 hex）
-- tw02 ColorSplit: sq-only, max(cols,rows)<=7, 1 start, 1 end, <=3 colors
+- tw01 PathDots: hex-only, max(cols,rows)<=7, 1 start, >=1 end, 仅节点 hex
+- tw02 ColorSplit: sq-only, max(cols,rows)<=7, 1 start, >=1 end, <=3 colors
+- tw03 ShapeFill: tetris-only, max(cols,rows)<=6, 1 start, >=1 end
 - tw04 SymDraw: symmetry puzzles, max(cols,rows)<=7, >=1 start, >=1 end
+- tw05 StarPair: stars-only, max(cols,rows)<=7, 1 start, >=1 end, >=2 stars
+- tw06 TriCount: triangles-only, max(cols,rows)<=7, 1 start, >=1 end
+- tw07 EraserLogic: eliminations + other constraint, max(cols,rows)<=6
+- tw08 ComboBasic: squares + stars, max(cols,rows)<=7, <=3 colors
 """
 from typing import List, Dict
 from unified_puzzle import UnifiedPuzzle
 
 
 def filter_tw01(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
-    """筛选 tw01 PathDots 候选谜题。
-
-    条件：
-    - 仅有 node hexagons（节点必经点），不含边上的 hexagon
-    - 无 squares, stars, triangles, tetris, eliminations, symmetry
-    - max(cols, rows) <= 7
-    - 恰好 1 个起点和至少 1 个终点
-    - 至少有 1 个 hexagon
-    """
+    """筛选 tw01 PathDots 候选谜题。"""
     results = []
     for p in puzzles:
-        # 基本特征检查：仅有 hex（和 missing edges）
         if p.squares or p.stars or p.triangles or p.tetris or p.eliminations or p.symmetry:
             continue
         if max(p.cols, p.rows) > 7:
             continue
         if len(p.starts) != 1 or len(p.ends) < 1:
             continue
-        # 仅接受节点 hex，不接受边 hex（我们的游戏只支持节点 dots）
         if p.hex_edges:
             continue
         if not p.hexagons:
             continue
-        # 允许 missing edges（映射为 breakpoints）
         results.append(p)
     return results
 
 
 def filter_tw02(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
-    """筛选 tw02 ColorSplit 候选谜题。
-
-    条件：
-    - 仅有 squares（彩色方块），无其他约束
-    - max(cols, rows) <= 7
-    - 恰好 1 个起点和至少 1 个终点
-    - 使用 <= 3 种颜色
-    - 至少有 2 个 squares
-    """
+    """筛选 tw02 ColorSplit 候选谜题。"""
     results = []
     for p in puzzles:
         if p.classify() != "tw02":
@@ -67,16 +53,27 @@ def filter_tw02(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
     return results
 
 
-def filter_tw04(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
-    """筛选 tw04 SymDraw 候选谜题。
+def filter_tw03(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
+    """筛选 tw03 ShapeFill 候选谜题。
 
-    条件：
-    - 有 symmetry
-    - max(cols, rows) <= 7
-    - 有起点和终点
-    - 可以有 hexagons（作为 dots）
-    - 不含 squares, stars, triangles, tetris, eliminations（简化）
+    条件：仅有 tetris，max(cols,rows)<=6，1 start, >=1 end
     """
+    results = []
+    for p in puzzles:
+        if p.classify() != "tw03":
+            continue
+        if max(p.cols, p.rows) > 6:
+            continue
+        if len(p.starts) != 1 or len(p.ends) < 1:
+            continue
+        if p.missing_edges:
+            continue
+        results.append(p)
+    return results
+
+
+def filter_tw04(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
+    """筛选 tw04 SymDraw 候选谜题。"""
     results = []
     for p in puzzles:
         if p.symmetry is None:
@@ -85,8 +82,87 @@ def filter_tw04(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
             continue
         if len(p.starts) < 1 or len(p.ends) < 1:
             continue
-        # 只接受 hex+sym 或纯 sym 的简单谜题
         if p.squares or p.stars or p.triangles or p.tetris or p.eliminations:
+            continue
+        results.append(p)
+    return results
+
+
+def filter_tw05(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
+    """筛选 tw05 StarPair 候选谜题。
+
+    条件：仅有 stars，max(cols,rows)<=7，1 start, >=1 end, >=2 stars, no missing_edges
+    """
+    results = []
+    for p in puzzles:
+        if p.classify() != "tw05":
+            continue
+        if max(p.cols, p.rows) > 7:
+            continue
+        if len(p.starts) != 1 or len(p.ends) < 1:
+            continue
+        if len(p.stars) < 2:
+            continue
+        if p.missing_edges:
+            continue
+        results.append(p)
+    return results
+
+
+def filter_tw06(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
+    """筛选 tw06 TriCount 候选谜题。
+
+    条件：仅有 triangles，max(cols,rows)<=7，1 start, >=1 end
+    """
+    results = []
+    for p in puzzles:
+        if p.classify() != "tw06":
+            continue
+        if max(p.cols, p.rows) > 7:
+            continue
+        if len(p.starts) != 1 or len(p.ends) < 1:
+            continue
+        if p.missing_edges:
+            continue
+        results.append(p)
+    return results
+
+
+def filter_tw07(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
+    """筛选 tw07 EraserLogic 候选谜题。
+
+    条件：有 eliminations 且有至少一种其他约束，max(cols,rows)<=6
+    """
+    results = []
+    for p in puzzles:
+        if p.classify() != "tw07":
+            continue
+        if max(p.cols, p.rows) > 6:
+            continue
+        if len(p.starts) != 1 or len(p.ends) < 1:
+            continue
+        if p.missing_edges:
+            continue
+        results.append(p)
+    return results
+
+
+def filter_tw08(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
+    """筛选 tw08 ComboBasic 候选谜题。
+
+    条件：同时有 squares AND stars，无其他约束，max(cols,rows)<=7, <=3 colors
+    """
+    results = []
+    for p in puzzles:
+        if p.classify() != "tw08":
+            continue
+        if max(p.cols, p.rows) > 7:
+            continue
+        if len(p.starts) != 1 or len(p.ends) < 1:
+            continue
+        if p.unique_square_colors() > 3:
+            continue
+        if p.missing_edges:
             continue
         results.append(p)
     return results
@@ -97,7 +173,12 @@ def filter_all(puzzles: List[UnifiedPuzzle]) -> Dict[str, List[UnifiedPuzzle]]:
     return {
         "tw01": filter_tw01(puzzles),
         "tw02": filter_tw02(puzzles),
+        "tw03": filter_tw03(puzzles),
         "tw04": filter_tw04(puzzles),
+        "tw05": filter_tw05(puzzles),
+        "tw06": filter_tw06(puzzles),
+        "tw07": filter_tw07(puzzles),
+        "tw08": filter_tw08(puzzles),
     }
 
 

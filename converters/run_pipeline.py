@@ -2,15 +2,15 @@
 """
 run_pipeline.py — 一键提取 The Witness 社区谜题到我们的游戏格式
 
-用法: python converters/run_pipeline.py [--max-solve-time 5] [--output-dir levels]
+用法: python converters/run_pipeline.py [--keep-all] [--max-solve-time 10] [--output-dir levels]
 
 步骤:
 1. 从 vendor_ttws/ 解码所有谜题
 2. 分类筛选
 3. 转换为 level_config 格式
-4. BFS 求解验证 + baseline 校准
+4. BFS/DFS 求解验证 + baseline 校准
 5. 按难度排序，选取关卡
-6. 输出 JSON 文件
+6. 输出 JSON 文件 + 自动生成 metadata.json
 """
 import sys
 import os
@@ -19,6 +19,7 @@ import time
 import argparse
 from typing import List, Dict
 from collections import Counter
+from datetime import datetime
 
 _here = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _here)
@@ -27,6 +28,61 @@ from ingest_ttws import ingest_all
 from filter import filter_all
 from to_level_config import convert_puzzle
 from validate import validate_config, solution_to_actions, calibrate_baseline
+
+
+# === 游戏元信息注册表 ===
+GAME_REGISTRY = {
+    "tw01": {
+        "title": "PathDots - 路径必经点",
+        "class_name": "Tw01",
+        "tags": ["witness", "path-constraint", "spatial-reasoning"],
+    },
+    "tw02": {
+        "title": "ColorSplit - 彩色方块分隔",
+        "class_name": "Tw02",
+        "tags": ["witness", "partition-constraint", "classification"],
+    },
+    "tw03": {
+        "title": "ShapeFill - 多联骨牌铺满",
+        "class_name": "Tw03",
+        "tags": ["witness", "tiling", "exact-cover"],
+    },
+    "tw04": {
+        "title": "SymDraw - 对称画线",
+        "class_name": "Tw04",
+        "tags": ["witness", "symmetry", "dual-control"],
+    },
+    "tw05": {
+        "title": "StarPair - 星星配对",
+        "class_name": "Tw05",
+        "tags": ["witness", "pairing-constraint", "region-partition"],
+    },
+    "tw06": {
+        "title": "TriCount - 三角形计数",
+        "class_name": "Tw06",
+        "tags": ["witness", "counting-constraint", "edge-awareness"],
+    },
+    "tw07": {
+        "title": "EraserLogic - 消除逻辑",
+        "class_name": "Tw07",
+        "tags": ["witness", "meta-reasoning", "error-correction"],
+    },
+    "tw08": {
+        "title": "ComboBasic - 基础组合",
+        "class_name": "Tw08",
+        "tags": ["witness", "multi-constraint", "squares-stars"],
+    },
+    "tw09": {
+        "title": "CylinderWrap - 圆柱环绕",
+        "class_name": "Tw09",
+        "tags": ["witness", "topology", "wrap-around"],
+    },
+    "tw10": {
+        "title": "ColorFilter - 颜色滤镜",
+        "class_name": "Tw10",
+        "tags": ["witness", "perception", "color-transform"],
+    },
+}
 
 
 def ascii_grid_tw01(config: dict, solution=None) -> str:
@@ -57,9 +113,7 @@ def ascii_grid_tw01(config: dict, solution=None) -> str:
             line += ch
 
             if c < cols:
-                # Horizontal edge
                 if solution and (c, r) in path_set and (c + 1, r) in path_set:
-                    # Check if adjacent in solution
                     adjacent = False
                     for i in range(len(solution) - 1):
                         if (tuple(solution[i]) == (c, r) and tuple(solution[i+1]) == (c+1, r)) or \
@@ -130,27 +184,49 @@ def ascii_grid_tw02(config: dict) -> str:
     return "\n".join(lines)
 
 
+def _generate_metadata(game_id: str, baselines: list, env_dir: str):
+    """自动生成 metadata.json。"""
+    info = GAME_REGISTRY.get(game_id, {})
+    metadata = {
+        "game_id": game_id,
+        "title": info.get("title", game_id),
+        "class_name": info.get("class_name", game_id.capitalize()),
+        "tags": info.get("tags", ["witness"]),
+        "baseline_actions": baselines,
+        "date_downloaded": datetime.now().strftime("%Y-%m-%dT00:00:00Z"),
+    }
+
+    game_dir = os.path.join(env_dir, game_id)
+    os.makedirs(game_dir, exist_ok=True)
+    filepath = os.path.join(game_dir, "metadata.json")
+    with open(filepath, "w") as f:
+        json.dump(metadata, f, indent=4, ensure_ascii=False)
+    return filepath
+
+
 def run_pipeline(max_solve_time: float = 10.0, output_dir: str = "levels",
-                 levels_per_game: int = 10) -> dict:
+                 levels_per_game: int = 10, keep_all: bool = False) -> dict:
     """运行完整提取管线。"""
     print("=" * 60)
     print("ARC-AGI-3 Witness Puzzle Extraction Pipeline")
+    if keep_all:
+        print("  Mode: KEEP ALL validated levels")
     print("=" * 60)
 
     # Step 1: Ingest
-    print("\n[1/5] Ingesting puzzles from vendor_ttws/...")
+    print("\n[1/6] Ingesting puzzles from vendor_ttws/...")
     t0 = time.time()
     all_puzzles = ingest_all()
     print(f"  Decoded: {len(all_puzzles)} puzzles ({time.time()-t0:.1f}s)")
 
     # Step 2: Filter
-    print("\n[2/5] Filtering by game type...")
+    print("\n[2/6] Filtering by game type...")
     filtered = filter_all(all_puzzles)
-    for game, ps in filtered.items():
+    for game, ps in sorted(filtered.items()):
         print(f"  {game}: {len(ps)} candidates")
 
     # Step 3: Convert
-    print("\n[3/5] Converting to level_config format...")
+    print("\n[3/6] Converting to level_config format...")
     converted = {}
     for game, ps in filtered.items():
         configs = []
@@ -162,15 +238,15 @@ def run_pipeline(max_solve_time: float = 10.0, output_dir: str = "levels",
         print(f"  {game}: {len(configs)} converted")
 
     # Step 4: Validate + calibrate
-    print("\n[4/5] Solving and calibrating baselines...")
+    print("\n[4/6] Solving and calibrating baselines...")
     validated = {}
     stats = {"total_solved": 0, "total_failed": 0}
 
-    for game, configs in converted.items():
+    for game, configs in sorted(converted.items()):
         valid_levels = []
         for config, puzzle in configs:
             t0 = time.time()
-            result = validate_config(config, game)
+            result = validate_config(config, game, timeout=max_solve_time)
             elapsed = time.time() - t0
 
             if result["valid"]:
@@ -193,31 +269,36 @@ def run_pipeline(max_solve_time: float = 10.0, output_dir: str = "levels",
         # Sort by difficulty (moves)
         valid_levels.sort(key=lambda x: x["moves"])
         validated[game] = valid_levels
-        print(f"  {game}: {len(valid_levels)} validated "
-              f"(moves range: {valid_levels[0]['moves']}-{valid_levels[-1]['moves']}"
-              f" if valid_levels else 'N/A')")
+        if valid_levels:
+            print(f"  {game}: {len(valid_levels)} validated "
+                  f"(moves range: {valid_levels[0]['moves']}-{valid_levels[-1]['moves']})")
+        else:
+            print(f"  {game}: 0 validated")
 
     print(f"\n  Total solved: {stats['total_solved']}, failed: {stats['total_failed']}")
 
     # Step 5: Select and export
-    print(f"\n[5/5] Selecting levels and exporting JSON...")
+    effective_count = 0 if keep_all else levels_per_game
+    print(f"\n[5/6] Selecting levels and exporting JSON...")
+    if keep_all:
+        print("  (Keeping ALL validated levels)")
 
     abs_output = os.path.join(os.path.dirname(_here), output_dir)
     os.makedirs(abs_output, exist_ok=True)
 
     results = {}
-    for game, levels in validated.items():
+    for game, levels in sorted(validated.items()):
         if not levels:
             print(f"  {game}: NO valid levels!")
             continue
 
-        # Select up to levels_per_game, spread across difficulty range
-        selected = _select_levels(levels, levels_per_game)
+        # Select levels
+        selected = _select_levels(levels, effective_count)
 
         # Build output
         output = {
             "game": game,
-            "total_candidates": len(filtered[game]),
+            "total_candidates": len(filtered.get(game, [])),
             "total_validated": len(levels),
             "selected_count": len(selected),
             "levels": [],
@@ -245,34 +326,33 @@ def run_pipeline(max_solve_time: float = 10.0, output_dir: str = "levels",
         print(f"    baselines: {baselines}")
         print(f"    moves: {[l['moves'] for l in selected]}")
 
-        # Print ASCII art for each selected level
-        for i, level in enumerate(selected):
-            print(f"\n    --- {game} Level {i+1} ({level['config']['cols']}x{level['config']['rows']}, "
-                  f"moves={level['moves']}, baseline={level['baseline']}) ---")
-            if game == "tw01":
-                print(ascii_grid_tw01(level["config"], level.get("solution")))
-            elif game == "tw02":
-                print(ascii_grid_tw02(level["config"]))
+    # Step 6: Generate metadata.json for each game
+    print(f"\n[6/6] Generating metadata.json files...")
+    env_dir = os.path.join(os.path.dirname(_here), "environment_files")
+    for game, data in sorted(results.items()):
+        baselines = [l["baseline"] for l in data["levels"]]
+        meta_path = _generate_metadata(game, baselines, env_dir)
+        print(f"  {game}: {meta_path}")
 
     return results
 
 
 def _select_levels(levels: list, count: int, min_moves: int = 3) -> list:
-    """从验证通过的关卡中选取 count 个，按难度渐进。"""
+    """从验证通过的关卡中选取关卡。count=0 表示保留全部。"""
     # 过滤太简单的关卡和去重
     filtered = []
     seen_configs = set()
     for level in levels:
         if level["moves"] < min_moves:
             continue
-        # 使用 config 的 JSON 字符串去重
         config_key = json.dumps(level["config"], sort_keys=True)
         if config_key in seen_configs:
             continue
         seen_configs.add(config_key)
         filtered.append(level)
 
-    if len(filtered) <= count:
+    # count=0 表示保留全部
+    if count == 0 or len(filtered) <= count:
         return filtered
 
     # 均匀采样不同难度
@@ -290,18 +370,21 @@ def main():
     parser.add_argument("--max-solve-time", type=float, default=10.0)
     parser.add_argument("--output-dir", default="levels")
     parser.add_argument("--levels-per-game", type=int, default=10)
+    parser.add_argument("--keep-all", action="store_true",
+                        help="Keep all validated levels instead of selecting a subset")
     args = parser.parse_args()
 
     results = run_pipeline(
         max_solve_time=args.max_solve_time,
         output_dir=args.output_dir,
         levels_per_game=args.levels_per_game,
+        keep_all=args.keep_all,
     )
 
     print("\n" + "=" * 60)
     print("Pipeline complete!")
     print("=" * 60)
-    for game, data in results.items():
+    for game, data in sorted(results.items()):
         print(f"  {game}: {data['selected_count']} levels selected "
               f"(from {data['total_validated']} validated, {data['total_candidates']} candidates)")
 

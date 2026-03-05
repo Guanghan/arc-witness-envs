@@ -1,0 +1,8 @@
+{
+    "game_id": "tw10",
+    "title": "ColorFilter - 颜色滤镜",
+    "class_name": "Tw10",
+    "tags": ["witness", "perception", "color-transform"],
+    "baseline_actions": [9, 8, 10, 11, 11],
+    "date_downloaded": "2026-03-05T00:00:00Z"
+}

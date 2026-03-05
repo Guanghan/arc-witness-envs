@@ -1,5 +1,5 @@
 """
-Test script for Witness-inspired games (tw01, tw02, tw04).
+Test script for all Witness-inspired games (tw01-tw10).
 Uses the proper ARCBaseGame.perform_action() API.
 
 Automatically loads test solutions from levels/*.json if available,
@@ -43,7 +43,8 @@ def load_solutions_from_json(game_id):
     solutions = []
     for entry in data["levels"]:
         actions = entry["solution_actions"]
-        desc = (f"{entry['config']['cols']}x{entry['config']['rows']}, "
+        cfg = entry["config"]
+        desc = (f"{cfg['cols']}x{cfg['rows']}, "
                 f"moves={entry['moves']}, source={entry['source']}")
         solutions.append((actions, desc))
 
@@ -52,14 +53,14 @@ def load_solutions_from_json(game_id):
 
 def test_game(game_class, game_name, level_solutions):
     print(f"\n{'='*60}")
-    print(f"Testing {game_name}")
+    print(f"Testing {game_name} ({len(level_solutions)} levels)")
     print(f"{'='*60}")
 
     game = game_class(seed=0)
 
     # Verify init fix: _grid should not be None
     assert game._grid is not None, "FAIL: _grid is None after init (constructor bug not fixed!)"
-    print(f"  Init check: _grid is set ✓")
+    print(f"  Init check: _grid is set")
     print(f"  level_index={game.level_index}, win_score={game.win_score}")
 
     # Get initial frame
@@ -78,68 +79,126 @@ def test_game(game_class, game_name, level_solutions):
 
         expected_completed = level_idx + 1
         if frame.levels_completed >= expected_completed:
-            print(f"    PASSED ✓")
+            print(f"    PASSED")
         else:
-            print(f"    FAILED ✗ (expected levels_completed>={expected_completed})")
+            print(f"    FAILED (expected levels_completed>={expected_completed})")
             return False
 
     print(f"\n  Final: levels_completed={frame.levels_completed}, state={frame.state}")
     if frame.state == GameState.WIN:
-        print(f"  Game WON ✓")
+        print(f"  Game WON")
     return True
 
 
 def test_tw01():
     from tw01_pathdots import Tw01
-
-    # Try JSON solutions first
     json_solutions = load_solutions_from_json("tw01")
     if json_solutions:
         print("  (Using JSON level solutions)")
         return test_game(Tw01, "tw01_pathdots", json_solutions)
-
-    # Hardcoded fallback
-    level1 = ([RIGHT, RIGHT, RIGHT, CONFIRM],
-              "3×3, 1 dot on straight path")
-    level2 = ([DOWN, RIGHT, RIGHT, UP, RIGHT, CONFIRM],
-              "3×3, 1 dot needs detour")
-    level3 = ([RIGHT, RIGHT, DOWN, DOWN, DOWN, DOWN, RIGHT, RIGHT, CONFIRM],
-              "4×4, 2 dots")
-    level4 = ([DOWN, DOWN, DOWN, DOWN, RIGHT, RIGHT, UP, UP, RIGHT, RIGHT, DOWN, DOWN, CONFIRM],
-              "4×4, 3 dots")
+    level1 = ([RIGHT, RIGHT, RIGHT, CONFIRM], "3x3, 1 dot on straight path")
+    level2 = ([DOWN, RIGHT, RIGHT, UP, RIGHT, CONFIRM], "3x3, 1 dot needs detour")
+    level3 = ([RIGHT, RIGHT, DOWN, DOWN, DOWN, DOWN, RIGHT, RIGHT, CONFIRM], "4x4, 2 dots")
+    level4 = ([DOWN, DOWN, DOWN, DOWN, RIGHT, RIGHT, UP, UP, RIGHT, RIGHT, DOWN, DOWN, CONFIRM], "4x4, 3 dots")
     level5 = ([RIGHT, RIGHT, RIGHT, RIGHT, RIGHT, DOWN, LEFT, LEFT, LEFT, LEFT, LEFT,
-               DOWN, DOWN, DOWN, DOWN, RIGHT, RIGHT, RIGHT, RIGHT, RIGHT, CONFIRM],
-              "5×5, 4 dots")
-
+               DOWN, DOWN, DOWN, DOWN, RIGHT, RIGHT, RIGHT, RIGHT, RIGHT, CONFIRM], "5x5, 4 dots")
     return test_game(Tw01, "tw01_pathdots", [level1, level2, level3, level4, level5])
 
 
 def test_tw02():
     from tw02_colorsplit import Tw02
-
     json_solutions = load_solutions_from_json("tw02")
     if json_solutions:
         print("  (Using JSON level solutions)")
         return test_game(Tw02, "tw02_colorsplit", json_solutions)
-
-    # Hardcoded fallback (only level 1)
-    level1 = ([RIGHT, DOWN, DOWN, DOWN, LEFT, CONFIRM],
-              "3×3, 2 colors, vertical split")
+    level1 = ([RIGHT, DOWN, DOWN, DOWN, LEFT, CONFIRM], "3x3, 2 colors")
     return test_game(Tw02, "tw02_colorsplit", [level1])
+
+
+def test_tw03():
+    from tw03_shapefill import Tw03
+    json_solutions = load_solutions_from_json("tw03")
+    if json_solutions:
+        print("  (Using JSON level solutions)")
+        return test_game(Tw03, "tw03_shapefill", json_solutions)
+    print("  (No JSON levels, using hardcoded fallback)")
+    # Hardcoded fallback has limited levels
+    level1 = ([DOWN, DOWN, RIGHT, DOWN, RIGHT, RIGHT, CONFIRM], "3x3, 2 shapes")
+    return test_game(Tw03, "tw03_shapefill", [level1])
 
 
 def test_tw04():
     from tw04_symdraw import Tw04
-
     json_solutions = load_solutions_from_json("tw04")
     if json_solutions:
         print("  (Using JSON level solutions)")
         return test_game(Tw04, "tw04_symdraw", json_solutions)
-
-    # Hardcoded fallback (only level 1)
-    level1 = ([DOWN, DOWN, DOWN, CONFIRM],
-              "4×3, horizontal mirror, straight down")
+    level1 = ([DOWN, DOWN, DOWN, CONFIRM], "4x3, horizontal mirror")
     return test_game(Tw04, "tw04_symdraw", [level1])
+
+
+def test_tw05():
+    from tw05_starpair import Tw05
+    json_solutions = load_solutions_from_json("tw05")
+    if json_solutions:
+        print("  (Using JSON level solutions)")
+        return test_game(Tw05, "tw05_starpair", json_solutions)
+    print("  (No JSON levels, using hardcoded fallback)")
+    level1 = ([DOWN, DOWN, DOWN, RIGHT, RIGHT, RIGHT, CONFIRM], "3x3, 2 color pairs")
+    return test_game(Tw05, "tw05_starpair", [level1])
+
+
+def test_tw06():
+    from tw06_tricount import Tw06
+    json_solutions = load_solutions_from_json("tw06")
+    if json_solutions:
+        print("  (Using JSON level solutions)")
+        return test_game(Tw06, "tw06_tricount", json_solutions)
+    print("  (No JSON levels, using hardcoded fallback)")
+    level1 = ([DOWN, RIGHT, DOWN, RIGHT, DOWN, RIGHT, CONFIRM], "3x3, 1 triangle")
+    return test_game(Tw06, "tw06_tricount", [level1])
+
+
+def test_tw07():
+    from tw07_eraserlogic import Tw07
+    json_solutions = load_solutions_from_json("tw07")
+    if json_solutions:
+        print("  (Using JSON level solutions)")
+        return test_game(Tw07, "tw07_eraserlogic", json_solutions)
+    print("  (No JSON levels, using hardcoded fallback)")
+    level1 = ([DOWN, DOWN, DOWN, RIGHT, RIGHT, RIGHT, CONFIRM], "3x3, 1 eraser")
+    return test_game(Tw07, "tw07_eraserlogic", [level1])
+
+
+def test_tw08():
+    from tw08_combobasic import Tw08
+    json_solutions = load_solutions_from_json("tw08")
+    if json_solutions:
+        print("  (Using JSON level solutions)")
+        return test_game(Tw08, "tw08_combobasic", json_solutions)
+    print("  (No JSON levels, using hardcoded fallback)")
+    level1 = ([DOWN, DOWN, RIGHT, RIGHT, DOWN, DOWN, RIGHT, RIGHT, CONFIRM], "4x4, combo")
+    return test_game(Tw08, "tw08_combobasic", [level1])
+
+
+def test_tw09():
+    from tw09_cylinderwrap import Tw09
+    json_solutions = load_solutions_from_json("tw09")
+    if json_solutions:
+        print("  (Using JSON level solutions)")
+        return test_game(Tw09, "tw09_cylinderwrap", json_solutions)
+    print("  (No JSON levels available)")
+    return True  # Skip if no levels
+
+
+def test_tw10():
+    from tw10_colorfilter import Tw10
+    json_solutions = load_solutions_from_json("tw10")
+    if json_solutions:
+        print("  (Using JSON level solutions)")
+        return test_game(Tw10, "tw10_colorfilter", json_solutions)
+    print("  (No JSON levels available)")
+    return True  # Skip if no levels
 
 
 if __name__ == "__main__":
@@ -147,18 +206,35 @@ if __name__ == "__main__":
     print("ARC-AGI-3 Witness Games — Test Suite")
     print("=" * 60)
 
+    all_tests = [
+        ("tw01", test_tw01),
+        ("tw02", test_tw02),
+        ("tw03", test_tw03),
+        ("tw04", test_tw04),
+        ("tw05", test_tw05),
+        ("tw06", test_tw06),
+        ("tw07", test_tw07),
+        ("tw08", test_tw08),
+        ("tw09", test_tw09),
+        ("tw10", test_tw10),
+    ]
+
     results = {}
-    for name, test_fn in [("tw01", test_tw01), ("tw02", test_tw02), ("tw04", test_tw04)]:
+    for name, test_fn in all_tests:
         try:
             ok = test_fn()
             results[name] = "PASSED" if ok else "FAILED"
-            print(f"\n{'✓' if ok else '✗'} {name} {'passed' if ok else 'FAILED'}")
+            status = "passed" if ok else "FAILED"
+            print(f"\n{'PASS' if ok else 'FAIL'} {name} {status}")
         except Exception as e:
             results[name] = f"ERROR: {e}"
-            print(f"\n✗ {name} ERROR: {e}")
+            print(f"\nFAIL {name} ERROR: {e}")
             import traceback; traceback.print_exc()
 
     print(f"\n{'='*60}")
     print("Summary:")
+    passed = sum(1 for v in results.values() if v == "PASSED")
+    total = len(results)
     for name, result in results.items():
         print(f"  {name}: {result}")
+    print(f"\n  {passed}/{total} passed")

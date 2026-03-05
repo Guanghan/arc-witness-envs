@@ -1,0 +1,8 @@
+{
+    "game_id": "tw09",
+    "title": "CylinderWrap - 圆柱环绕",
+    "class_name": "Tw09",
+    "tags": ["witness", "topology", "wrap-around"],
+    "baseline_actions": [8, 9, 11, 10, 15],
+    "date_downloaded": "2026-03-05T00:00:00Z"
+}

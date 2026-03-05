@@ -32,12 +32,12 @@ SQUARE_C = 12  # COLOR_ORANGE
 _GAME_COLORS = [SQUARE_A, SQUARE_B, SQUARE_C]
 
 
-def _map_colors(squares: Dict[Tuple[int, int], str]) -> Dict[Tuple[int, int], int]:
+def _map_colors(color_dict: Dict[Tuple[int, int], str]) -> Dict[Tuple[int, int], int]:
     """将颜色名称映射为游戏颜色索引。"""
     # 收集所有出现的颜色，按首次出现顺序
     seen = []
-    for cell in sorted(squares.keys()):
-        c = squares[cell]
+    for cell in sorted(color_dict.keys()):
+        c = color_dict[cell]
         if c not in seen:
             seen.append(c)
 
@@ -45,22 +45,22 @@ def _map_colors(squares: Dict[Tuple[int, int], str]) -> Dict[Tuple[int, int], in
         return {}  # 超过 3 色，无法映射
 
     color_map = {c: _GAME_COLORS[i] for i, c in enumerate(seen)}
-    return {cell: color_map[color] for cell, color in squares.items()}
+    return {cell: color_map[color] for cell, color in color_dict.items()}
+
+
+def _pick_end(puzzle: UnifiedPuzzle) -> Tuple[int, int]:
+    """选择距起点最远的终点。"""
+    start = puzzle.starts[0]
+    return max(puzzle.ends, key=lambda e: abs(e[0] - start[0]) + abs(e[1] - start[1]))
 
 
 def convert_tw01(puzzle: UnifiedPuzzle) -> Optional[dict]:
-    """将 UnifiedPuzzle 转换为 tw01 PathDots level_config。
-
-    格式: {cols, rows, start, end, dots, breakpoints?}
-    """
-    if len(puzzle.starts) != 1:
-        return None
-    if not puzzle.ends:
+    """将 UnifiedPuzzle 转换为 tw01 PathDots level_config。"""
+    if len(puzzle.starts) != 1 or not puzzle.ends:
         return None
 
     start = puzzle.starts[0]
-    # 如果多个终点，选择离起点最远的
-    end = max(puzzle.ends, key=lambda e: abs(e[0] - start[0]) + abs(e[1] - start[1]))
+    end = _pick_end(puzzle)
 
     config = {
         "cols": puzzle.cols,
@@ -70,34 +70,10 @@ def convert_tw01(puzzle: UnifiedPuzzle) -> Optional[dict]:
         "dots": [list(h) for h in puzzle.hexagons],
     }
 
-    # 添加 breakpoints（missing edges → 不可通过的边）
     if puzzle.missing_edges:
         breakpoints = []
         for x, y, direction in puzzle.missing_edges:
             if direction == "v":
-                # v_edges[y][x] 连接 node(x,y) 和 node(x+1,y)
-                # 实际上 v_edge 是垂直方向的边，连接 node(x,y) 和 node(x,y+1)
-                # 但在 ttws 中 v_edges[y][x] 是 row y, col x 的垂直边
-                # 对应我们的边 (x,y)-(x+1,y)? 不对
-                # ttws puzzle.py: v_edges 3 x 3 - w x h+1
-                # 这意味着 v_edges[y][x] 连接 node(x,y) 和 node(x+1,y)
-                # Wait, from puzzle.py diagram:
-                # V Edges: +-V-+-V-+-V-+
-                # v_edges: w x (h+1) -- w cols, h+1 rows
-                # v_edge at [y][x] is horizontal position x, at row y
-                # It connects node(x,y) to node(x+1,y)? No...
-                # Looking at the diagram more carefully:
-                # +---+---+---+    n-v-n-v-n-v-n
-                # v_edges are between nodes horizontally
-                # Actually v_edges seem to be the horizontal connections between nodes
-                # Wait, the name is confusing. Let me re-read:
-                # Storage layout: n-v-n-v-n-v-n
-                #                 h c h c h c h
-                # v = v-edge (connecting two nodes on the same row)
-                # h = h-edge (connecting two nodes in the same column)
-                # So v_edges[y][x] connects node(x,y) and node(x+1,y) - HORIZONTAL edge
-                # And h_edges[y][x] connects node(x,y) and node(x,y+1) - VERTICAL edge
-                # This is counterintuitive naming!
                 n1 = (x, y)
                 n2 = (x + 1, y)
             else:  # "h"
@@ -110,38 +86,56 @@ def convert_tw01(puzzle: UnifiedPuzzle) -> Optional[dict]:
 
 
 def convert_tw02(puzzle: UnifiedPuzzle) -> Optional[dict]:
-    """将 UnifiedPuzzle 转换为 tw02 ColorSplit level_config。
-
-    格式: {cols, rows, start, end, squares}
-    """
-    if len(puzzle.starts) != 1:
-        return None
-    if not puzzle.ends:
+    """将 UnifiedPuzzle 转换为 tw02 ColorSplit level_config。"""
+    if len(puzzle.starts) != 1 or not puzzle.ends:
         return None
 
     start = puzzle.starts[0]
-    end = max(puzzle.ends, key=lambda e: abs(e[0] - start[0]) + abs(e[1] - start[1]))
+    end = _pick_end(puzzle)
 
     mapped_colors = _map_colors(puzzle.squares)
     if not mapped_colors:
         return None
 
-    config = {
+    return {
         "cols": puzzle.cols,
         "rows": puzzle.rows,
         "start": list(start),
         "end": list(end),
         "squares": {f"{c},{r}": v for (c, r), v in mapped_colors.items()},
     }
-    return config
+
+
+def convert_tw03(puzzle: UnifiedPuzzle) -> Optional[dict]:
+    """将 UnifiedPuzzle 转换为 tw03 ShapeFill level_config。
+
+    格式: {cols, rows, start, end, tetris: {"c,r": {shape, rotated, negative}}}
+    """
+    if len(puzzle.starts) != 1 or not puzzle.ends:
+        return None
+
+    start = puzzle.starts[0]
+    end = _pick_end(puzzle)
+
+    tetris = {}
+    for (c, r), t in puzzle.tetris.items():
+        tetris[f"{c},{r}"] = {
+            "shape": t["shape"],
+            "rotated": t.get("rotated", False),
+            "negative": t.get("negative", False),
+        }
+
+    return {
+        "cols": puzzle.cols,
+        "rows": puzzle.rows,
+        "start": list(start),
+        "end": list(end),
+        "tetris": tetris,
+    }
 
 
 def convert_tw04(puzzle: UnifiedPuzzle) -> Optional[dict]:
-    """将 UnifiedPuzzle 转换为 tw04 SymDraw level_config。
-
-    需要确定 blue/yellow 的 start/end 对。
-    对称性决定了如何配对起点和终点。
-    """
+    """将 UnifiedPuzzle 转换为 tw04 SymDraw level_config。"""
     if not puzzle.symmetry:
         return None
     if len(puzzle.starts) < 1 or len(puzzle.ends) < 1:
@@ -160,41 +154,33 @@ def convert_tw04(puzzle: UnifiedPuzzle) -> Optional[dict]:
             return (cols - x, rows - y)
         return node
 
-    # 配对起点：选择一个起点作为 blue_start，其镜像为 yellow_start
-    blue_start = None
-    yellow_start = None
-
+    # 配对起点
+    blue_start = yellow_start = None
     starts = list(puzzle.starts)
     if len(starts) == 2:
-        # 检查两个起点是否互为镜像
         s0, s1 = starts
         if mirror(s0) == s1:
             blue_start, yellow_start = s0, s1
         elif mirror(s1) == s0:
             blue_start, yellow_start = s1, s0
     elif len(starts) == 1:
-        # 单起点 — 另一个是其镜像
         blue_start = starts[0]
         yellow_start = mirror(blue_start)
         if blue_start == yellow_start:
-            return None  # 自对称起点，不适合双线
+            return None
 
     if blue_start is None:
-        # 尝试从多个起点中找配对
         for s in starts:
             m = mirror(s)
             if m in starts and m != s:
-                blue_start = s
-                yellow_start = m
+                blue_start, yellow_start = s, m
                 break
 
     if blue_start is None:
         return None
 
     # 配对终点
-    blue_end = None
-    yellow_end = None
-
+    blue_end = yellow_end = None
     ends = list(puzzle.ends)
     if len(ends) == 2:
         e0, e1 = ends
@@ -212,14 +198,13 @@ def convert_tw04(puzzle: UnifiedPuzzle) -> Optional[dict]:
         for e in ends:
             m = mirror(e)
             if m in ends and m != e:
-                blue_end = e
-                yellow_end = m
+                blue_end, yellow_end = e, m
                 break
 
     if blue_end is None:
         return None
 
-    # 确保 blue 在"左半/上半"（约定）
+    # 确保 blue 在"左半/上半"
     if sym == "horizontal" and blue_start[0] > cols // 2:
         blue_start, yellow_start = yellow_start, blue_start
         blue_end, yellow_end = yellow_end, blue_end
@@ -227,13 +212,11 @@ def convert_tw04(puzzle: UnifiedPuzzle) -> Optional[dict]:
         blue_start, yellow_start = yellow_start, blue_start
         blue_end, yellow_end = yellow_end, blue_end
 
-    # 分配 hexagons 到 blue/yellow dots
-    blue_dots = []
-    yellow_dots = []
+    # 分配 hexagons
+    blue_dots, yellow_dots = [], []
     for h in puzzle.hexagons:
         m = mirror(h)
         if h != m:
-            # 把靠近 blue_start 的分给 blue
             d_blue = abs(h[0] - blue_start[0]) + abs(h[1] - blue_start[1])
             d_yellow = abs(h[0] - yellow_start[0]) + abs(h[1] - yellow_start[1])
             if d_blue <= d_yellow:
@@ -246,9 +229,8 @@ def convert_tw04(puzzle: UnifiedPuzzle) -> Optional[dict]:
                     yellow_dots.append(h)
                 if m not in blue_dots:
                     blue_dots.append(m)
-        # Skip self-symmetric hexagons (both paths must cross, complex)
 
-    config = {
+    return {
         "cols": cols,
         "rows": rows,
         "symmetry": sym,
@@ -259,7 +241,117 @@ def convert_tw04(puzzle: UnifiedPuzzle) -> Optional[dict]:
         "blue_dots": [list(d) for d in blue_dots],
         "yellow_dots": [list(d) for d in yellow_dots],
     }
+
+
+def convert_tw05(puzzle: UnifiedPuzzle) -> Optional[dict]:
+    """将 UnifiedPuzzle 转换为 tw05 StarPair level_config。
+
+    格式: {cols, rows, start, end, stars: {"c,r": color_index}}
+    """
+    if len(puzzle.starts) != 1 or not puzzle.ends:
+        return None
+
+    start = puzzle.starts[0]
+    end = _pick_end(puzzle)
+
+    mapped_colors = _map_colors(puzzle.stars)
+    if not mapped_colors:
+        return None
+
+    return {
+        "cols": puzzle.cols,
+        "rows": puzzle.rows,
+        "start": list(start),
+        "end": list(end),
+        "stars": {f"{c},{r}": v for (c, r), v in mapped_colors.items()},
+    }
+
+
+def convert_tw06(puzzle: UnifiedPuzzle) -> Optional[dict]:
+    """将 UnifiedPuzzle 转换为 tw06 TriCount level_config。
+
+    格式: {cols, rows, start, end, triangles: {"c,r": count}}
+    """
+    if len(puzzle.starts) != 1 or not puzzle.ends:
+        return None
+
+    start = puzzle.starts[0]
+    end = _pick_end(puzzle)
+
+    return {
+        "cols": puzzle.cols,
+        "rows": puzzle.rows,
+        "start": list(start),
+        "end": list(end),
+        "triangles": {f"{c},{r}": v for (c, r), v in puzzle.triangles.items()},
+    }
+
+
+def convert_tw07(puzzle: UnifiedPuzzle) -> Optional[dict]:
+    """将 UnifiedPuzzle 转换为 tw07 EraserLogic level_config。
+
+    格式: {cols, rows, start, end, erasers: [[c,r],...], + squares/stars/triangles}
+    """
+    if len(puzzle.starts) != 1 or not puzzle.ends:
+        return None
+
+    start = puzzle.starts[0]
+    end = _pick_end(puzzle)
+
+    config = {
+        "cols": puzzle.cols,
+        "rows": puzzle.rows,
+        "start": list(start),
+        "end": list(end),
+        "erasers": [list(e) for e in puzzle.eliminations],
+    }
+
+    # 添加方块约束
+    if puzzle.squares:
+        mapped = _map_colors(puzzle.squares)
+        if mapped:
+            config["squares"] = {f"{c},{r}": v for (c, r), v in mapped.items()}
+
+    # 添加星星约束
+    if puzzle.stars:
+        mapped = _map_colors(puzzle.stars)
+        if mapped:
+            config["stars"] = {f"{c},{r}": v for (c, r), v in mapped.items()}
+
+    # 添加三角形约束
+    if puzzle.triangles:
+        config["triangles"] = {f"{c},{r}": v for (c, r), v in puzzle.triangles.items()}
+
     return config
+
+
+def convert_tw08(puzzle: UnifiedPuzzle) -> Optional[dict]:
+    """将 UnifiedPuzzle 转换为 tw08 ComboBasic level_config。
+
+    格式: {cols, rows, start, end, squares: {...}, stars: {...}}
+    """
+    if len(puzzle.starts) != 1 or not puzzle.ends:
+        return None
+
+    start = puzzle.starts[0]
+    end = _pick_end(puzzle)
+
+    mapped_sq = _map_colors(puzzle.squares)
+    if not mapped_sq:
+        return None
+
+    mapped_st = _map_colors(puzzle.stars)
+    if not mapped_st:
+        return None
+
+    return {
+        "cols": puzzle.cols,
+        "rows": puzzle.rows,
+        "start": list(start),
+        "end": list(end),
+        "squares": {f"{c},{r}": v for (c, r), v in mapped_sq.items()},
+        "stars": {f"{c},{r}": v for (c, r), v in mapped_st.items()},
+    }
 
 
 def convert_puzzle(puzzle: UnifiedPuzzle, game_type: str) -> Optional[dict]:
@@ -267,7 +359,12 @@ def convert_puzzle(puzzle: UnifiedPuzzle, game_type: str) -> Optional[dict]:
     converters = {
         "tw01": convert_tw01,
         "tw02": convert_tw02,
+        "tw03": convert_tw03,
         "tw04": convert_tw04,
+        "tw05": convert_tw05,
+        "tw06": convert_tw06,
+        "tw07": convert_tw07,
+        "tw08": convert_tw08,
     }
     converter = converters.get(game_type)
     if not converter:
