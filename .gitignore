@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Virtual environments
+.venv/
+venv/
+
+# Vendor submodule internals (keep data files, ignore git)
+converters/vendor_ttws/.git/
+converters/vendor_ttws/__pycache__/
+converters/vendor_ttws/images/

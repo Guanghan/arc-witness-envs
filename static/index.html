@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARC-AGI-3 Witness Games</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; color: #eee; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+  h1 { margin: 20px 0 10px; font-size: 1.5em; color: #e94560; }
+  .info { color: #888; margin-bottom: 15px; font-size: 0.85em; }
+  #game-select { margin-bottom: 15px; }
+  #game-select button { background: #16213e; color: #eee; border: 1px solid #e94560; padding: 8px 16px; margin: 0 5px; cursor: pointer; font-family: inherit; border-radius: 4px; }
+  #game-select button:hover, #game-select button.active { background: #e94560; }
+  canvas { border: 2px solid #e94560; image-rendering: pixelated; }
+  #status { margin: 15px 0; font-size: 1.1em; min-height: 1.5em; }
+  #controls { display: flex; gap: 20px; margin: 10px 0; }
+  .key-group { text-align: center; }
+  .key-row { display: flex; justify-content: center; gap: 4px; margin: 2px 0; }
+  .key { background: #16213e; border: 1px solid #555; padding: 6px 12px; border-radius: 4px; font-size: 0.9em; min-width: 36px; }
+  .key.active { background: #e94560; border-color: #e94560; }
+  #log { width: 520px; max-height: 120px; overflow-y: auto; background: #0f0f23; border: 1px solid #333; padding: 8px; font-size: 0.75em; color: #666; margin-top: 10px; border-radius: 4px; }
+  #log div { margin: 1px 0; }
+  #log .ok { color: #4fcc30; }
+  #log .err { color: #f93c31; }
+  #log .info { color: #88d8f1; }
+</style>
+</head>
+<body>
+
+<h1>ARC-AGI-3 Witness Games</h1>
+<div class="info">Arrow keys = move | Space = confirm/submit | R = reset</div>
+<div id="game-select"></div>
+<canvas id="game" width="512" height="512"></canvas>
+<div id="status">Select a game to start</div>
+<div id="controls">
+  <div class="key-group">
+    <div class="key-row"><span class="key" id="k-up">&uarr; UP</span></div>
+    <div class="key-row">
+      <span class="key" id="k-left">&larr;</span>
+      <span class="key" id="k-down">&darr;</span>
+      <span class="key" id="k-right">&rarr;</span>
+    </div>
+  </div>
+  <div class="key-group" style="display:flex;align-items:center;gap:8px;">
+    <span class="key" id="k-space">Space (confirm)</span>
+    <span class="key" id="k-r">R (reset)</span>
+  </div>
+</div>
+<div id="log"></div>
+
+<script>
+const COLORS = {
+  0:[255,255,255], 1:[204,204,204], 2:[153,153,153], 3:[102,102,102],
+  4:[51,51,51], 5:[0,0,0], 6:[229,58,163], 7:[255,123,204],
+  8:[249,60,49], 9:[30,147,255], 10:[136,216,241], 11:[255,220,0],
+  12:[255,133,27], 13:[146,18,49], 14:[79,204,48], 15:[163,86,214]
+};
+const SCALE = 8;
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const statusEl = document.getElementById('status');
+const logEl = document.getElementById('log');
+const selectEl = document.getElementById('game-select');
+
+let cardId = null;
+let currentGameId = null;
+let guid = null;
+let busy = false;
+let actionCount = 0;
+
+function log(msg, cls='') {
+  const d = document.createElement('div');
+  d.className = cls;
+  d.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+  logEl.appendChild(d);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function renderFrame(frames) {
+  if (!frames || frames.length === 0) return;
+  const f = frames[frames.length - 1]; // last frame
+  const img = ctx.createImageData(64*SCALE, 64*SCALE);
+  for (let y = 0; y < 64; y++) {
+    for (let x = 0; x < 64; x++) {
+      const val = f[y][x];
+      const [r, g, b] = COLORS[val] || [0,0,0];
+      for (let dy = 0; dy < SCALE; dy++) {
+        for (let dx = 0; dx < SCALE; dx++) {
+          const idx = ((y*SCALE+dy)*64*SCALE + (x*SCALE+dx)) * 4;
+          img.data[idx] = r; img.data[idx+1] = g; img.data[idx+2] = b; img.data[idx+3] = 255;
+        }
+      }
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+}
+
+async function sendAction(action) {
+  if (busy || !currentGameId) return;
+  busy = true;
+
+  const body = { game_id: currentGameId };
+  if (cardId) body.card_id = cardId;
+  if (guid) body.guid = guid;
+  if (action === 'RESET') {
+    // RESET generates a new guid
+    delete body.guid;
+  }
+
+  try {
+    const res = await fetch(`/api/cmd/${action}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-API-Key': '1234' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+
+    if (data.error) {
+      log(`Error: ${data.message}`, 'err');
+      busy = false;
+      return;
+    }
+
+    // Update guid from response
+    if (data.guid) guid = data.guid;
+
+    // Render
+    if (data.frame) renderFrame(data.frame);
+
+    // Status
+    const lc = data.levels_completed ?? 0;
+    const wl = data.win_levels ?? '?';
+    const state = data.state ?? '';
+    actionCount++;
+    statusEl.textContent = `${currentGameId} | Levels: ${lc}/${wl} | Actions: ${actionCount} | ${state}`;
+
+    if (state === 'WIN') {
+      statusEl.textContent += ' 🎉';
+      log('ALL LEVELS COMPLETE!', 'ok');
+    }
+    log(`${action} → levels=${lc} state=${state}`);
+
+  } catch(e) {
+    log(`Fetch error: ${e.message}`, 'err');
+  }
+  busy = false;
+}
+
+async function loadGames() {
+  try {
+    const res = await fetch('/api/games');
+    const games = await res.json();
+    selectEl.innerHTML = '';
+    for (const g of games) {
+      const btn = document.createElement('button');
+      btn.textContent = `${g.game_id}`;
+      btn.title = g.title || g.game_id;
+      btn.onclick = () => startGame(g.game_id, btn);
+      selectEl.appendChild(btn);
+    }
+    log(`Loaded ${games.length} games`, 'info');
+  } catch(e) {
+    log(`Failed to load games: ${e.message}`, 'err');
+  }
+}
+
+async function startGame(gameId, btn) {
+  // Open scorecard if needed
+  if (!cardId) {
+    try {
+      const res = await fetch('/api/scorecard/open', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-API-Key': '1234' },
+        body: JSON.stringify({ tags: ['human'] }),
+      });
+      const data = await res.json();
+      if (data.card_id) {
+        cardId = data.card_id;
+        log(`Scorecard opened: ${cardId.slice(0,8)}...`, 'info');
+      }
+    } catch(e) {
+      log(`Failed to open scorecard: ${e.message}`, 'err');
+    }
+  }
+
+  currentGameId = gameId;
+  guid = null;
+  actionCount = 0;
+  document.querySelectorAll('#game-select button').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  log(`Starting ${gameId}...`, 'info');
+  statusEl.textContent = `Loading ${gameId}...`;
+  await sendAction('RESET');
+}
+
+const KEY_MAP = {
+  'ArrowUp':    ['ACTION1', 'k-up'],
+  'ArrowDown':  ['ACTION2', 'k-down'],
+  'ArrowLeft':  ['ACTION3', 'k-left'],
+  'ArrowRight': ['ACTION4', 'k-right'],
+  ' ':          ['ACTION5', 'k-space'],
+  'r':          ['RESET',   'k-r'],
+  'R':          ['RESET',   'k-r'],
+};
+
+document.addEventListener('keydown', (e) => {
+  const m = KEY_MAP[e.key];
+  if (!m) return;
+  e.preventDefault();
+  document.getElementById(m[1])?.classList.add('active');
+  sendAction(m[0]);
+});
+document.addEventListener('keyup', (e) => {
+  const m = KEY_MAP[e.key];
+  if (!m) return;
+  document.getElementById(m[1])?.classList.remove('active');
+});
+
+loadGames();
+</script>
+</body>
+</html>
