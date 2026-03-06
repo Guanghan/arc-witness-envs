@@ -1,184 +1,12 @@
 {
   "game": "tw04",
   "total_candidates": 28,
-  "total_validated": 26,
-  "total_unvalidated": 2,
-  "selected_count": 28,
+  "total_validated": 22,
+  "total_unvalidated": 6,
+  "selected_count": 26,
   "levels": [
     {
       "level_index": 0,
-      "config": {
-        "cols": 3,
-        "rows": 3,
-        "symmetry": "rotational",
-        "blue_start": [
-          3,
-          0
-        ],
-        "blue_end": [
-          2,
-          0
-        ],
-        "yellow_start": [
-          0,
-          3
-        ],
-        "yellow_end": [
-          1,
-          3
-        ],
-        "blue_dots": [],
-        "yellow_dots": []
-      },
-      "baseline": 3,
-      "moves": 1,
-      "solution_actions": [
-        3,
-        5
-      ],
-      "source": "witness:32",
-      "validated": true
-    },
-    {
-      "level_index": 1,
-      "config": {
-        "cols": 3,
-        "rows": 3,
-        "symmetry": "rotational",
-        "blue_start": [
-          3,
-          0
-        ],
-        "blue_end": [
-          2,
-          0
-        ],
-        "yellow_start": [
-          0,
-          3
-        ],
-        "yellow_end": [
-          1,
-          3
-        ],
-        "blue_dots": [],
-        "yellow_dots": []
-      },
-      "baseline": 3,
-      "moves": 1,
-      "solution_actions": [
-        3,
-        5
-      ],
-      "source": "witness:33",
-      "validated": true
-    },
-    {
-      "level_index": 2,
-      "config": {
-        "cols": 4,
-        "rows": 4,
-        "symmetry": "rotational",
-        "blue_start": [
-          0,
-          0
-        ],
-        "blue_end": [
-          1,
-          0
-        ],
-        "yellow_start": [
-          4,
-          4
-        ],
-        "yellow_end": [
-          3,
-          4
-        ],
-        "blue_dots": [],
-        "yellow_dots": []
-      },
-      "baseline": 3,
-      "moves": 1,
-      "solution_actions": [
-        4,
-        5
-      ],
-      "source": "windmill:1225",
-      "validated": true
-    },
-    {
-      "level_index": 3,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "symmetry": "rotational",
-        "blue_start": [
-          1,
-          0
-        ],
-        "blue_end": [
-          0,
-          0
-        ],
-        "yellow_start": [
-          4,
-          5
-        ],
-        "yellow_end": [
-          5,
-          5
-        ],
-        "blue_dots": [],
-        "yellow_dots": []
-      },
-      "baseline": 3,
-      "moves": 1,
-      "solution_actions": [
-        3,
-        5
-      ],
-      "source": "windmill:2017",
-      "validated": true
-    },
-    {
-      "level_index": 4,
-      "config": {
-        "cols": 7,
-        "rows": 7,
-        "symmetry": "vertical",
-        "blue_start": [
-          2,
-          0
-        ],
-        "blue_end": [
-          5,
-          0
-        ],
-        "yellow_start": [
-          2,
-          7
-        ],
-        "yellow_end": [
-          5,
-          7
-        ],
-        "blue_dots": [],
-        "yellow_dots": []
-      },
-      "baseline": 5,
-      "moves": 3,
-      "solution_actions": [
-        4,
-        4,
-        4,
-        5
-      ],
-      "source": "windmill:261",
-      "validated": true
-    },
-    {
-      "level_index": 5,
       "config": {
         "cols": 3,
         "rows": 3,
@@ -215,7 +43,7 @@
       "validated": true
     },
     {
-      "level_index": 6,
+      "level_index": 1,
       "config": {
         "cols": 3,
         "rows": 3,
@@ -237,13 +65,55 @@
           0
         ],
         "blue_dots": [],
-        "yellow_dots": []
+        "yellow_dots": [],
+        "breakpoints": [
+          [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          [
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              2
+            ]
+          ],
+          [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ]
+          ],
+          [
+            [
+              2,
+              2
+            ],
+            [
+              2,
+              3
+            ]
+          ]
+        ]
       },
       "baseline": 6,
       "moves": 4,
       "solution_actions": [
-        4,
         1,
+        4,
         1,
         1,
         5
@@ -252,158 +122,87 @@
       "validated": true
     },
     {
-      "level_index": 7,
+      "level_index": 2,
       "config": {
-        "cols": 4,
-        "rows": 4,
+        "cols": 3,
+        "rows": 3,
         "symmetry": "rotational",
         "blue_start": [
-          4,
-          0
-        ],
-        "blue_end": [
-          0,
-          0
-        ],
-        "yellow_start": [
-          0,
-          4
-        ],
-        "yellow_end": [
-          4,
-          4
-        ],
-        "blue_dots": [],
-        "yellow_dots": []
-      },
-      "baseline": 6,
-      "moves": 4,
-      "solution_actions": [
-        3,
-        3,
-        3,
-        3,
-        5
-      ],
-      "source": "witness:34",
-      "validated": true
-    },
-    {
-      "level_index": 8,
-      "config": {
-        "cols": 4,
-        "rows": 4,
-        "symmetry": "horizontal",
-        "blue_start": [
-          0,
-          4
-        ],
-        "blue_end": [
-          1,
-          0
-        ],
-        "yellow_start": [
-          4,
-          4
-        ],
-        "yellow_end": [
           3,
           0
         ],
-        "blue_dots": [],
-        "yellow_dots": []
-      },
-      "baseline": 8,
-      "moves": 5,
-      "solution_actions": [
-        4,
-        1,
-        1,
-        1,
-        1,
-        5
-      ],
-      "source": "witness:29",
-      "validated": true
-    },
-    {
-      "level_index": 9,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "symmetry": "vertical",
-        "blue_start": [
-          0,
-          0
-        ],
         "blue_end": [
-          5,
+          2,
           0
         ],
         "yellow_start": [
           0,
-          5
+          3
         ],
         "yellow_end": [
-          5,
-          5
+          1,
+          3
         ],
         "blue_dots": [],
-        "yellow_dots": []
+        "yellow_dots": [],
+        "breakpoints": [
+          [
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          [
+            [
+              0,
+              3
+            ],
+            [
+              1,
+              3
+            ]
+          ],
+          [
+            [
+              2,
+              0
+            ],
+            [
+              2,
+              1
+            ]
+          ],
+          [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ]
+          ]
+        ]
       },
       "baseline": 8,
       "moves": 5,
       "solution_actions": [
-        4,
-        4,
-        4,
-        4,
+        2,
+        3,
+        3,
+        1,
         4,
         5
       ],
-      "source": "windmill:254",
+      "source": "witness:32",
       "validated": true
     },
     {
-      "level_index": 10,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "symmetry": "horizontal",
-        "blue_start": [
-          0,
-          5
-        ],
-        "blue_end": [
-          0,
-          0
-        ],
-        "yellow_start": [
-          5,
-          5
-        ],
-        "yellow_end": [
-          5,
-          0
-        ],
-        "blue_dots": [],
-        "yellow_dots": []
-      },
-      "baseline": 8,
-      "moves": 5,
-      "solution_actions": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        5
-      ],
-      "source": "windmill:982",
-      "validated": true
-    },
-    {
-      "level_index": 11,
+      "level_index": 3,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -425,15 +224,67 @@
           5
         ],
         "blue_dots": [],
-        "yellow_dots": []
+        "yellow_dots": [],
+        "breakpoints": [
+          [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ]
+          ],
+          [
+            [
+              3,
+              4
+            ],
+            [
+              4,
+              4
+            ]
+          ],
+          [
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              2
+            ]
+          ],
+          [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              4
+            ]
+          ],
+          [
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              4
+            ]
+          ]
+        ]
       },
       "baseline": 8,
       "moves": 5,
       "solution_actions": [
         3,
         3,
-        3,
         1,
+        3,
         1,
         5
       ],
@@ -441,162 +292,7 @@
       "validated": true
     },
     {
-      "level_index": 12,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "symmetry": "horizontal",
-        "blue_start": [
-          0,
-          5
-        ],
-        "blue_end": [
-          0,
-          0
-        ],
-        "yellow_start": [
-          5,
-          5
-        ],
-        "yellow_end": [
-          5,
-          0
-        ],
-        "blue_dots": [],
-        "yellow_dots": []
-      },
-      "baseline": 8,
-      "moves": 5,
-      "solution_actions": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        5
-      ],
-      "source": "windmill:2065",
-      "validated": true
-    },
-    {
-      "level_index": 13,
-      "config": {
-        "cols": 5,
-        "rows": 6,
-        "symmetry": "horizontal",
-        "blue_start": [
-          1,
-          5
-        ],
-        "blue_end": [
-          2,
-          0
-        ],
-        "yellow_start": [
-          4,
-          5
-        ],
-        "yellow_end": [
-          3,
-          0
-        ],
-        "blue_dots": [],
-        "yellow_dots": []
-      },
-      "baseline": 9,
-      "moves": 6,
-      "solution_actions": [
-        4,
-        1,
-        1,
-        1,
-        1,
-        1,
-        5
-      ],
-      "source": "witness:30",
-      "validated": true
-    },
-    {
-      "level_index": 14,
-      "config": {
-        "cols": 6,
-        "rows": 6,
-        "symmetry": "rotational",
-        "blue_start": [
-          6,
-          0
-        ],
-        "blue_end": [
-          0,
-          0
-        ],
-        "yellow_start": [
-          0,
-          6
-        ],
-        "yellow_end": [
-          6,
-          6
-        ],
-        "blue_dots": [],
-        "yellow_dots": []
-      },
-      "baseline": 9,
-      "moves": 6,
-      "solution_actions": [
-        3,
-        3,
-        3,
-        3,
-        3,
-        3,
-        5
-      ],
-      "source": "witness:35",
-      "validated": true
-    },
-    {
-      "level_index": 15,
-      "config": {
-        "cols": 6,
-        "rows": 6,
-        "symmetry": "rotational",
-        "blue_start": [
-          6,
-          0
-        ],
-        "blue_end": [
-          0,
-          0
-        ],
-        "yellow_start": [
-          0,
-          6
-        ],
-        "yellow_end": [
-          6,
-          6
-        ],
-        "blue_dots": [],
-        "yellow_dots": []
-      },
-      "baseline": 9,
-      "moves": 6,
-      "solution_actions": [
-        3,
-        3,
-        3,
-        3,
-        3,
-        3,
-        5
-      ],
-      "source": "witness:36",
-      "validated": true
-    },
-    {
-      "level_index": 16,
+      "level_index": 4,
       "config": {
         "cols": 6,
         "rows": 6,
@@ -635,7 +331,7 @@
       "validated": true
     },
     {
-      "level_index": 17,
+      "level_index": 5,
       "config": {
         "cols": 6,
         "rows": 6,
@@ -684,47 +380,89 @@
       "validated": true
     },
     {
-      "level_index": 18,
+      "level_index": 6,
       "config": {
-        "cols": 5,
-        "rows": 7,
+        "cols": 4,
+        "rows": 4,
         "symmetry": "horizontal",
         "blue_start": [
           0,
-          7
+          4
         ],
         "blue_end": [
-          0,
+          1,
           0
         ],
         "yellow_start": [
-          5,
-          7
+          4,
+          4
         ],
         "yellow_end": [
-          5,
+          3,
           0
         ],
         "blue_dots": [],
-        "yellow_dots": []
+        "yellow_dots": [],
+        "breakpoints": [
+          [
+            [
+              4,
+              0
+            ],
+            [
+              4,
+              1
+            ]
+          ],
+          [
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ]
+          ],
+          [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              4
+            ]
+          ]
+        ]
       },
       "baseline": 10,
       "moves": 7,
       "solution_actions": [
+        4,
+        1,
+        3,
         1,
         1,
-        1,
-        1,
-        1,
-        1,
+        4,
         1,
         5
       ],
-      "source": "windmill:961",
+      "source": "witness:29",
       "validated": true
     },
     {
-      "level_index": 19,
+      "level_index": 7,
       "config": {
         "cols": 7,
         "rows": 7,
@@ -764,7 +502,285 @@
       "validated": true
     },
     {
-      "level_index": 20,
+      "level_index": 8,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "symmetry": "vertical",
+        "blue_start": [
+          0,
+          0
+        ],
+        "blue_end": [
+          5,
+          0
+        ],
+        "yellow_start": [
+          0,
+          5
+        ],
+        "yellow_end": [
+          5,
+          5
+        ],
+        "blue_dots": [],
+        "yellow_dots": [],
+        "breakpoints": [
+          [
+            [
+              3,
+              0
+            ],
+            [
+              4,
+              0
+            ]
+          ],
+          [
+            [
+              2,
+              1
+            ],
+            [
+              3,
+              1
+            ]
+          ],
+          [
+            [
+              1,
+              4
+            ],
+            [
+              2,
+              4
+            ]
+          ],
+          [
+            [
+              1,
+              5
+            ],
+            [
+              2,
+              5
+            ]
+          ],
+          [
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ]
+          ],
+          [
+            [
+              2,
+              2
+            ],
+            [
+              2,
+              3
+            ]
+          ],
+          [
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ]
+          ],
+          [
+            [
+              4,
+              2
+            ],
+            [
+              4,
+              3
+            ]
+          ],
+          [
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              3
+            ]
+          ],
+          [
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ]
+          ]
+        ]
+      },
+      "baseline": 12,
+      "moves": 9,
+      "solution_actions": [
+        4,
+        2,
+        2,
+        4,
+        4,
+        4,
+        4,
+        1,
+        1,
+        5
+      ],
+      "source": "windmill:254",
+      "validated": true
+    },
+    {
+      "level_index": 9,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "symmetry": "horizontal",
+        "blue_start": [
+          0,
+          5
+        ],
+        "blue_end": [
+          0,
+          0
+        ],
+        "yellow_start": [
+          5,
+          5
+        ],
+        "yellow_end": [
+          5,
+          0
+        ],
+        "blue_dots": [],
+        "yellow_dots": [],
+        "breakpoints": [
+          [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          [
+            [
+              3,
+              2
+            ],
+            [
+              4,
+              2
+            ]
+          ],
+          [
+            [
+              0,
+              3
+            ],
+            [
+              1,
+              3
+            ]
+          ],
+          [
+            [
+              0,
+              4
+            ],
+            [
+              1,
+              4
+            ]
+          ],
+          [
+            [
+              4,
+              4
+            ],
+            [
+              5,
+              4
+            ]
+          ],
+          [
+            [
+              3,
+              0
+            ],
+            [
+              3,
+              1
+            ]
+          ],
+          [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ]
+          ],
+          [
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              5
+            ]
+          ]
+        ]
+      },
+      "baseline": 12,
+      "moves": 9,
+      "solution_actions": [
+        4,
+        4,
+        1,
+        1,
+        1,
+        1,
+        3,
+        1,
+        3,
+        5
+      ],
+      "source": "windmill:2065",
+      "validated": true
+    },
+    {
+      "level_index": 10,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -842,7 +858,340 @@
       "validated": true
     },
     {
-      "level_index": 21,
+      "level_index": 11,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "symmetry": "horizontal",
+        "blue_start": [
+          0,
+          5
+        ],
+        "blue_end": [
+          0,
+          0
+        ],
+        "yellow_start": [
+          5,
+          5
+        ],
+        "yellow_end": [
+          5,
+          0
+        ],
+        "blue_dots": [],
+        "yellow_dots": [],
+        "breakpoints": [
+          [
+            [
+              2,
+              2
+            ],
+            [
+              3,
+              2
+            ]
+          ],
+          [
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ]
+          ],
+          [
+            [
+              2,
+              4
+            ],
+            [
+              3,
+              4
+            ]
+          ],
+          [
+            [
+              4,
+              4
+            ],
+            [
+              5,
+              4
+            ]
+          ],
+          [
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          [
+            [
+              4,
+              0
+            ],
+            [
+              4,
+              1
+            ]
+          ],
+          [
+            [
+              5,
+              0
+            ],
+            [
+              5,
+              1
+            ]
+          ],
+          [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          [
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ]
+          ],
+          [
+            [
+              5,
+              1
+            ],
+            [
+              5,
+              2
+            ]
+          ],
+          [
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          [
+            [
+              4,
+              2
+            ],
+            [
+              4,
+              3
+            ]
+          ],
+          [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ]
+          ],
+          [
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              5
+            ]
+          ]
+        ]
+      },
+      "baseline": 15,
+      "moves": 11,
+      "solution_actions": [
+        4,
+        4,
+        1,
+        1,
+        1,
+        3,
+        1,
+        4,
+        1,
+        3,
+        3,
+        5
+      ],
+      "source": "windmill:982",
+      "validated": true
+    },
+    {
+      "level_index": 12,
+      "config": {
+        "cols": 5,
+        "rows": 6,
+        "symmetry": "horizontal",
+        "blue_start": [
+          1,
+          5
+        ],
+        "blue_end": [
+          2,
+          0
+        ],
+        "yellow_start": [
+          4,
+          5
+        ],
+        "yellow_end": [
+          3,
+          0
+        ],
+        "blue_dots": [],
+        "yellow_dots": [],
+        "breakpoints": [
+          [
+            [
+              3,
+              0
+            ],
+            [
+              4,
+              0
+            ]
+          ],
+          [
+            [
+              1,
+              5
+            ],
+            [
+              2,
+              5
+            ]
+          ],
+          [
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ]
+          ],
+          [
+            [
+              5,
+              1
+            ],
+            [
+              5,
+              2
+            ]
+          ],
+          [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ]
+          ],
+          [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ]
+          ],
+          [
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              4
+            ]
+          ],
+          [
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ]
+          ],
+          [
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              5
+            ]
+          ],
+          [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              6
+            ]
+          ]
+        ]
+      },
+      "baseline": 16,
+      "moves": 12,
+      "solution_actions": [
+        2,
+        4,
+        1,
+        1,
+        3,
+        3,
+        1,
+        1,
+        4,
+        1,
+        4,
+        1,
+        5
+      ],
+      "source": "witness:30",
+      "validated": true
+    },
+    {
+      "level_index": 13,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -921,7 +1270,7 @@
       "validated": true
     },
     {
-      "level_index": 22,
+      "level_index": 14,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -1001,7 +1350,7 @@
       "validated": true
     },
     {
-      "level_index": 23,
+      "level_index": 15,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -1081,7 +1430,7 @@
       "validated": true
     },
     {
-      "level_index": 24,
+      "level_index": 16,
       "config": {
         "cols": 6,
         "rows": 6,
@@ -1129,6 +1478,48 @@
             0,
             2
           ]
+        ],
+        "breakpoints": [
+          [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          [
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ]
+          ],
+          [
+            [
+              3,
+              5
+            ],
+            [
+              3,
+              6
+            ]
+          ],
+          [
+            [
+              4,
+              5
+            ],
+            [
+              4,
+              6
+            ]
+          ]
         ]
       },
       "baseline": 18,
@@ -1154,7 +1545,197 @@
       "validated": true
     },
     {
-      "level_index": 25,
+      "level_index": 17,
+      "config": {
+        "cols": 5,
+        "rows": 7,
+        "symmetry": "horizontal",
+        "blue_start": [
+          0,
+          7
+        ],
+        "blue_end": [
+          0,
+          0
+        ],
+        "yellow_start": [
+          5,
+          7
+        ],
+        "yellow_end": [
+          5,
+          0
+        ],
+        "blue_dots": [],
+        "yellow_dots": [],
+        "breakpoints": [
+          [
+            [
+              3,
+              2
+            ],
+            [
+              4,
+              2
+            ]
+          ],
+          [
+            [
+              0,
+              3
+            ],
+            [
+              1,
+              3
+            ]
+          ],
+          [
+            [
+              2,
+              5
+            ],
+            [
+              3,
+              5
+            ]
+          ],
+          [
+            [
+              4,
+              5
+            ],
+            [
+              5,
+              5
+            ]
+          ],
+          [
+            [
+              2,
+              7
+            ],
+            [
+              3,
+              7
+            ]
+          ],
+          [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          [
+            [
+              4,
+              0
+            ],
+            [
+              4,
+              1
+            ]
+          ],
+          [
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ]
+          ],
+          [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ]
+          ],
+          [
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              4
+            ]
+          ],
+          [
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              6
+            ]
+          ],
+          [
+            [
+              1,
+              6
+            ],
+            [
+              1,
+              7
+            ]
+          ],
+          [
+            [
+              5,
+              6
+            ],
+            [
+              5,
+              7
+            ]
+          ]
+        ]
+      },
+      "baseline": 20,
+      "moves": 15,
+      "solution_actions": [
+        4,
+        4,
+        1,
+        1,
+        1,
+        1,
+        3,
+        1,
+        3,
+        1,
+        4,
+        4,
+        1,
+        3,
+        3,
+        5
+      ],
+      "source": "windmill:961",
+      "validated": true
+    },
+    {
+      "level_index": 18,
       "config": {
         "cols": 6,
         "rows": 6,
@@ -1355,7 +1936,459 @@
       "validated": true
     },
     {
-      "level_index": 26,
+      "level_index": 19,
+      "config": {
+        "cols": 7,
+        "rows": 7,
+        "symmetry": "vertical",
+        "blue_start": [
+          2,
+          0
+        ],
+        "blue_end": [
+          5,
+          0
+        ],
+        "yellow_start": [
+          2,
+          7
+        ],
+        "yellow_end": [
+          5,
+          7
+        ],
+        "blue_dots": [],
+        "yellow_dots": [],
+        "breakpoints": [
+          [
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          [
+            [
+              4,
+              0
+            ],
+            [
+              5,
+              0
+            ]
+          ],
+          [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          [
+            [
+              3,
+              1
+            ],
+            [
+              4,
+              1
+            ]
+          ],
+          [
+            [
+              2,
+              2
+            ],
+            [
+              3,
+              2
+            ]
+          ],
+          [
+            [
+              5,
+              2
+            ],
+            [
+              6,
+              2
+            ]
+          ],
+          [
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ]
+          ],
+          [
+            [
+              1,
+              4
+            ],
+            [
+              2,
+              4
+            ]
+          ],
+          [
+            [
+              0,
+              5
+            ],
+            [
+              1,
+              5
+            ]
+          ],
+          [
+            [
+              3,
+              5
+            ],
+            [
+              4,
+              5
+            ]
+          ],
+          [
+            [
+              2,
+              6
+            ],
+            [
+              3,
+              6
+            ]
+          ],
+          [
+            [
+              5,
+              6
+            ],
+            [
+              6,
+              6
+            ]
+          ],
+          [
+            [
+              1,
+              7
+            ],
+            [
+              2,
+              7
+            ]
+          ],
+          [
+            [
+              6,
+              0
+            ],
+            [
+              6,
+              1
+            ]
+          ],
+          [
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ]
+          ],
+          [
+            [
+              7,
+              1
+            ],
+            [
+              7,
+              2
+            ]
+          ],
+          [
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              5
+            ]
+          ],
+          [
+            [
+              6,
+              4
+            ],
+            [
+              6,
+              5
+            ]
+          ],
+          [
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              6
+            ]
+          ],
+          [
+            [
+              4,
+              5
+            ],
+            [
+              4,
+              6
+            ]
+          ],
+          [
+            [
+              5,
+              6
+            ],
+            [
+              5,
+              7
+            ]
+          ]
+        ]
+      },
+      "baseline": 39,
+      "moves": 31,
+      "solution_actions": [
+        2,
+        3,
+        1,
+        3,
+        2,
+        2,
+        2,
+        4,
+        1,
+        4,
+        2,
+        4,
+        1,
+        1,
+        1,
+        4,
+        2,
+        4,
+        2,
+        3,
+        2,
+        4,
+        4,
+        4,
+        1,
+        3,
+        1,
+        4,
+        1,
+        3,
+        3,
+        5
+      ],
+      "source": "windmill:261",
+      "validated": true
+    },
+    {
+      "level_index": 20,
+      "config": {
+        "cols": 3,
+        "rows": 3,
+        "symmetry": "rotational",
+        "blue_start": [
+          3,
+          0
+        ],
+        "blue_end": [
+          2,
+          0
+        ],
+        "yellow_start": [
+          0,
+          3
+        ],
+        "yellow_end": [
+          1,
+          3
+        ],
+        "blue_dots": [],
+        "yellow_dots": [],
+        "breakpoints": [
+          [
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              3
+            ]
+          ],
+          [
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ]
+          ]
+        ]
+      },
+      "baseline": 11,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "witness:33",
+      "validated": false
+    },
+    {
+      "level_index": 21,
+      "config": {
+        "cols": 4,
+        "rows": 4,
+        "symmetry": "rotational",
+        "blue_start": [
+          4,
+          0
+        ],
+        "blue_end": [
+          0,
+          0
+        ],
+        "yellow_start": [
+          0,
+          4
+        ],
+        "yellow_end": [
+          4,
+          4
+        ],
+        "blue_dots": [],
+        "yellow_dots": [],
+        "breakpoints": [
+          [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          [
+            [
+              0,
+              3
+            ],
+            [
+              1,
+              3
+            ]
+          ],
+          [
+            [
+              3,
+              4
+            ],
+            [
+              4,
+              4
+            ]
+          ],
+          [
+            [
+              2,
+              0
+            ],
+            [
+              2,
+              1
+            ]
+          ],
+          [
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              2
+            ]
+          ],
+          [
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ]
+          ],
+          [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ]
+          ]
+        ]
+      },
+      "baseline": 14,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "witness:34",
+      "validated": false
+    },
+    {
+      "level_index": 22,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -1405,14 +2438,380 @@
           ]
         ]
       },
-      "baseline": 75,
+      "baseline": 17,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:700",
       "validated": false
     },
     {
-      "level_index": 27,
+      "level_index": 23,
+      "config": {
+        "cols": 6,
+        "rows": 6,
+        "symmetry": "rotational",
+        "blue_start": [
+          6,
+          0
+        ],
+        "blue_end": [
+          0,
+          0
+        ],
+        "yellow_start": [
+          0,
+          6
+        ],
+        "yellow_end": [
+          6,
+          6
+        ],
+        "blue_dots": [],
+        "yellow_dots": [],
+        "breakpoints": [
+          [
+            [
+              3,
+              1
+            ],
+            [
+              4,
+              1
+            ]
+          ],
+          [
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              2
+            ]
+          ],
+          [
+            [
+              4,
+              3
+            ],
+            [
+              5,
+              3
+            ]
+          ],
+          [
+            [
+              2,
+              4
+            ],
+            [
+              3,
+              4
+            ]
+          ],
+          [
+            [
+              0,
+              5
+            ],
+            [
+              1,
+              5
+            ]
+          ],
+          [
+            [
+              3,
+              5
+            ],
+            [
+              4,
+              5
+            ]
+          ],
+          [
+            [
+              2,
+              6
+            ],
+            [
+              3,
+              6
+            ]
+          ],
+          [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          [
+            [
+              2,
+              0
+            ],
+            [
+              2,
+              1
+            ]
+          ],
+          [
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            [
+              5,
+              1
+            ],
+            [
+              5,
+              2
+            ]
+          ],
+          [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ]
+          ],
+          [
+            [
+              2,
+              4
+            ],
+            [
+              2,
+              5
+            ]
+          ],
+          [
+            [
+              6,
+              4
+            ],
+            [
+              6,
+              5
+            ]
+          ],
+          [
+            [
+              5,
+              5
+            ],
+            [
+              5,
+              6
+            ]
+          ]
+        ]
+      },
+      "baseline": 20,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "witness:35",
+      "validated": false
+    },
+    {
+      "level_index": 24,
+      "config": {
+        "cols": 6,
+        "rows": 6,
+        "symmetry": "rotational",
+        "blue_start": [
+          6,
+          0
+        ],
+        "blue_end": [
+          0,
+          0
+        ],
+        "yellow_start": [
+          0,
+          6
+        ],
+        "yellow_end": [
+          6,
+          6
+        ],
+        "blue_dots": [],
+        "yellow_dots": [],
+        "breakpoints": [
+          [
+            [
+              2,
+              1
+            ],
+            [
+              3,
+              1
+            ]
+          ],
+          [
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              2
+            ]
+          ],
+          [
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              3
+            ]
+          ],
+          [
+            [
+              2,
+              4
+            ],
+            [
+              3,
+              4
+            ]
+          ],
+          [
+            [
+              0,
+              5
+            ],
+            [
+              1,
+              5
+            ]
+          ],
+          [
+            [
+              2,
+              5
+            ],
+            [
+              3,
+              5
+            ]
+          ],
+          [
+            [
+              2,
+              6
+            ],
+            [
+              3,
+              6
+            ]
+          ],
+          [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          [
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          [
+            [
+              2,
+              0
+            ],
+            [
+              2,
+              1
+            ]
+          ],
+          [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          [
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ]
+          ],
+          [
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ]
+          ],
+          [
+            [
+              2,
+              4
+            ],
+            [
+              2,
+              5
+            ]
+          ]
+        ]
+      },
+      "baseline": 20,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "witness:36",
+      "validated": false
+    },
+    {
+      "level_index": 25,
       "config": {
         "cols": 7,
         "rows": 7,
@@ -1700,9 +3099,41 @@
             1,
             1
           ]
+        ],
+        "breakpoints": [
+          [
+            [
+              0,
+              3
+            ],
+            [
+              1,
+              3
+            ]
+          ],
+          [
+            [
+              4,
+              0
+            ],
+            [
+              4,
+              1
+            ]
+          ],
+          [
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              4
+            ]
+          ]
         ]
       },
-      "baseline": 147,
+      "baseline": 23,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:56",

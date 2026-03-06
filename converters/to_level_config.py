@@ -63,6 +63,22 @@ def _start_fields(puzzle: UnifiedPuzzle) -> dict:
     return {"starts": [list(s) for s in puzzle.starts]}
 
 
+def _breakpoint_fields(puzzle: UnifiedPuzzle) -> dict:
+    """生成 breakpoints 字段。无 missing_edges 时返回空 dict。"""
+    if not puzzle.missing_edges:
+        return {}
+    breakpoints = []
+    for x, y, direction in puzzle.missing_edges:
+        if direction == "v":
+            n1 = (x, y)
+            n2 = (x + 1, y)
+        else:  # "h"
+            n1 = (x, y)
+            n2 = (x, y + 1)
+        breakpoints.append([list(n1), list(n2)])
+    return {"breakpoints": breakpoints}
+
+
 def convert_tw01(puzzle: UnifiedPuzzle) -> Optional[dict]:
     """将 UnifiedPuzzle 转换为 tw01 PathDots level_config。"""
     if len(puzzle.starts) < 1 or not puzzle.ends:
@@ -70,27 +86,14 @@ def convert_tw01(puzzle: UnifiedPuzzle) -> Optional[dict]:
 
     end = _pick_end(puzzle)
 
-    config = {
+    return {
         "cols": puzzle.cols,
         "rows": puzzle.rows,
         **_start_fields(puzzle),
         "end": list(end),
         "dots": [list(h) for h in puzzle.hexagons],
+        **_breakpoint_fields(puzzle),
     }
-
-    if puzzle.missing_edges:
-        breakpoints = []
-        for x, y, direction in puzzle.missing_edges:
-            if direction == "v":
-                n1 = (x, y)
-                n2 = (x + 1, y)
-            else:  # "h"
-                n1 = (x, y)
-                n2 = (x, y + 1)
-            breakpoints.append([list(n1), list(n2)])
-        config["breakpoints"] = breakpoints
-
-    return config
 
 
 def convert_tw02(puzzle: UnifiedPuzzle) -> Optional[dict]:
@@ -110,6 +113,7 @@ def convert_tw02(puzzle: UnifiedPuzzle) -> Optional[dict]:
         **_start_fields(puzzle),
         "end": list(end),
         "squares": {f"{c},{r}": v for (c, r), v in mapped_colors.items()},
+        **_breakpoint_fields(puzzle),
     }
 
 
@@ -137,6 +141,7 @@ def convert_tw03(puzzle: UnifiedPuzzle) -> Optional[dict]:
         **_start_fields(puzzle),
         "end": list(end),
         "tetris": tetris,
+        **_breakpoint_fields(puzzle),
     }
 
 
@@ -246,6 +251,7 @@ def convert_tw04(puzzle: UnifiedPuzzle) -> Optional[dict]:
         "yellow_end": list(yellow_end),
         "blue_dots": [list(d) for d in blue_dots],
         "yellow_dots": [list(d) for d in yellow_dots],
+        **_breakpoint_fields(puzzle),
     }
 
 
@@ -269,6 +275,7 @@ def convert_tw05(puzzle: UnifiedPuzzle) -> Optional[dict]:
         **_start_fields(puzzle),
         "end": list(end),
         "stars": {f"{c},{r}": v for (c, r), v in mapped_colors.items()},
+        **_breakpoint_fields(puzzle),
     }
 
 
@@ -288,6 +295,7 @@ def convert_tw06(puzzle: UnifiedPuzzle) -> Optional[dict]:
         **_start_fields(puzzle),
         "end": list(end),
         "triangles": {f"{c},{r}": v for (c, r), v in puzzle.triangles.items()},
+        **_breakpoint_fields(puzzle),
     }
 
 
@@ -307,6 +315,7 @@ def convert_tw07(puzzle: UnifiedPuzzle) -> Optional[dict]:
         **_start_fields(puzzle),
         "end": list(end),
         "erasers": [list(e) for e in puzzle.eliminations],
+        **_breakpoint_fields(puzzle),
     }
 
     # 添加方块约束
@@ -353,6 +362,7 @@ def convert_tw08(puzzle: UnifiedPuzzle) -> Optional[dict]:
         "end": list(end),
         "squares": {f"{c},{r}": v for (c, r), v in mapped_sq.items()},
         "stars": {f"{c},{r}": v for (c, r), v in mapped_st.items()},
+        **_breakpoint_fields(puzzle),
     }
 
 

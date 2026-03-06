@@ -31,24 +31,27 @@ Draw a path from start to end that passes through **all** marked waypoints (yell
 
 ### tw02 — ColorSplit
 Draw a path that **partitions** the grid into regions where each region contains only one color of square.
-- 36 levels (27 validated + 9 unvalidated, up to 3 colors)
+- 62 levels (51 validated + 11 unvalidated, up to 3 colors)
+- Advanced levels include breakpoints (blocked edges)
 - Trains: classification, spatial reasoning, region analysis
 
 ### tw03 — ShapeFill
 Draw a path that partitions the grid; each region's polyomino pieces must **exactly tile** the region.
-- 139 levels (47 validated + 92 unvalidated)
-- NP-complete tiling validation
+- 248 levels (106 validated + 142 unvalidated)
+- NP-complete tiling validation, advanced levels include breakpoints
 - Trains: spatial composition, geometric reasoning
 
 ### tw04 — SymDraw
 Control a **blue** line; a **yellow** line mirrors your moves automatically. Both must reach their respective endpoints simultaneously.
-- 28 levels (26 validated + 2 unvalidated)
+- 26 levels (20 validated + 6 unvalidated)
 - Symmetry types: horizontal, vertical, 180° rotational
+- Advanced levels include breakpoints affecting both paths
 - Trains: symmetry transforms, dual-state mental simulation
 
 ### tw05 — StarPair
 Draw a path that partitions the grid; each region must contain **exactly 2 stars** of each color present.
-- 35 levels (26 validated + 9 unvalidated)
+- 55 levels (46 validated + 9 unvalidated)
+- Advanced levels include breakpoints
 - Trains: counting, classification, region analysis
 
 ### tw06 — TriCount

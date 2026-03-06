@@ -89,6 +89,15 @@ def _parse_cell_dict(d):
     return result
 
 
+def _parse_breakpoints(config: dict) -> Set[Tuple[Tuple[int, int], Tuple[int, int]]]:
+    """解析 config["breakpoints"] → normalized edge set。"""
+    breakpoints: Set[Tuple[Tuple[int, int], Tuple[int, int]]] = set()
+    for bp in config.get("breakpoints", []):
+        n1, n2 = tuple(bp[0]), tuple(bp[1])
+        breakpoints.add((min(n1, n2), max(n1, n2)))
+    return breakpoints
+
+
 # ====================================================================
 # tw01 PathDots Solver — BFS 求最短路径
 # ====================================================================
@@ -103,10 +112,7 @@ def solve_tw01(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
     end = tuple(config["end"])
     dots = set(tuple(d) for d in config["dots"])
 
-    breakpoints: Set[Tuple[Tuple[int, int], Tuple[int, int]]] = set()
-    for bp in config.get("breakpoints", []):
-        n1, n2 = tuple(bp[0]), tuple(bp[1])
-        breakpoints.add((min(n1, n2), max(n1, n2)))
+    breakpoints = _parse_breakpoints(config)
 
     initial_visited_dots = frozenset({start} & dots)
     initial_state = (start, initial_visited_dots)
@@ -175,6 +181,7 @@ def solve_tw02(config: dict, timeout: float = 5.0) -> Optional[List[Tuple[int, i
     end = tuple(config["end"])
 
     squares = _parse_cell_dict(config["squares"])
+    breakpoints = _parse_breakpoints(config)
 
     t0 = time.time()
     best_solution = [None]
@@ -197,6 +204,10 @@ def solve_tw02(config: dict, timeout: float = 5.0) -> Optional[List[Tuple[int, i
             if not (0 <= nc <= cols and 0 <= nr <= rows):
                 continue
             if next_node in path_set:
+                continue
+
+            edge = (min(node, next_node), max(node, next_node))
+            if edge in breakpoints:
                 continue
 
             path.append(next_node)
@@ -335,6 +346,7 @@ def solve_tw03(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
     start = tuple(config["start"])
     end = tuple(config["end"])
     tetris = config["tetris"]
+    breakpoints = _parse_breakpoints(config)
 
     t0 = time.time()
     best_solution = [None]
@@ -355,6 +367,10 @@ def solve_tw03(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
             if not (0 <= nc <= cols and 0 <= nr <= rows):
                 continue
             if next_node in path_set:
+                continue
+
+            edge = (min(node, next_node), max(node, next_node))
+            if edge in breakpoints:
                 continue
 
             path.append(next_node)
@@ -394,6 +410,7 @@ def solve_tw04(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
     yellow_end = tuple(config["yellow_end"])
     blue_dots = set(tuple(d) for d in config["blue_dots"])
     yellow_dots = set(tuple(d) for d in config["yellow_dots"])
+    breakpoints = _parse_breakpoints(config)
 
     def mirror_delta(dc, dr):
         if sym == "horizontal":
@@ -430,6 +447,13 @@ def solve_tw04(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
 
             if not valid_node(b_next) or not valid_node(y_next):
                 continue
+
+            # breakpoint check for both paths
+            b_edge = (min(b_node, b_next), max(b_node, b_next))
+            y_edge = (min(y_node, y_next), max(y_node, y_next))
+            if b_edge in breakpoints or y_edge in breakpoints:
+                continue
+
             if b_next in set(b_path):
                 continue
             y_path = _compute_yellow_path(b_path + [b_next], yellow_start, sym, cols, rows)
@@ -501,6 +525,7 @@ def solve_tw05(config: dict, timeout: float = 5.0) -> Optional[List[Tuple[int, i
     end = tuple(config["end"])
 
     stars = _parse_cell_dict(config["stars"])
+    breakpoints = _parse_breakpoints(config)
 
     t0 = time.time()
     best_solution = [None]
@@ -519,6 +544,10 @@ def solve_tw05(config: dict, timeout: float = 5.0) -> Optional[List[Tuple[int, i
             if not (0 <= nc <= cols and 0 <= nr <= rows):
                 continue
             if next_node in path_set:
+                continue
+
+            edge = (min(node, next_node), max(node, next_node))
+            if edge in breakpoints:
                 continue
             path.append(next_node)
             path_set.add(next_node)
@@ -559,6 +588,7 @@ def solve_tw06(config: dict, timeout: float = 5.0) -> Optional[List[Tuple[int, i
     end = tuple(config["end"])
 
     triangles = _parse_cell_dict(config["triangles"])
+    breakpoints = _parse_breakpoints(config)
 
     t0 = time.time()
     best_solution = [None]
@@ -577,6 +607,10 @@ def solve_tw06(config: dict, timeout: float = 5.0) -> Optional[List[Tuple[int, i
             if not (0 <= nc <= cols and 0 <= nr <= rows):
                 continue
             if next_node in path_set:
+                continue
+
+            edge = (min(node, next_node), max(node, next_node))
+            if edge in breakpoints:
                 continue
             path.append(next_node)
             path_set.add(next_node)
@@ -659,6 +693,7 @@ def solve_tw07(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
     squares = _parse_cell_dict(config.get("squares", {}))
     stars = _parse_cell_dict(config.get("stars", {}))
     triangles = _parse_cell_dict(config.get("triangles", {}))
+    breakpoints = _parse_breakpoints(config)
 
     t0 = time.time()
     best_solution = [None]
@@ -677,6 +712,10 @@ def solve_tw07(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
             if not (0 <= nc <= cols and 0 <= nr <= rows):
                 continue
             if next_node in path_set:
+                continue
+
+            edge = (min(node, next_node), max(node, next_node))
+            if edge in breakpoints:
                 continue
             path.append(next_node)
             path_set.add(next_node)
@@ -714,6 +753,7 @@ def solve_tw08(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
 
     squares = _parse_cell_dict(config["squares"])
     stars = _parse_cell_dict(config["stars"])
+    breakpoints = _parse_breakpoints(config)
 
     t0 = time.time()
     best_solution = [None]
@@ -732,6 +772,10 @@ def solve_tw08(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
             if not (0 <= nc <= cols and 0 <= nr <= rows):
                 continue
             if next_node in path_set:
+                continue
+
+            edge = (min(node, next_node), max(node, next_node))
+            if edge in breakpoints:
                 continue
             path.append(next_node)
             path_set.add(next_node)

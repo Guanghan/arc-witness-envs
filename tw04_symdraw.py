@@ -33,7 +33,7 @@ from witness_grid import (
     START_COLOR, END_COLOR, DOT_COLOR, ERROR_COLOR, SUCCESS_COLOR,
     COLOR_BLACK, COLOR_BLUE, COLOR_YELLOW,
 )
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Set, Optional
 
 
 class Tw04(ARCBaseGame):
@@ -57,6 +57,7 @@ class Tw04(ARCBaseGame):
         self._symmetry: str = "horizontal"  # horizontal, vertical, rotational
         self._blue_dots: List[Tuple[int, int]] = []
         self._yellow_dots: List[Tuple[int, int]] = []
+        self._breakpoints: Set[Tuple[Tuple[int, int], Tuple[int, int]]] = set()
 
         levels = self._create_levels()
         camera = Camera(background=GRID_BG, letter_box=COLOR_BLACK)
@@ -112,6 +113,10 @@ class Tw04(ARCBaseGame):
                     "yellow_dots": [tuple(d) for d in cfg["yellow_dots"]],
                     "validated": entry.get("validated", True),
                 }
+                if "breakpoints" in cfg:
+                    config["breakpoints"] = [
+                        (tuple(bp[0]), tuple(bp[1])) for bp in cfg["breakpoints"]
+                    ]
                 level_configs.append(config)
         else:
             # 硬编码回退
@@ -174,6 +179,10 @@ class Tw04(ARCBaseGame):
             for dot in config["yellow_dots"]:
                 grid.draw_dot(frame, dot, COLOR_YELLOW)
 
+            # 绘制断边
+            for bp in config.get("breakpoints", []):
+                grid.draw_breakpoint(frame, bp[0], bp[1])
+
             if not config.get("validated", True):
                 grid.draw_unvalidated_indicator(frame)
 
@@ -186,10 +195,7 @@ class Tw04(ARCBaseGame):
                 tags=["sys_static"],
             )
 
-            level = Level(
-                sprites=[bg_sprite],
-                grid_size=(64, 64),
-                data={
+            level_data = {
                     "cols": config["cols"],
                     "rows": config["rows"],
                     "symmetry": config["symmetry"],
@@ -200,7 +206,14 @@ class Tw04(ARCBaseGame):
                     "blue_dots": config["blue_dots"],
                     "yellow_dots": config["yellow_dots"],
                     "validated": config.get("validated", True),
-                },
+            }
+            if "breakpoints" in config:
+                level_data["breakpoints"] = config["breakpoints"]
+
+            level = Level(
+                sprites=[bg_sprite],
+                grid_size=(64, 64),
+                data=level_data,
                 name=f"Level {i + 1}",
             )
             levels.append(level)
@@ -217,6 +230,10 @@ class Tw04(ARCBaseGame):
         self._yellow_end = tuple(data["yellow_end"])
         self._blue_dots = [tuple(d) for d in data["blue_dots"]]
         self._yellow_dots = [tuple(d) for d in data["yellow_dots"]]
+        self._breakpoints = set()
+        for bp in data.get("breakpoints", []):
+            n1, n2 = tuple(bp[0]), tuple(bp[1])
+            self._breakpoints.add((min(n1, n2), max(n1, n2)))
         self._blue_path = [self._blue_start]
         self._yellow_path = [self._yellow_start]
 
@@ -252,6 +269,16 @@ class Tw04(ARCBaseGame):
             cols, rows = data["cols"], data["rows"]
             blue_valid = self._is_valid_node(blue_target, cols, rows)
             yellow_valid = self._is_valid_node(yellow_target, cols, rows)
+
+            # breakpoint check for both paths
+            if blue_valid:
+                b_edge = (min(blue_current, blue_target), max(blue_current, blue_target))
+                if b_edge in self._breakpoints:
+                    blue_valid = False
+            if yellow_valid:
+                y_edge = (min(yellow_current, yellow_target), max(yellow_current, yellow_target))
+                if y_edge in self._breakpoints:
+                    yellow_valid = False
 
             if blue_valid and yellow_valid:
                 # 检查回退
@@ -333,6 +360,10 @@ class Tw04(ARCBaseGame):
             self._grid.draw_dot(frame, dot, COLOR_BLUE)
         for dot in self._yellow_dots:
             self._grid.draw_dot(frame, dot, COLOR_YELLOW)
+
+        # 绘制断边
+        for bp in self._breakpoints:
+            self._grid.draw_breakpoint(frame, bp[0], bp[1])
 
         # 蓝色路径
         for i in range(len(self._blue_path) - 1):

@@ -53,6 +53,7 @@ class Tw02(ARCBaseGame):
         self._start: Tuple[int, int] = (0, 0)  # 当前选中的起点
         self._end: Tuple[int, int] = (0, 0)
         self._squares: Dict[Tuple[int, int], int] = {}  # cell -> color
+        self._breakpoints: Set[Tuple[Tuple[int, int], Tuple[int, int]]] = set()
 
         levels = self._create_levels()
         camera = Camera(background=GRID_BG, letter_box=COLOR_BLACK)
@@ -103,6 +104,10 @@ class Tw02(ARCBaseGame):
                     },
                     "validated": entry.get("validated", True),
                 }
+                if "breakpoints" in cfg:
+                    config["breakpoints"] = [
+                        (tuple(bp[0]), tuple(bp[1])) for bp in cfg["breakpoints"]
+                    ]
                 level_configs.append(config)
         else:
             # 硬编码回退
@@ -163,6 +168,10 @@ class Tw02(ARCBaseGame):
             for cell, color in config["squares"].items():
                 grid.draw_cell_symbol(frame, cell, color)
 
+            # 绘制断边
+            for bp in config.get("breakpoints", []):
+                grid.draw_breakpoint(frame, bp[0], bp[1])
+
             if not config.get("validated", True):
                 grid.draw_unvalidated_indicator(frame)
 
@@ -184,17 +193,21 @@ class Tw02(ARCBaseGame):
                 interaction=InteractionMode.TANGIBLE,
             )
 
-            level = Level(
-                sprites=[bg_sprite, cursor_sprite],
-                grid_size=(64, 64),
-                data={
+            level_data = {
                     "cols": config["cols"],
                     "rows": config["rows"],
                     "starts": config["starts"],
                     "end": config["end"],
                     "squares": {f"{k[0]},{k[1]}": v for k, v in config["squares"].items()},
                     "validated": config.get("validated", True),
-                },
+            }
+            if "breakpoints" in config:
+                level_data["breakpoints"] = config["breakpoints"]
+
+            level = Level(
+                sprites=[bg_sprite, cursor_sprite],
+                grid_size=(64, 64),
+                data=level_data,
                 name=f"Level {i + 1}",
             )
             levels.append(level)
@@ -215,6 +228,10 @@ class Tw02(ARCBaseGame):
         for k, v in data["squares"].items():
             parts = k.split(",")
             self._squares[(int(parts[0]), int(parts[1]))] = v
+        self._breakpoints = set()
+        for bp in data.get("breakpoints", []):
+            n1, n2 = tuple(bp[0]), tuple(bp[1])
+            self._breakpoints.add((min(n1, n2), max(n1, n2)))
         self._path = [self._start]
 
     def _try_auto_select_start(self, dc: int, dr: int) -> bool:
@@ -282,6 +299,9 @@ class Tw02(ARCBaseGame):
             return False
         if abs(fc - tc) + abs(fr - tr) != 1:
             return False
+        edge = (min(from_node, to_node), max(from_node, to_node))
+        if edge in self._breakpoints:
+            return False
         return True
 
     def _check_solution(self) -> None:
@@ -326,6 +346,10 @@ class Tw02(ARCBaseGame):
 
         for cell, color in self._squares.items():
             self._grid.draw_cell_symbol(frame, cell, color)
+
+        # 绘制断边
+        for bp in self._breakpoints:
+            self._grid.draw_breakpoint(frame, bp[0], bp[1])
 
         for i in range(len(self._path) - 1):
             self._grid.draw_path_segment(frame, self._path[i], self._path[i + 1], path_color)

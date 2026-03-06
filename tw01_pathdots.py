@@ -156,6 +156,10 @@ class Tw01(ARCBaseGame):
             for dot in config["dots"]:
                 grid.draw_dot(frame, dot, DOT_COLOR)
 
+            # 绘制断边
+            for bp in config.get("breakpoints", []):
+                grid.draw_breakpoint(frame, bp[0], bp[1])
+
             # 未验证标记
             if not config.get("validated", True):
                 grid.draw_unvalidated_indicator(frame)
@@ -380,6 +384,10 @@ class Tw01(ARCBaseGame):
             covered = dot in set(self._path)
             color = SUCCESS_COLOR if covered else DOT_COLOR
             self._grid.draw_dot(frame, dot, color)
+
+        # 绘制断边
+        for bp in self._breakpoints:
+            self._grid.draw_breakpoint(frame, bp[0], bp[1])
 
         # 绘制路径
         for i in range(len(self._path) - 1):

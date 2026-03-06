@@ -361,6 +361,32 @@ class WitnessGrid:
             if 0 <= px < 64 and 0 <= py < 64:
                 frame[py][px] = COLOR
 
+    def draw_breakpoint(self, frame: List[List[int]],
+                        node1: Tuple[int, int], node2: Tuple[int, int]):
+        """在两个相邻节点之间的网格线上画一个间隙（断边）。
+
+        擦除边线中间 ~60% 的像素，两端保留短桩，用 GRID_BG 填充间隙。
+        """
+        x1, y1 = self.node_to_pixel(*node1)
+        x2, y2 = self.node_to_pixel(*node2)
+
+        if x1 == x2:  # 垂直边
+            lo, hi = min(y1, y2), max(y1, y2)
+            length = hi - lo
+            gap_start = lo + max(1, length * 2 // 10)
+            gap_end = hi - max(1, length * 2 // 10)
+            for y in range(gap_start, gap_end + 1):
+                if 0 <= x1 < 64 and 0 <= y < 64:
+                    frame[y][x1] = GRID_BG
+        elif y1 == y2:  # 水平边
+            lo, hi = min(x1, x2), max(x1, x2)
+            length = hi - lo
+            gap_start = lo + max(1, length * 2 // 10)
+            gap_end = hi - max(1, length * 2 // 10)
+            for x in range(gap_start, gap_end + 1):
+                if 0 <= x < 64 and 0 <= y1 < 64:
+                    frame[y1][x] = GRID_BG
+
     def cell_edge_count(self, cell: Tuple[int, int],
                         path_edges: Set[Tuple[Tuple[int, int], Tuple[int, int]]]) -> int:
         """计算单元格边界被路径经过的边数。"""

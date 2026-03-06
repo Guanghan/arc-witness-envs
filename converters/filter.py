@@ -47,8 +47,6 @@ def filter_tw02(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
             continue
         if len(p.squares) < 2:
             continue
-        if p.missing_edges:
-            continue
         results.append(p)
     return results
 
@@ -65,8 +63,6 @@ def filter_tw03(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
         if max(p.cols, p.rows) > 6:
             continue
         if len(p.starts) < 1 or len(p.ends) < 1:
-            continue
-        if p.missing_edges:
             continue
         results.append(p)
     return results
@@ -103,8 +99,6 @@ def filter_tw05(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
             continue
         if len(p.stars) < 2:
             continue
-        if p.missing_edges:
-            continue
         results.append(p)
     return results
 
@@ -122,8 +116,6 @@ def filter_tw06(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
             continue
         if len(p.starts) < 1 or len(p.ends) < 1:
             continue
-        if p.missing_edges:
-            continue
         results.append(p)
     return results
 
@@ -140,8 +132,6 @@ def filter_tw07(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
         if max(p.cols, p.rows) > 6:
             continue
         if len(p.starts) < 1 or len(p.ends) < 1:
-            continue
-        if p.missing_edges:
             continue
         results.append(p)
     return results
@@ -161,8 +151,6 @@ def filter_tw08(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
         if len(p.starts) < 1 or len(p.ends) < 1:
             continue
         if p.unique_square_colors() > 3:
-            continue
-        if p.missing_edges:
             continue
         results.append(p)
     return results
