@@ -42,7 +42,7 @@ Draw a path that partitions the grid; each region's polyomino pieces must **exac
 
 ### tw04 — SymDraw
 Control a **blue** line; a **yellow** line mirrors your moves automatically. Both must reach their respective endpoints simultaneously.
-- 28 levels (0 validated + 28 unvalidated)
+- 28 levels (26 validated + 2 unvalidated)
 - Symmetry types: horizontal, vertical, 180° rotational
 - Trains: symmetry transforms, dual-state mental simulation
 
@@ -86,7 +86,7 @@ ColorSplit variant where **filter cells** change the perceived color of squares.
 | tw01 | PathDots | 44 | 10 | 6 | **16** | 36.4% |
 | tw02 | ColorSplit | 76 | 27 | 9 | **36** | 47.4% |
 | tw03 | ShapeFill | 272 | 47 | 92 | **139** | 51.1% |
-| tw04 | SymDraw | 210 | 0 | 28 | **28** | 13.3% |
+| tw04 | SymDraw | 210 | 26 | 2 | **28** | 13.3% |
 | tw05 | StarPair | 88 | 26 | 9 | **35** | 39.8% |
 | tw06 | TriCount | 160 | 105 | 18 | **123** | 76.9% |
 | tw07 | EraserLogic | 625 | 221 | 73 | **294** | 47.0% |
@@ -94,7 +94,7 @@ ColorSplit variant where **filter cells** change the perceived color of squares.
 | tw09 | CylinderWrap | 0 | 5 | 0 | **5** | hand-crafted |
 | tw10 | ColorFilter | 0 | 5 | 0 | **5** | hand-crafted |
 | **other** | multi-constraint | **1,002** | — | — | **0** | 0% |
-| **Total** | | **2,605** | **480** | **274** | **754** | |
+| **Total** | | **2,605** | **506** | **248** | **754** | |
 
 > **Validated** levels have solver-verified solutions with action sequences and baseline scores.
 > **Unvalidated** levels passed filtering but the solver timed out (NP-hard puzzles). They are playable and marked with an orange "?" indicator. When a human solves one in play_human.py, it is automatically marked as validated.
@@ -121,8 +121,8 @@ Each puzzle may contain multiple constraint types simultaneously:
 TTWS total puzzles:           2,605   (100%)
  ├─ Classified (tw01-08):     1,603   (61.5%)
  │  ├─ Passed filter:          ~788   (30.2%)  ← includes multi-start
- │  │  ├─ Solver validated:     470   (18.0%)
- │  │  ├─ Unvalidated kept:     274   (10.5%)  ← solver timeout, still playable
+ │  │  ├─ Solver validated:     496   (19.0%)
+ │  │  ├─ Unvalidated kept:     248   (9.5%)   ← solver timeout, still playable
  │  │  └─ Total levels:         744   (28.6%)
  │  └─ Filter rejected:        ~815
  ├─ "other" (multi-constraint):1,002   (38.5%)
@@ -162,7 +162,7 @@ arc-witness-envs/
 ├── tw08_combobasic.py         # ComboBasic game
 ├── tw09_cylinderwrap.py       # CylinderWrap game
 ├── tw10_colorfilter.py        # ColorFilter game
-├── test_games.py              # Automated test suite (480 validated levels)
+├── test_games.py              # Automated test suite (506 validated levels)
 ├── play_human.py              # Local web server for browser play
 ├── environment_files/         # Game metadata (for SDK discovery)
 │   ├── tw01/metadata.json
@@ -232,7 +232,7 @@ print(f"State: {frame.state}")  # GameState.PLAYING or GameState.WIN
 
 ```bash
 python test_games.py
-# 10/10 games, 480 validated levels verified (274 unvalidated skipped)
+# 10/10 games, 506 validated levels verified (248 unvalidated skipped)
 ```
 
 ### Re-extract Levels
