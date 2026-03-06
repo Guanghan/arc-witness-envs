@@ -234,6 +234,39 @@ def test_tw10():
     return True  # Skip if no levels
 
 
+def test_tw11():
+    from tw11_multiregion import Tw11
+    result = load_solutions_from_json("tw11")
+    if result:
+        solutions, total = result
+        print(f"  (Using JSON level solutions: {len(solutions)} validated / {total} total)")
+        return test_game(Tw11, "tw11_multiregion", solutions, total)
+    print("  (No JSON levels available)")
+    return True  # Skip if no levels
+
+
+def test_tw12():
+    from tw12_hexcombo import Tw12
+    result = load_solutions_from_json("tw12")
+    if result:
+        solutions, total = result
+        print(f"  (Using JSON level solutions: {len(solutions)} validated / {total} total)")
+        return test_game(Tw12, "tw12_hexcombo", solutions, total)
+    print("  (No JSON levels available)")
+    return True  # Skip if no levels
+
+
+def test_tw13():
+    from tw13_eraserall import Tw13
+    result = load_solutions_from_json("tw13")
+    if result:
+        solutions, total = result
+        print(f"  (Using JSON level solutions: {len(solutions)} validated / {total} total)")
+        return test_game(Tw13, "tw13_eraserall", solutions, total)
+    print("  (No JSON levels available)")
+    return True  # Skip if no levels
+
+
 if __name__ == "__main__":
     print("=" * 60)
     print("ARC-AGI-3 Witness Games — Test Suite")
@@ -250,6 +283,9 @@ if __name__ == "__main__":
         ("tw08", test_tw08),
         ("tw09", test_tw09),
         ("tw10", test_tw10),
+        ("tw11", test_tw11),
+        ("tw12", test_tw12),
+        ("tw13", test_tw13),
     ]
 
     results = {}

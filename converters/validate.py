@@ -735,6 +735,57 @@ def solve_tw07(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
 
 
 # ====================================================================
+# tw07 helpers for tetris violation counting (reused by tw13)
+# ====================================================================
+
+def _count_tetris_violations(region, tetris, path_edges, cols, rows):
+    """计算区域内的 tetris 违反数。
+
+    如果区域内的正形状无法精确覆盖区域，返回违反数。
+    违反数 = 1（简化：铺砖失败算 1 个违反）。
+    """
+    tetris_parsed = {}
+    for k, v in tetris.items():
+        if isinstance(k, str):
+            parts = k.split(",")
+            tetris_parsed[(int(parts[0]), int(parts[1]))] = v
+        else:
+            tetris_parsed[k] = v
+
+    shapes_in_region = []
+    total_positive_area = 0
+    total_negative_area = 0
+
+    for cell in region:
+        if cell in tetris_parsed:
+            t = tetris_parsed[cell]
+            shape_cells = [tuple(s) if isinstance(s, (list, tuple)) else s for s in t["shape"]]
+            is_negative = t.get("negative", False)
+            shapes_in_region.append({
+                "cells": sorted(shape_cells),
+                "rotated": t.get("rotated", False),
+                "negative": is_negative,
+            })
+            if is_negative:
+                total_negative_area += len(shape_cells)
+            else:
+                total_positive_area += len(shape_cells)
+
+    if not shapes_in_region:
+        return 0
+
+    expected_area = total_positive_area - total_negative_area
+    if expected_area != len(region):
+        return 1
+
+    positive_shapes = [s for s in shapes_in_region if not s["negative"]]
+    if not _exact_cover(positive_shapes, set(region), set(), 0):
+        return 1
+
+    return 0
+
+
+# ====================================================================
 # tw08 ComboBasic Solver — DFS + 双重约束
 # ====================================================================
 
@@ -795,6 +846,305 @@ def solve_tw08(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
 
 
 # ====================================================================
+# tw11 MultiRegion Solver — DFS + 多约束验证
+# ====================================================================
+
+def _check_multiregion(path, config, cols, rows):
+    """检查路径是否同时满足所有存在的区域约束（AND 逻辑）。"""
+    squares = _parse_cell_dict(config.get("squares", {}))
+    stars = _parse_cell_dict(config.get("stars", {}))
+    triangles = _parse_cell_dict(config.get("triangles", {}))
+    tetris = config.get("tetris", {})
+
+    if squares:
+        if not _check_colorsplit(path, squares, cols, rows):
+            return False
+    if stars:
+        if not _check_starpair(path, stars, cols, rows):
+            return False
+    if triangles:
+        if not _check_tricount(path, triangles, cols, rows):
+            return False
+    if tetris:
+        if not _check_shapefill(path, tetris, cols, rows):
+            return False
+
+    return True
+
+
+def solve_tw11(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, int]]]:
+    """DFS 求解 tw11 MultiRegion 谜题。"""
+    cols = config["cols"]
+    rows = config["rows"]
+    start = tuple(config["start"])
+    end = tuple(config["end"])
+    breakpoints = _parse_breakpoints(config)
+
+    t0 = time.time()
+    best_solution = [None]
+    best_len = [(cols + 1) * (rows + 1) + 1]
+    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+
+    def dfs(path, path_set):
+        if time.time() - t0 > timeout:
+            return
+        if len(path) >= best_len[0]:
+            return
+        node = path[-1]
+        for dc, dr in directions:
+            nc, nr = node[0] + dc, node[1] + dr
+            next_node = (nc, nr)
+            if not (0 <= nc <= cols and 0 <= nr <= rows):
+                continue
+            if next_node in path_set:
+                continue
+            edge = (min(node, next_node), max(node, next_node))
+            if edge in breakpoints:
+                continue
+            path.append(next_node)
+            path_set.add(next_node)
+            if next_node == end:
+                if _check_multiregion(path, config, cols, rows):
+                    if len(path) < best_len[0]:
+                        best_len[0] = len(path)
+                        best_solution[0] = list(path)
+            else:
+                if len(path) < best_len[0] - 1:
+                    dfs(path, path_set)
+            path.pop()
+            path_set.remove(next_node)
+
+    dfs([start], {start})
+    return best_solution[0]
+
+
+# ====================================================================
+# tw12 HexCombo Solver — BFS + dots + 区域验证
+# ====================================================================
+
+def solve_tw12(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, int]]]:
+    """BFS 求解 tw12 HexCombo 谜题。路径必须经过所有 dots 且满足区域约束。"""
+    t0 = time.time()
+
+    cols = config["cols"]
+    rows = config["rows"]
+    start = tuple(config["start"])
+    end = tuple(config["end"])
+    dots = set(tuple(d) for d in config["dots"])
+    breakpoints = _parse_breakpoints(config)
+
+    initial_visited_dots = frozenset({start} & dots)
+    initial_state = (start, initial_visited_dots)
+
+    queue = deque()
+    queue.append((initial_state, [start]))
+    seen = {initial_state}
+
+    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+
+    while queue:
+        if time.time() - t0 > timeout:
+            return None
+
+        (node, visited_dots), path = queue.popleft()
+
+        for dc, dr in directions:
+            nc, nr = node[0] + dc, node[1] + dr
+            next_node = (nc, nr)
+
+            if not (0 <= nc <= cols and 0 <= nr <= rows):
+                continue
+            if next_node in set(path):
+                continue
+
+            edge = (min(node, next_node), max(node, next_node))
+            if edge in breakpoints:
+                continue
+
+            new_visited = visited_dots | ({next_node} & dots)
+            new_path = path + [next_node]
+
+            if next_node == end and new_visited == dots:
+                # All dots visited, now check region constraints
+                if _check_multiregion(new_path, config, cols, rows):
+                    return new_path
+
+            new_state = (next_node, new_visited)
+            if new_state not in seen:
+                seen.add(new_state)
+                queue.append((new_state, new_path))
+
+    return None
+
+
+# ====================================================================
+# tw13 EraserAll Solver — DFS/BFS + 扩展消除逻辑
+# ====================================================================
+
+def _count_violations_extended(region, squares, stars, triangles, tetris, path_edges, cols, rows):
+    """扩展的违反计数，支持 tetris 违反。"""
+    violations = 0
+
+    # 方块约束违反
+    if squares:
+        colors = set()
+        for cell in region:
+            if cell in squares:
+                colors.add(squares[cell])
+        if len(colors) > 1:
+            violations += len(colors) - 1
+
+    # 星星约束违反
+    if stars:
+        color_counts = {}
+        for cell in region:
+            if cell in stars:
+                c = stars[cell]
+                color_counts[c] = color_counts.get(c, 0) + 1
+        for color, count in color_counts.items():
+            if count != 2:
+                violations += abs(count - 2)
+
+    # 三角形约束违反
+    if triangles:
+        for cell in region:
+            if cell in triangles:
+                actual = _cell_edge_count(cell, path_edges)
+                if actual != triangles[cell]:
+                    violations += 1
+
+    # tetris 约束违反
+    if tetris:
+        violations += _count_tetris_violations(region, tetris, path_edges, cols, rows)
+
+    return violations
+
+
+def _check_eraser_all(path, erasers, config, cols, rows):
+    """检查路径是否满足 EraserAll 约束（扩展版，支持 tetris + hex dots）。"""
+    # 如果有 dots，先检查是否全部访问
+    if "dots" in config:
+        dots = set(tuple(d) for d in config["dots"])
+        path_set = set(path)
+        for dot in dots:
+            if dot not in path_set:
+                return False
+
+    regions = _path_splits_regions(path, cols, rows)
+    path_edges = _path_to_edges(path)
+    eraser_set = set(tuple(e) for e in erasers)
+
+    squares = _parse_cell_dict(config.get("squares", {}))
+    stars = _parse_cell_dict(config.get("stars", {}))
+    triangles = _parse_cell_dict(config.get("triangles", {}))
+    tetris = config.get("tetris", {})
+
+    for region in regions:
+        eraser_count = sum(1 for cell in region if cell in eraser_set)
+        violations = _count_violations_extended(
+            region, squares, stars, triangles, tetris, path_edges, cols, rows
+        )
+        if violations != eraser_count:
+            return False
+    return True
+
+
+def solve_tw13(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, int]]]:
+    """求解 tw13 EraserAll 谜题。有 hex dots 时用 BFS，否则用 DFS。"""
+    cols = config["cols"]
+    rows = config["rows"]
+    start = tuple(config["start"])
+    end = tuple(config["end"])
+    erasers = [tuple(e) for e in config["erasers"]]
+    breakpoints = _parse_breakpoints(config)
+    has_dots = "dots" in config and config["dots"]
+
+    t0 = time.time()
+
+    if has_dots:
+        # BFS with dot tracking
+        dots = set(tuple(d) for d in config["dots"])
+        initial_visited_dots = frozenset({start} & dots)
+        initial_state = (start, initial_visited_dots)
+
+        queue = deque()
+        queue.append((initial_state, [start]))
+        seen = {initial_state}
+
+        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+
+        while queue:
+            if time.time() - t0 > timeout:
+                return None
+
+            (node, visited_dots), path = queue.popleft()
+
+            for dc, dr in directions:
+                nc, nr = node[0] + dc, node[1] + dr
+                next_node = (nc, nr)
+
+                if not (0 <= nc <= cols and 0 <= nr <= rows):
+                    continue
+                if next_node in set(path):
+                    continue
+
+                edge_key = (min(node, next_node), max(node, next_node))
+                if edge_key in breakpoints:
+                    continue
+
+                new_visited = visited_dots | ({next_node} & dots)
+                new_path = path + [next_node]
+
+                if next_node == end and new_visited == dots:
+                    if _check_eraser_all(new_path, erasers, config, cols, rows):
+                        return new_path
+
+                new_state = (next_node, new_visited)
+                if new_state not in seen:
+                    seen.add(new_state)
+                    queue.append((new_state, new_path))
+
+        return None
+    else:
+        # DFS (like tw07)
+        best_solution = [None]
+        best_len = [(cols + 1) * (rows + 1) + 1]
+        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+
+        def dfs(path, path_set):
+            if time.time() - t0 > timeout:
+                return
+            if len(path) >= best_len[0]:
+                return
+            node = path[-1]
+            for dc, dr in directions:
+                nc, nr = node[0] + dc, node[1] + dr
+                next_node = (nc, nr)
+                if not (0 <= nc <= cols and 0 <= nr <= rows):
+                    continue
+                if next_node in path_set:
+                    continue
+                edge_key = (min(node, next_node), max(node, next_node))
+                if edge_key in breakpoints:
+                    continue
+                path.append(next_node)
+                path_set.add(next_node)
+                if next_node == end:
+                    if _check_eraser_all(path, erasers, config, cols, rows):
+                        if len(path) < best_len[0]:
+                            best_len[0] = len(path)
+                            best_solution[0] = list(path)
+                else:
+                    if len(path) < best_len[0] - 1:
+                        dfs(path, path_set)
+                path.pop()
+                path_set.remove(next_node)
+
+        dfs([start], {start})
+        return best_solution[0]
+
+
+# ====================================================================
 # Baseline calibration
 # ====================================================================
 
@@ -833,6 +1183,9 @@ def validate_config(config: dict, game_type: str, timeout: float = 5.0) -> dict:
         "tw06": solve_tw06,
         "tw07": solve_tw07,
         "tw08": solve_tw08,
+        "tw11": solve_tw11,
+        "tw12": solve_tw12,
+        "tw13": solve_tw13,
     }
 
     solver = solvers.get(game_type)

@@ -83,6 +83,19 @@ class UnifiedPuzzle:
         if has_tetris and not has_sq and not has_hex and not has_star and not has_tri and not has_elim:
             return "tw03"
 
+        # tw13: 剩余的 elim 组合（tw07 已捕获 elim+(sq|star|tri)）
+        if has_elim:
+            return "tw13"
+
+        # tw12: hex + 至少一种区域约束（tw01 已捕获纯 hex）
+        if has_hex and (has_sq or has_star or has_tri or has_tetris):
+            return "tw12"
+
+        # tw11: 2+ 区域约束（无 hex/elim/sym — 已被上方捕获）
+        region_count = sum([has_sq, has_star, has_tri, has_tetris])
+        if region_count >= 2:
+            return "tw11"
+
         return "other"
 
     def feature_set(self) -> Set[str]:

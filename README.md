@@ -20,6 +20,9 @@ The Witness contains 523+ hand-crafted line-drawing puzzles that teach abstract 
 | Squares + Stars (dual constraint) | `tw08` ComboBasic | Composition — multiple simultaneous rules |
 | Cylinder wrap (topology) | `tw09` CylinderWrap | Topology — non-planar space |
 | Color filters (perception transform) | `tw10` ColorFilter | Perception — transform-then-apply |
+| Multi-constraint regions | `tw11` MultiRegion | Composition — 2+ simultaneous region constraints |
+| Hex dots + region constraints | `tw12` HexCombo | Composition — path waypoints + region rules |
+| Erasers + any constraint | `tw13` EraserAll | Meta-reasoning — generalized error absorption |
 
 ## Games
 
@@ -56,18 +59,20 @@ Draw a path that partitions the grid; each region must contain **exactly 2 stars
 
 ### tw06 — TriCount
 Each cell with N triangles requires the path to touch **exactly N edges** of that cell.
-- 123 levels (105 validated + 18 unvalidated)
+- 144 levels (126 validated + 18 unvalidated)
+- Advanced levels include breakpoints
 - Trains: local counting, edge-cell relationship reasoning
 
 ### tw07 — EraserLogic
 Eraser symbols absorb constraint violations. Each region must have `#erasers == #violations`.
-- 294 levels (221 validated + 73 unvalidated) — largest game
-- Combines with squares, stars, and triangle constraints
+- 502 levels (376 validated + 126 unvalidated) — largest game
+- Combines with squares, stars, and triangle constraints; advanced levels include breakpoints
 - Trains: meta-reasoning, error balancing
 
 ### tw08 — ComboBasic
 Simultaneous **ColorSplit** (squares) + **StarPair** (stars) constraints.
-- 73 levels (34 validated + 39 unvalidated)
+- 108 levels (61 validated + 47 unvalidated)
+- Advanced levels include breakpoints
 - Trains: compositional reasoning, multi-constraint satisfaction
 
 ### tw09 — CylinderWrap
@@ -80,6 +85,27 @@ ColorSplit variant where **filter cells** change the perceived color of squares.
 - 5 hand-crafted levels
 - Trains: perception transformation, transform-then-apply reasoning
 
+### tw11 — MultiRegion
+Draw a path that partitions the grid; each region must satisfy **2 or more** constraint types simultaneously (e.g., squares + triangles, stars + tetris).
+- 410 levels (145 validated + 265 unvalidated)
+- AND logic: all present constraints must hold per region
+- Constraint combinations: sq+tri, sq+tetris, star+tri, star+tetris, tri+tetris, and 3+ combos
+- Trains: compositional reasoning, multi-constraint satisfaction
+
+### tw12 — HexCombo
+Draw a path through **all hex waypoints** (mandatory dots) that also partitions the grid into valid regions satisfying at least one region constraint.
+- 160 levels (4 validated + 156 unvalidated)
+- Combines path constraint (hex dots) with region constraints (squares, stars, triangles, tetris)
+- Low validation rate due to BFS complexity with dot-tracking + region validation at 3s timeout
+- Trains: path planning + region reasoning, dual-objective optimization
+
+### tw13 — EraserAll
+Generalization of tw07 EraserLogic — erasers absorb constraint violations from **any** constraint type, including tetris and hex dots.
+- 131 levels (61 validated + 70 unvalidated)
+- Extends tw07 to support tetris violations (failed exact cover) and hex dot violations
+- Per region: `#erasers == #violations` across all constraint types
+- Trains: meta-reasoning, generalized error balancing
+
 ## Dataset Statistics
 
 ### Coverage Summary
@@ -87,17 +113,20 @@ ColorSplit variant where **filter cells** change the perceived color of squares.
 | Game | Mechanism | TTWS Classified | Validated | Unvalidated | **Total** | Coverage |
 |------|-----------|----------------|-----------|-------------|-----------|----------|
 | tw01 | PathDots | 44 | 10 | 6 | **16** | 36.4% |
-| tw02 | ColorSplit | 76 | 27 | 9 | **36** | 47.4% |
-| tw03 | ShapeFill | 272 | 47 | 92 | **139** | 51.1% |
-| tw04 | SymDraw | 210 | 26 | 2 | **28** | 13.3% |
-| tw05 | StarPair | 88 | 26 | 9 | **35** | 39.8% |
-| tw06 | TriCount | 160 | 105 | 18 | **123** | 76.9% |
-| tw07 | EraserLogic | 625 | 221 | 73 | **294** | 47.0% |
-| tw08 | ComboBasic | 128 | 34 | 39 | **73** | 57.0% |
+| tw02 | ColorSplit | 76 | 46 | 16 | **62** | 81.6% |
+| tw03 | ShapeFill | 272 | 88 | 160 | **248** | 91.2% |
+| tw04 | SymDraw | 210 | 20 | 6 | **26** | 12.4% |
+| tw05 | StarPair | 88 | 42 | 13 | **55** | 62.5% |
+| tw06 | TriCount | 160 | 118 | 26 | **144** | 90.0% |
+| tw07 | EraserLogic | 625 | 359 | 143 | **502** | 80.3% |
+| tw08 | ComboBasic | 128 | 56 | 52 | **108** | 84.4% |
 | tw09 | CylinderWrap | 0 | 5 | 0 | **5** | hand-crafted |
 | tw10 | ColorFilter | 0 | 5 | 0 | **5** | hand-crafted |
-| **other** | multi-constraint | **1,002** | — | — | **0** | 0% |
-| **Total** | | **2,605** | **506** | **248** | **754** | |
+| tw11 | MultiRegion | 475 | 145 | 265 | **410** | 86.3% |
+| tw12 | HexCombo | 375 | 4 | 156 | **160** | 42.7% |
+| tw13 | EraserAll | 142 | 61 | 70 | **131** | 92.3% |
+| **other** | pure path | **10** | — | — | **0** | — |
+| **Total** | | **2,605** | **959** | **913** | **1,872** | |
 
 > **Validated** levels have solver-verified solutions with action sequences and baseline scores.
 > **Unvalidated** levels passed filtering but the solver timed out (NP-hard puzzles). They are playable and marked with an orange "?" indicator. When a human solves one in play_human.py, it is automatically marked as validated.
@@ -108,13 +137,13 @@ Each puzzle may contain multiple constraint types simultaneously:
 
 | Constraint | Count | Mapped To |
 |-----------|-------|-----------|
-| tetris (polyomino) | 1,195 | tw03 (solo), tw07/tw08 (combo) |
-| stars | 1,177 | tw05 (solo), tw07/tw08 (combo) |
-| missing_edges | 1,043 | Not supported (rejected by filter) |
-| triangles | 972 | tw06 (solo), tw07 (combo) |
-| squares | 936 | tw02 (solo), tw07/tw08 (combo) |
-| hex (hexagons) | 809 | tw01 (solo) |
-| eliminations | 776 | tw07 (combo only) |
+| tetris (polyomino) | 1,195 | tw03 (solo), tw07/tw08/tw11/tw12/tw13 (combo) |
+| stars | 1,177 | tw05 (solo), tw07/tw08/tw11/tw12 (combo) |
+| missing_edges | 1,043 | Supported as breakpoints (all games) |
+| triangles | 972 | tw06 (solo), tw07/tw11/tw12/tw13 (combo) |
+| squares | 936 | tw02 (solo), tw07/tw08/tw11/tw12/tw13 (combo) |
+| hex (hexagons) | 809 | tw01 (solo), tw12/tw13 (combo) |
+| eliminations | 776 | tw07 (sq/star/tri combo), tw13 (all combos) |
 | symmetry | 258 | tw04 |
 | No constraints | 5 | — |
 
@@ -122,24 +151,27 @@ Each puzzle may contain multiple constraint types simultaneously:
 
 ```
 TTWS total puzzles:           2,605   (100%)
- ├─ Classified (tw01-08):     1,603   (61.5%)
- │  ├─ Passed filter:          ~788   (30.2%)  ← includes multi-start
- │  │  ├─ Solver validated:     496   (19.0%)
- │  │  ├─ Unvalidated kept:     248   (9.5%)   ← solver timeout, still playable
- │  │  └─ Total levels:         744   (28.6%)
- │  └─ Filter rejected:        ~815
- ├─ "other" (multi-constraint):1,002   (38.5%)
+ ├─ Classified (tw01-13):     2,595   (99.6%)
+ │  ├─ tw01-08:               1,603   (61.5%)
+ │  │  └─ Levels generated:   1,161
+ │  ├─ tw11 MultiRegion:        475   (18.2%)
+ │  │  └─ Levels generated:     410
+ │  ├─ tw12 HexCombo:           375   (14.4%)
+ │  │  └─ Levels generated:     160
+ │  └─ tw13 EraserAll:          142   (5.5%)
+ │     └─ Levels generated:     131
+ ├─ "other" (pure path):         10   (0.4%)
  └─ Hand-crafted (tw09/10):     +10
 ───────────────────────────────
- Grand total:                   754 levels
+ Grand total:   1,872 levels (959 validated + 913 unvalidated)
 ```
 
 ### Major Loss Points
 
 | Bottleneck | Lost | Cause | Status |
 |-----------|------|-------|--------|
-| "other" unclassified | 1,002 | Multi-constraint combos (e.g., tetris+stars, hex+tetris) | Pending (tw11+) |
-| missing_edges rejected | ~400+ | Grid engine doesn't support broken edges | Pending |
+| ~~"other" unclassified~~ | ~~1,002~~ | ~~Multi-constraint combos (tetris+stars, hex+tetris)~~ | **Resolved** (tw11-13, 10 remaining) |
+| ~~missing\_edges rejected~~ | ~~\~400+~~ | ~~Grid engine doesn't support broken edges~~ | **Resolved** (+417 levels) |
 | ~~multi-start rejected~~ | ~~\~180~~ | ~~Puzzles with 2+ start points~~ | **Resolved** |
 | ~~Solver timeout~~ | ~~\~259~~ | ~~NP-hard puzzles exceed BFS/DFS time limit~~ | **Resolved** (kept as unvalidated) |
 
@@ -147,8 +179,9 @@ TTWS total puzzles:           2,605   (100%)
 
 | Direction | Potential Levels | Effort | Status |
 |----------|-----------------|--------|--------|
-| Support missing_edges (broken edges) | ~400+ | Medium (grid engine change) | Pending |
-| New games for multi-constraint combos | ~170+ | High | Pending |
+| ~~Support missing\_edges (broken edges)~~ | ~~\~400+~~ | ~~Medium~~ | **Done** (+417) |
+| ~~New games for multi-constraint combos~~ | ~~\~170+~~ | ~~High~~ | **Done** (tw11-13, +701) |
+| Re-run pipeline with 15s timeout | ~100+ validated | Low | Optional (improves tw12 validation) |
 
 ## Project Structure
 
@@ -165,24 +198,30 @@ arc-witness-envs/
 ├── tw08_combobasic.py         # ComboBasic game
 ├── tw09_cylinderwrap.py       # CylinderWrap game
 ├── tw10_colorfilter.py        # ColorFilter game
-├── test_games.py              # Automated test suite (506 validated levels)
+├── tw11_multiregion.py        # MultiRegion game (2+ constraints)
+├── tw12_hexcombo.py           # HexCombo game (hex dots + regions)
+├── tw13_eraserall.py          # EraserAll game (generalized erasers)
+├── test_games.py              # Automated test suite (959 validated levels)
 ├── play_human.py              # Local web server for browser play
 ├── environment_files/         # Game metadata (for SDK discovery)
 │   ├── tw01/metadata.json
 │   ├── tw02/metadata.json
 │   ├── ...
-│   └── tw10/metadata.json
+│   └── tw13/metadata.json
 ├── levels/                    # Level configs with verified solutions
 │   ├── tw01_levels.json       # 16 levels (10v + 6u)
-│   ├── tw02_levels.json       # 36 levels (27v + 9u)
-│   ├── tw03_levels.json       # 139 levels (47v + 92u)
-│   ├── tw04_levels.json       # 28 levels (0v + 28u)
-│   ├── tw05_levels.json       # 35 levels (26v + 9u)
-│   ├── tw06_levels.json       # 123 levels (105v + 18u)
-│   ├── tw07_levels.json       # 294 levels (221v + 73u)
-│   ├── tw08_levels.json       # 73 levels (34v + 39u)
+│   ├── tw02_levels.json       # 62 levels (51v + 11u)
+│   ├── tw03_levels.json       # 248 levels (106v + 142u)
+│   ├── tw04_levels.json       # 26 levels (20v + 6u)
+│   ├── tw05_levels.json       # 55 levels (46v + 9u)
+│   ├── tw06_levels.json       # 144 levels (126v + 18u)
+│   ├── tw07_levels.json       # 502 levels (359v + 143u)
+│   ├── tw08_levels.json       # 108 levels (56v + 52u)
 │   ├── tw09_levels.json       # 5 levels (hand-crafted)
-│   └── tw10_levels.json       # 5 levels (hand-crafted)
+│   ├── tw10_levels.json       # 5 levels (hand-crafted)
+│   ├── tw11_levels.json       # 410 levels (145v + 265u)
+│   ├── tw12_levels.json       # 160 levels (4v + 156u)
+│   └── tw13_levels.json       # 131 levels (61v + 70u)
 └── converters/                # Puzzle extraction pipeline
     ├── unified_puzzle.py      # Intermediate data model + classifier
     ├── ingest_ttws.py         # Decode protobuf puzzles from ttws
@@ -235,7 +274,7 @@ print(f"State: {frame.state}")  # GameState.PLAYING or GameState.WIN
 
 ```bash
 python test_games.py
-# 10/10 games, 506 validated levels verified (248 unvalidated skipped)
+# 13/13 games, 959 validated levels verified (913 unvalidated skipped)
 ```
 
 ### Re-extract Levels
@@ -271,6 +310,7 @@ WitnessGrid(cols, rows)
 ├── draw_triangle()         → 1-3 small triangles per cell
 ├── draw_polyomino()        → tetris piece preview
 ├── draw_eraser()           → Y-shaped eraser symbol
+├── draw_breakpoint()       → gap on blocked edge between nodes
 ├── draw_unvalidated_indicator() → orange "?" for unverified levels
 ├── path_splits_regions()   → BFS region extraction
 └── cell_edge_count()       → count path edges touching a cell

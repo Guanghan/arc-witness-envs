@@ -156,6 +156,74 @@ def filter_tw08(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
     return results
 
 
+def filter_tw11(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
+    """筛选 tw11 MultiRegion 候选谜题。
+
+    条件：2+ 区域约束同时满足，max(cols,rows)<=7（有 tetris 时<=6），
+    >=1 start, >=1 end, <=3 色
+    """
+    results = []
+    for p in puzzles:
+        if p.classify() != "tw11":
+            continue
+        has_tetris = bool(p.tetris)
+        max_dim = 6 if has_tetris else 7
+        if max(p.cols, p.rows) > max_dim:
+            continue
+        if len(p.starts) < 1 or len(p.ends) < 1:
+            continue
+        if p.squares and p.unique_square_colors() > 3:
+            continue
+        results.append(p)
+    return results
+
+
+def filter_tw12(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
+    """筛选 tw12 HexCombo 候选谜题。
+
+    条件：hex + 至少一种区域约束，max(cols,rows)<=7（有 tetris 时<=6），
+    无 hex_edges，有 hexagons，>=1 start, >=1 end, <=3 色
+    """
+    results = []
+    for p in puzzles:
+        if p.classify() != "tw12":
+            continue
+        has_tetris = bool(p.tetris)
+        max_dim = 6 if has_tetris else 7
+        if max(p.cols, p.rows) > max_dim:
+            continue
+        if len(p.starts) < 1 or len(p.ends) < 1:
+            continue
+        if p.hex_edges:
+            continue
+        if not p.hexagons:
+            continue
+        if p.squares and p.unique_square_colors() > 3:
+            continue
+        results.append(p)
+    return results
+
+
+def filter_tw13(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
+    """筛选 tw13 EraserAll 候选谜题。
+
+    条件：有 eliminations（tw07 未覆盖的组合），max(cols,rows)<=6，
+    >=1 start, >=1 end, <=3 色
+    """
+    results = []
+    for p in puzzles:
+        if p.classify() != "tw13":
+            continue
+        if max(p.cols, p.rows) > 6:
+            continue
+        if len(p.starts) < 1 or len(p.ends) < 1:
+            continue
+        if p.squares and p.unique_square_colors() > 3:
+            continue
+        results.append(p)
+    return results
+
+
 def filter_all(puzzles: List[UnifiedPuzzle]) -> Dict[str, List[UnifiedPuzzle]]:
     """对所有谜题进行分类筛选。"""
     return {
@@ -167,6 +235,9 @@ def filter_all(puzzles: List[UnifiedPuzzle]) -> Dict[str, List[UnifiedPuzzle]]:
         "tw06": filter_tw06(puzzles),
         "tw07": filter_tw07(puzzles),
         "tw08": filter_tw08(puzzles),
+        "tw11": filter_tw11(puzzles),
+        "tw12": filter_tw12(puzzles),
+        "tw13": filter_tw13(puzzles),
     }
 
 

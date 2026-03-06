@@ -82,6 +82,21 @@ GAME_REGISTRY = {
         "class_name": "Tw10",
         "tags": ["witness", "perception", "color-transform"],
     },
+    "tw11": {
+        "title": "MultiRegion - 多约束区域组合",
+        "class_name": "Tw11",
+        "tags": ["witness", "multi-constraint", "region-combo"],
+    },
+    "tw12": {
+        "title": "HexCombo - 必经点+区域组合",
+        "class_name": "Tw12",
+        "tags": ["witness", "path-constraint", "region-combo"],
+    },
+    "tw13": {
+        "title": "EraserAll - 全约束消除逻辑",
+        "class_name": "Tw13",
+        "tags": ["witness", "meta-reasoning", "error-correction", "extended"],
+    },
 }
 
 

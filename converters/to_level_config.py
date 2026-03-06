@@ -366,6 +366,164 @@ def convert_tw08(puzzle: UnifiedPuzzle) -> Optional[dict]:
     }
 
 
+def convert_tw11(puzzle: UnifiedPuzzle) -> Optional[dict]:
+    """将 UnifiedPuzzle 转换为 tw11 MultiRegion level_config。
+
+    格式: {cols, rows, start(s), end, + squares/stars/triangles/tetris (至少 2 种)}
+    """
+    if len(puzzle.starts) < 1 or not puzzle.ends:
+        return None
+
+    end = _pick_end(puzzle)
+
+    # 至少需要 2 种区域约束
+    constraint_count = sum([
+        bool(puzzle.squares), bool(puzzle.stars),
+        bool(puzzle.triangles), bool(puzzle.tetris),
+    ])
+    if constraint_count < 2:
+        return None
+
+    config = {
+        "cols": puzzle.cols,
+        "rows": puzzle.rows,
+        **_start_fields(puzzle),
+        "end": list(end),
+        **_breakpoint_fields(puzzle),
+    }
+
+    if puzzle.squares:
+        mapped = _map_colors(puzzle.squares)
+        if not mapped:
+            return None
+        config["squares"] = {f"{c},{r}": v for (c, r), v in mapped.items()}
+
+    if puzzle.stars:
+        mapped = _map_colors(puzzle.stars)
+        if not mapped:
+            return None
+        config["stars"] = {f"{c},{r}": v for (c, r), v in mapped.items()}
+
+    if puzzle.triangles:
+        config["triangles"] = {f"{c},{r}": v for (c, r), v in puzzle.triangles.items()}
+
+    if puzzle.tetris:
+        tetris = {}
+        for (c, r), t in puzzle.tetris.items():
+            tetris[f"{c},{r}"] = {
+                "shape": t["shape"],
+                "rotated": t.get("rotated", False),
+                "negative": t.get("negative", False),
+            }
+        config["tetris"] = tetris
+
+    return config
+
+
+def convert_tw12(puzzle: UnifiedPuzzle) -> Optional[dict]:
+    """将 UnifiedPuzzle 转换为 tw12 HexCombo level_config。
+
+    格式: {cols, rows, start(s), end, dots: [...], + squares/stars/triangles/tetris}
+    要求: hex + >=1 区域约束
+    """
+    if len(puzzle.starts) < 1 or not puzzle.ends:
+        return None
+
+    if not puzzle.hexagons:
+        return None
+
+    has_region = bool(puzzle.squares or puzzle.stars or puzzle.triangles or puzzle.tetris)
+    if not has_region:
+        return None
+
+    end = _pick_end(puzzle)
+
+    config = {
+        "cols": puzzle.cols,
+        "rows": puzzle.rows,
+        **_start_fields(puzzle),
+        "end": list(end),
+        "dots": [list(h) for h in puzzle.hexagons],
+        **_breakpoint_fields(puzzle),
+    }
+
+    if puzzle.squares:
+        mapped = _map_colors(puzzle.squares)
+        if not mapped:
+            return None
+        config["squares"] = {f"{c},{r}": v for (c, r), v in mapped.items()}
+
+    if puzzle.stars:
+        mapped = _map_colors(puzzle.stars)
+        if not mapped:
+            return None
+        config["stars"] = {f"{c},{r}": v for (c, r), v in mapped.items()}
+
+    if puzzle.triangles:
+        config["triangles"] = {f"{c},{r}": v for (c, r), v in puzzle.triangles.items()}
+
+    if puzzle.tetris:
+        tetris = {}
+        for (c, r), t in puzzle.tetris.items():
+            tetris[f"{c},{r}"] = {
+                "shape": t["shape"],
+                "rotated": t.get("rotated", False),
+                "negative": t.get("negative", False),
+            }
+        config["tetris"] = tetris
+
+    return config
+
+
+def convert_tw13(puzzle: UnifiedPuzzle) -> Optional[dict]:
+    """将 UnifiedPuzzle 转换为 tw13 EraserAll level_config。
+
+    格式: {cols, rows, start(s), end, erasers: [...], + 所有存在的约束 + 可选 dots}
+    扩展 tw07，覆盖 elim + tetris, elim + hex 等组合
+    """
+    if len(puzzle.starts) < 1 or not puzzle.ends:
+        return None
+
+    end = _pick_end(puzzle)
+
+    config = {
+        "cols": puzzle.cols,
+        "rows": puzzle.rows,
+        **_start_fields(puzzle),
+        "end": list(end),
+        "erasers": [list(e) for e in puzzle.eliminations],
+        **_breakpoint_fields(puzzle),
+    }
+
+    if puzzle.squares:
+        mapped = _map_colors(puzzle.squares)
+        if mapped:
+            config["squares"] = {f"{c},{r}": v for (c, r), v in mapped.items()}
+
+    if puzzle.stars:
+        mapped = _map_colors(puzzle.stars)
+        if mapped:
+            config["stars"] = {f"{c},{r}": v for (c, r), v in mapped.items()}
+
+    if puzzle.triangles:
+        config["triangles"] = {f"{c},{r}": v for (c, r), v in puzzle.triangles.items()}
+
+    if puzzle.tetris:
+        tetris = {}
+        for (c, r), t in puzzle.tetris.items():
+            tetris[f"{c},{r}"] = {
+                "shape": t["shape"],
+                "rotated": t.get("rotated", False),
+                "negative": t.get("negative", False),
+            }
+        config["tetris"] = tetris
+
+    if puzzle.hexagons:
+        config["dots"] = [list(h) for h in puzzle.hexagons]
+
+    return config
+
+
 def convert_puzzle(puzzle: UnifiedPuzzle, game_type: str) -> Optional[dict]:
     """根据游戏类型转换谜题。"""
     converters = {
@@ -377,6 +535,9 @@ def convert_puzzle(puzzle: UnifiedPuzzle, game_type: str) -> Optional[dict]:
         "tw06": convert_tw06,
         "tw07": convert_tw07,
         "tw08": convert_tw08,
+        "tw11": convert_tw11,
+        "tw12": convert_tw12,
+        "tw13": convert_tw13,
     }
     converter = converters.get(game_type)
     if not converter:

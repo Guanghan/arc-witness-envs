@@ -1,8 +1,8 @@
 {
   "game": "tw03",
   "total_candidates": 257,
-  "total_validated": 115,
-  "total_unvalidated": 142,
+  "total_validated": 97,
+  "total_unvalidated": 160,
   "selected_count": 248,
   "levels": [
     {
@@ -3809,142 +3809,6 @@
     {
       "level_index": 44,
       "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          5,
-          0
-        ],
-        "tetris": {
-          "2,0": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "0,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "2,2": {
-            "shape": [
-              [
-                0,
-                0
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "4,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "2,4": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          }
-        }
-      },
-      "baseline": 18,
-      "moves": 14,
-      "solution_actions": [
-        4,
-        4,
-        4,
-        1,
-        1,
-        4,
-        4,
-        1,
-        3,
-        3,
-        1,
-        1,
-        4,
-        4,
-        5
-      ],
-      "source": "windmill:1105",
-      "validated": true
-    },
-    {
-      "level_index": 45,
-      "config": {
         "cols": 4,
         "rows": 4,
         "start": [
@@ -4061,7 +3925,7 @@
       "validated": true
     },
     {
-      "level_index": 46,
+      "level_index": 45,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -4157,7 +4021,7 @@
       "validated": true
     },
     {
-      "level_index": 47,
+      "level_index": 46,
       "config": {
         "cols": 5,
         "rows": 4,
@@ -4266,7 +4130,7 @@
       "validated": true
     },
     {
-      "level_index": 48,
+      "level_index": 47,
       "config": {
         "cols": 3,
         "rows": 4,
@@ -4363,7 +4227,7 @@
       "validated": true
     },
     {
-      "level_index": 49,
+      "level_index": 48,
       "config": {
         "cols": 6,
         "rows": 6,
@@ -4556,7 +4420,7 @@
       "validated": true
     },
     {
-      "level_index": 50,
+      "level_index": 49,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -4680,7 +4544,7 @@
       "validated": true
     },
     {
-      "level_index": 51,
+      "level_index": 50,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -4784,7 +4648,7 @@
       "validated": true
     },
     {
-      "level_index": 52,
+      "level_index": 51,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -4898,7 +4762,7 @@
       "validated": true
     },
     {
-      "level_index": 53,
+      "level_index": 52,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -5014,7 +4878,7 @@
       "validated": true
     },
     {
-      "level_index": 54,
+      "level_index": 53,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -5142,131 +5006,7 @@
       "validated": true
     },
     {
-      "level_index": 55,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          5,
-          0
-        ],
-        "tetris": {
-          "0,1": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                0,
-                2
-              ],
-              [
-                1,
-                2
-              ],
-              [
-                0,
-                3
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "4,1": {
-            "shape": [
-              [
-                0,
-                0
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "0,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                0,
-                2
-              ],
-              [
-                1,
-                2
-              ],
-              [
-                2,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "3,4": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                2,
-                0
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          }
-        }
-      },
-      "baseline": 21,
-      "moves": 16,
-      "solution_actions": [
-        4,
-        4,
-        1,
-        4,
-        1,
-        3,
-        3,
-        3,
-        1,
-        1,
-        4,
-        4,
-        4,
-        4,
-        4,
-        1,
-        5
-      ],
-      "source": "windmill:2041",
-      "validated": true
-    },
-    {
-      "level_index": 56,
+      "level_index": 54,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -5365,7 +5105,7 @@
       "validated": true
     },
     {
-      "level_index": 57,
+      "level_index": 55,
       "config": {
         "cols": 6,
         "rows": 6,
@@ -5632,7 +5372,7 @@
       "validated": true
     },
     {
-      "level_index": 58,
+      "level_index": 56,
       "config": {
         "cols": 3,
         "rows": 4,
@@ -5709,7 +5449,7 @@
       "validated": true
     },
     {
-      "level_index": 59,
+      "level_index": 57,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -5855,95 +5595,7 @@
       "validated": true
     },
     {
-      "level_index": 60,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          5,
-          0
-        ],
-        "tetris": {
-          "4,0": {
-            "shape": [
-              [
-                0,
-                0
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "2,2": {
-            "shape": [
-              [
-                2,
-                0
-              ],
-              [
-                2,
-                1
-              ],
-              [
-                0,
-                2
-              ],
-              [
-                1,
-                2
-              ],
-              [
-                2,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "0,4": {
-            "shape": [
-              [
-                0,
-                0
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          }
-        }
-      },
-      "baseline": 23,
-      "moves": 18,
-      "solution_actions": [
-        4,
-        1,
-        3,
-        1,
-        4,
-        4,
-        4,
-        1,
-        3,
-        3,
-        1,
-        1,
-        4,
-        4,
-        4,
-        2,
-        4,
-        1,
-        5
-      ],
-      "source": "windmill:368",
-      "validated": true
-    },
-    {
-      "level_index": 61,
+      "level_index": 58,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -6165,7 +5817,7 @@
       "validated": true
     },
     {
-      "level_index": 62,
+      "level_index": 59,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -6297,7 +5949,7 @@
       "validated": true
     },
     {
-      "level_index": 63,
+      "level_index": 60,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -6429,7 +6081,7 @@
       "validated": true
     },
     {
-      "level_index": 64,
+      "level_index": 61,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -6537,7 +6189,7 @@
       "validated": true
     },
     {
-      "level_index": 65,
+      "level_index": 62,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -6631,149 +6283,7 @@
       "validated": true
     },
     {
-      "level_index": 66,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          5,
-          0
-        ],
-        "tetris": {
-          "0,0": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                2,
-                0
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "1,1": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                2,
-                0
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "2,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                2,
-                0
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "3,3": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                2,
-                0
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          }
-        },
-        "breakpoints": [
-          [
-            [
-              1,
-              4
-            ],
-            [
-              2,
-              4
-            ]
-          ]
-        ]
-      },
-      "baseline": 23,
-      "moves": 18,
-      "solution_actions": [
-        1,
-        4,
-        1,
-        4,
-        2,
-        2,
-        4,
-        1,
-        4,
-        1,
-        4,
-        1,
-        3,
-        3,
-        1,
-        4,
-        1,
-        4,
-        5
-      ],
-      "source": "windmill:2281",
-      "validated": true
-    },
-    {
-      "level_index": 67,
+      "level_index": 63,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -6903,7 +6413,7 @@
       "validated": true
     },
     {
-      "level_index": 68,
+      "level_index": 64,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -7052,267 +6562,7 @@
       "validated": true
     },
     {
-      "level_index": 69,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          4,
-          0
-        ],
-        "end": [
-          5,
-          4
-        ],
-        "tetris": {
-          "4,0": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                1,
-                2
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "4,1": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                1,
-                2
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "4,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                1,
-                2
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          }
-        },
-        "breakpoints": [
-          [
-            [
-              2,
-              0
-            ],
-            [
-              3,
-              0
-            ]
-          ]
-        ]
-      },
-      "baseline": 24,
-      "moves": 19,
-      "solution_actions": [
-        3,
-        2,
-        2,
-        3,
-        3,
-        3,
-        2,
-        2,
-        4,
-        2,
-        4,
-        1,
-        4,
-        2,
-        4,
-        1,
-        1,
-        4,
-        2,
-        5
-      ],
-      "source": "windmill:1010",
-      "validated": true
-    },
-    {
-      "level_index": 70,
-      "config": {
-        "cols": 5,
-        "rows": 6,
-        "start": [
-          0,
-          6
-        ],
-        "end": [
-          5,
-          0
-        ],
-        "tetris": {
-          "1,1": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                2,
-                0
-              ],
-              [
-                0,
-                2
-              ],
-              [
-                2,
-                2
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "2,1": {
-            "shape": [
-              [
-                0,
-                0
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "2,2": {
-            "shape": [
-              [
-                0,
-                0
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "2,3": {
-            "shape": [
-              [
-                0,
-                0
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "2,4": {
-            "shape": [
-              [
-                0,
-                0
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "3,4": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                2,
-                0
-              ],
-              [
-                0,
-                2
-              ],
-              [
-                2,
-                2
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          }
-        }
-      },
-      "baseline": 24,
-      "moves": 19,
-      "solution_actions": [
-        4,
-        4,
-        1,
-        1,
-        1,
-        1,
-        3,
-        1,
-        4,
-        4,
-        2,
-        2,
-        2,
-        4,
-        1,
-        1,
-        4,
-        1,
-        1,
-        5
-      ],
-      "source": "windmill:1532",
-      "validated": true
-    },
-    {
-      "level_index": 71,
+      "level_index": 65,
       "config": {
         "cols": 5,
         "rows": 4,
@@ -7467,7 +6717,7 @@
       "validated": true
     },
     {
-      "level_index": 72,
+      "level_index": 66,
       "config": {
         "cols": 4,
         "rows": 5,
@@ -7546,7 +6796,7 @@
       "validated": true
     },
     {
-      "level_index": 73,
+      "level_index": 67,
       "config": {
         "cols": 6,
         "rows": 4,
@@ -7747,7 +6997,7 @@
       "validated": true
     },
     {
-      "level_index": 74,
+      "level_index": 68,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -7875,123 +7125,7 @@
       "validated": true
     },
     {
-      "level_index": 75,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          5,
-          0
-        ],
-        "tetris": {
-          "2,0": {
-            "shape": [
-              [
-                0,
-                0
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "0,2": {
-            "shape": [
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "4,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "2,4": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                2,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          }
-        }
-      },
-      "baseline": 26,
-      "moves": 20,
-      "solution_actions": [
-        4,
-        4,
-        1,
-        4,
-        1,
-        3,
-        3,
-        3,
-        1,
-        4,
-        4,
-        1,
-        1,
-        4,
-        2,
-        2,
-        4,
-        4,
-        1,
-        1,
-        5
-      ],
-      "source": "witness:70",
-      "validated": true
-    },
-    {
-      "level_index": 76,
+      "level_index": 69,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -8111,123 +7245,7 @@
       "validated": true
     },
     {
-      "level_index": 77,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          5,
-          0
-        ],
-        "tetris": {
-          "2,0": {
-            "shape": [
-              [
-                0,
-                0
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "0,2": {
-            "shape": [
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "4,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "2,4": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                2,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          }
-        }
-      },
-      "baseline": 26,
-      "moves": 20,
-      "solution_actions": [
-        4,
-        4,
-        1,
-        4,
-        1,
-        3,
-        3,
-        3,
-        1,
-        4,
-        4,
-        1,
-        1,
-        4,
-        2,
-        2,
-        4,
-        4,
-        1,
-        1,
-        5
-      ],
-      "source": "windmill:866",
-      "validated": true
-    },
-    {
-      "level_index": 78,
+      "level_index": 70,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -8327,7 +7345,7 @@
       "validated": true
     },
     {
-      "level_index": 79,
+      "level_index": 71,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -8475,7 +7493,7 @@
       "validated": true
     },
     {
-      "level_index": 80,
+      "level_index": 72,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -8571,146 +7589,7 @@
       "validated": true
     },
     {
-      "level_index": 81,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "starts": [
-          [
-            5,
-            0
-          ],
-          [
-            0,
-            5
-          ]
-        ],
-        "end": [
-          0,
-          0
-        ],
-        "tetris": {
-          "0,0": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                1
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "2,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                1
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "4,4": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                1
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          }
-        },
-        "breakpoints": [
-          [
-            [
-              4,
-              1
-            ],
-            [
-              4,
-              2
-            ]
-          ],
-          [
-            [
-              2,
-              2
-            ],
-            [
-              2,
-              3
-            ]
-          ]
-        ]
-      },
-      "baseline": 27,
-      "moves": 21,
-      "solution_actions": [
-        3,
-        3,
-        3,
-        2,
-        2,
-        4,
-        2,
-        4,
-        4,
-        2,
-        2,
-        3,
-        3,
-        1,
-        3,
-        3,
-        1,
-        1,
-        3,
-        1,
-        1,
-        5
-      ],
-      "source": "windmill:180",
-      "validated": true
-    },
-    {
-      "level_index": 82,
+      "level_index": 73,
       "config": {
         "cols": 5,
         "rows": 4,
@@ -8829,7 +7708,7 @@
       "validated": true
     },
     {
-      "level_index": 83,
+      "level_index": 74,
       "config": {
         "cols": 5,
         "rows": 4,
@@ -8974,7 +7853,7 @@
       "validated": true
     },
     {
-      "level_index": 84,
+      "level_index": 75,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -9284,7 +8163,7 @@
       "validated": true
     },
     {
-      "level_index": 85,
+      "level_index": 76,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -9414,453 +8293,7 @@
       "validated": true
     },
     {
-      "level_index": 86,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          5,
-          0
-        ],
-        "tetris": {
-          "2,1": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                1,
-                1
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "4,1": {
-            "shape": [
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "0,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "2,3": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                0,
-                2
-              ],
-              [
-                1,
-                2
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          }
-        }
-      },
-      "baseline": 28,
-      "moves": 22,
-      "solution_actions": [
-        4,
-        4,
-        1,
-        4,
-        1,
-        3,
-        3,
-        1,
-        3,
-        1,
-        4,
-        1,
-        4,
-        2,
-        2,
-        4,
-        4,
-        4,
-        1,
-        3,
-        1,
-        4,
-        5
-      ],
-      "source": "windmill:506",
-      "validated": true
-    },
-    {
-      "level_index": 87,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          5,
-          0
-        ],
-        "tetris": {
-          "1,1": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "2,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                1
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "1,3": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                1,
-                1
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "4,3": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                2,
-                0
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          }
-        }
-      },
-      "baseline": 28,
-      "moves": 22,
-      "solution_actions": [
-        1,
-        1,
-        1,
-        1,
-        4,
-        2,
-        2,
-        2,
-        4,
-        4,
-        4,
-        4,
-        1,
-        1,
-        3,
-        3,
-        3,
-        1,
-        4,
-        1,
-        4,
-        4,
-        5
-      ],
-      "source": "windmill:1219",
-      "validated": true
-    },
-    {
-      "level_index": 88,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          5,
-          0
-        ],
-        "tetris": {
-          "1,2": {
-            "shape": [
-              [
-                3,
-                0
-              ],
-              [
-                2,
-                1
-              ],
-              [
-                1,
-                2
-              ],
-              [
-                0,
-                3
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "2,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                2,
-                2
-              ],
-              [
-                3,
-                3
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "3,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                2,
-                2
-              ],
-              [
-                3,
-                3
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          }
-        }
-      },
-      "baseline": 28,
-      "moves": 22,
-      "solution_actions": [
-        4,
-        4,
-        4,
-        1,
-        3,
-        1,
-        3,
-        1,
-        3,
-        1,
-        4,
-        1,
-        4,
-        2,
-        4,
-        2,
-        4,
-        2,
-        4,
-        1,
-        1,
-        1,
-        5
-      ],
-      "source": "windmill:2045",
-      "validated": true
-    },
-    {
-      "level_index": 89,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          5,
-          0
-        ],
-        "tetris": {
-          "3,3": {
-            "shape": [
-              [
-                1,
-                0
-              ],
-              [
-                2,
-                0
-              ],
-              [
-                2,
-                1
-              ],
-              [
-                0,
-                2
-              ],
-              [
-                1,
-                2
-              ],
-              [
-                2,
-                2
-              ],
-              [
-                2,
-                3
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          }
-        },
-        "breakpoints": [
-          [
-            [
-              3,
-              1
-            ],
-            [
-              4,
-              1
-            ]
-          ],
-          [
-            [
-              1,
-              3
-            ],
-            [
-              1,
-              4
-            ]
-          ]
-        ]
-      },
-      "baseline": 28,
-      "moves": 22,
-      "solution_actions": [
-        1,
-        1,
-        1,
-        1,
-        4,
-        1,
-        4,
-        2,
-        4,
-        2,
-        3,
-        3,
-        2,
-        4,
-        4,
-        2,
-        4,
-        1,
-        1,
-        1,
-        1,
-        4,
-        5
-      ],
-      "source": "windmill:2151",
-      "validated": true
-    },
-    {
-      "level_index": 90,
+      "level_index": 77,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -9982,7 +8415,7 @@
       "validated": true
     },
     {
-      "level_index": 91,
+      "level_index": 78,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -10094,7 +8527,7 @@
       "validated": true
     },
     {
-      "level_index": 92,
+      "level_index": 79,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -10114,14 +8547,18 @@
                 0
               ],
               [
-                1,
-                0
+                0,
+                1
+              ],
+              [
+                0,
+                2
               ]
             ],
             "rotated": false,
             "negative": false
           },
-          "0,2": {
+          "2,2": {
             "shape": [
               [
                 0,
@@ -10139,7 +8576,7 @@
             "rotated": false,
             "negative": false
           },
-          "3,3": {
+          "1,3": {
             "shape": [
               [
                 0,
@@ -10150,12 +8587,26 @@
                 0
               ],
               [
-                0,
+                1,
                 1
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "4,3": {
+            "shape": [
+              [
+                0,
+                0
               ],
               [
                 1,
-                1
+                0
+              ],
+              [
+                2,
+                0
               ]
             ],
             "rotated": false,
@@ -10168,171 +8619,35 @@
       "solution_actions": [
         4,
         4,
+        4,
+        4,
         1,
         3,
         3,
-        1,
-        1,
-        1,
-        4,
-        4,
-        2,
         3,
-        2,
-        4,
-        4,
-        4,
-        2,
-        2,
+        3,
+        1,
         4,
         1,
         1,
+        1,
+        4,
+        2,
+        4,
+        2,
+        4,
+        2,
+        4,
         1,
         1,
         1,
         5
       ],
-      "source": "witness:94",
+      "source": "windmill:1219",
       "validated": true
     },
     {
-      "level_index": 93,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          5,
-          0
-        ],
-        "tetris": {
-          "0,0": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "4,0": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "0,4": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "4,4": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          }
-        }
-      },
-      "baseline": 30,
-      "moves": 24,
-      "solution_actions": [
-        4,
-        4,
-        4,
-        1,
-        4,
-        2,
-        4,
-        1,
-        1,
-        3,
-        3,
-        3,
-        2,
-        3,
-        1,
-        1,
-        1,
-        4,
-        4,
-        4,
-        2,
-        4,
-        1,
-        1,
-        5
-      ],
-      "source": "windmill:1480",
-      "validated": true
-    },
-    {
-      "level_index": 94,
+      "level_index": 80,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -10436,178 +8751,7 @@
       "validated": true
     },
     {
-      "level_index": 95,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          0,
-          4
-        ],
-        "tetris": {
-          "2,0": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "2,1": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "0,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "1,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "2,2": {
-            "shape": [
-              [
-                0,
-                0
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "3,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "4,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "2,3": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "2,4": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          }
-        }
-      },
-      "baseline": 32,
-      "moves": 25,
-      "solution_actions": [
-        4,
-        4,
-        4,
-        1,
-        4,
-        1,
-        4,
-        1,
-        3,
-        3,
-        1,
-        4,
-        1,
-        3,
-        3,
-        2,
-        2,
-        3,
-        1,
-        1,
-        3,
-        2,
-        2,
-        2,
-        2,
-        5
-      ],
-      "source": "windmill:1594",
-      "validated": true
-    },
-    {
-      "level_index": 96,
+      "level_index": 81,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -10620,43 +8764,53 @@
           0
         ],
         "tetris": {
-          "3,0": {
+          "2,0": {
             "shape": [
               [
                 0,
                 0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                1,
-                1
               ]
             ],
-            "rotated": false,
+            "rotated": true,
             "negative": false
           },
-          "3,2": {
+          "0,2": {
             "shape": [
               [
+                1,
+                0
+              ],
+              [
                 0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                1,
                 1
+              ],
+              [
+                1,
+                2
               ]
             ],
-            "rotated": false,
+            "rotated": true,
             "negative": false
           },
-          "3,4": {
+          "4,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                0,
+                2
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "2,4": {
             "shape": [
               [
                 0,
@@ -10667,63 +8821,299 @@
                 0
               ],
               [
-                1,
+                2,
+                0
+              ],
+              [
+                0,
                 1
+              ],
+              [
+                0,
+                2
               ]
             ],
-            "rotated": false,
+            "rotated": true,
             "negative": false
           }
-        },
-        "breakpoints": [
-          [
-            [
-              1,
-              3
-            ],
-            [
-              2,
-              3
-            ]
-          ]
-        ]
+        }
       },
       "baseline": 33,
       "moves": 26,
       "solution_actions": [
         4,
+        4,
+        4,
+        4,
+        4,
+        1,
+        1,
+        1,
+        3,
+        3,
+        2,
+        2,
+        3,
+        3,
+        1,
         1,
         3,
         1,
         4,
         1,
         4,
-        1,
-        1,
-        4,
-        2,
-        4,
-        2,
-        3,
-        2,
-        3,
-        2,
-        4,
         2,
         4,
         1,
         4,
-        1,
-        1,
-        1,
-        1,
+        4,
         5
       ],
-      "source": "windmill:31",
+      "source": "witness:70",
       "validated": true
     },
     {
-      "level_index": 97,
+      "level_index": 82,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "tetris": {
+          "2,1": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                1,
+                1
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "4,1": {
+            "shape": [
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "0,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "2,3": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          }
+        }
+      },
+      "baseline": 33,
+      "moves": 26,
+      "solution_actions": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        1,
+        1,
+        3,
+        3,
+        2,
+        3,
+        3,
+        3,
+        1,
+        1,
+        4,
+        4,
+        1,
+        1,
+        4,
+        2,
+        2,
+        4,
+        1,
+        4,
+        1,
+        5
+      ],
+      "source": "windmill:506",
+      "validated": true
+    },
+    {
+      "level_index": 83,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "tetris": {
+          "2,0": {
+            "shape": [
+              [
+                0,
+                0
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "0,2": {
+            "shape": [
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "4,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                0,
+                2
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "2,4": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          }
+        }
+      },
+      "baseline": 33,
+      "moves": 26,
+      "solution_actions": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        1,
+        1,
+        1,
+        3,
+        3,
+        2,
+        2,
+        3,
+        3,
+        1,
+        1,
+        3,
+        1,
+        4,
+        1,
+        4,
+        2,
+        4,
+        1,
+        4,
+        4,
+        5
+      ],
+      "source": "windmill:866",
+      "validated": true
+    },
+    {
+      "level_index": 84,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -10739,197 +9129,15 @@
           "0,0": {
             "shape": [
               [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                1
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "4,0": {
-            "shape": [
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                1
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "2,1": {
-            "shape": [
-              [
-                0,
-                0
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "1,2": {
-            "shape": [
-              [
-                0,
-                0
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "2,2": {
-            "shape": [
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                1
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "3,2": {
-            "shape": [
-              [
-                0,
-                0
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "2,3": {
-            "shape": [
-              [
-                0,
-                0
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "0,4": {
-            "shape": [
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                1
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "4,4": {
-            "shape": [
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                1
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          }
-        }
-      },
-      "baseline": 33,
-      "moves": 26,
-      "solution_actions": [
-        4,
-        4,
-        1,
-        4,
-        1,
-        4,
-        2,
-        2,
-        4,
-        1,
-        1,
-        1,
-        3,
-        3,
-        3,
-        3,
-        3,
-        1,
-        1,
-        4,
-        2,
-        4,
-        4,
-        4,
-        1,
-        4,
-        5
-      ],
-      "source": "windmill:1477",
-      "validated": true
-    },
-    {
-      "level_index": 98,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "starts": [
-          [
-            0,
-            5
-          ],
-          [
-            5,
-            5
-          ]
-        ],
-        "end": [
-          0,
-          0
-        ],
-        "tetris": {
-          "1,2": {
-            "shape": [
-              [
                 0,
                 0
               ],
               [
-                0,
+                2,
+                0
+              ],
+              [
+                1,
                 1
               ],
               [
@@ -10937,126 +9145,7 @@
                 2
               ]
             ],
-            "rotated": false,
-            "negative": false
-          },
-          "3,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          }
-        },
-        "breakpoints": [
-          [
-            [
-              4,
-              0
-            ],
-            [
-              5,
-              0
-            ]
-          ],
-          [
-            [
-              3,
-              1
-            ],
-            [
-              3,
-              2
-            ]
-          ],
-          [
-            [
-              2,
-              4
-            ],
-            [
-              2,
-              5
-            ]
-          ]
-        ]
-      },
-      "baseline": 34,
-      "moves": 27,
-      "solution_actions": [
-        4,
-        4,
-        4,
-        1,
-        1,
-        1,
-        4,
-        2,
-        2,
-        2,
-        4,
-        1,
-        1,
-        1,
-        1,
-        3,
-        3,
-        1,
-        3,
-        2,
-        2,
-        2,
-        3,
-        1,
-        1,
-        1,
-        3,
-        5
-      ],
-      "source": "windmill:637",
-      "validated": true
-    },
-    {
-      "level_index": 99,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          5,
-          0
-        ],
-        "tetris": {
-          "4,0": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                0,
-                2
-              ]
-            ],
-            "rotated": false,
+            "rotated": true,
             "negative": false
           },
           "1,1": {
@@ -11066,79 +9155,115 @@
                 0
               ],
               [
-                1,
+                2,
                 0
               ],
               [
-                0,
+                1,
                 1
+              ],
+              [
+                0,
+                2
               ]
             ],
-            "rotated": false,
+            "rotated": true,
             "negative": false
           },
-          "0,4": {
+          "2,2": {
             "shape": [
               [
-                2,
+                0,
                 0
               ],
               [
-                0,
-                1
+                2,
+                0
               ],
               [
                 1,
                 1
               ],
               [
-                2,
-                1
+                0,
+                2
               ]
             ],
-            "rotated": false,
+            "rotated": true,
+            "negative": false
+          },
+          "3,3": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                0,
+                2
+              ]
+            ],
+            "rotated": true,
             "negative": false
           }
-        }
+        },
+        "breakpoints": [
+          [
+            [
+              1,
+              4
+            ],
+            [
+              2,
+              4
+            ]
+          ]
+        ]
       },
-      "baseline": 35,
-      "moves": 28,
+      "baseline": 33,
+      "moves": 26,
       "solution_actions": [
         4,
         4,
         4,
+        4,
         1,
+        3,
+        3,
         1,
         3,
         2,
         3,
-        3,
         1,
-        4,
         1,
-        4,
         1,
-        3,
-        3,
         1,
-        4,
-        4,
-        4,
         4,
         2,
+        4,
+        1,
+        4,
         2,
         2,
         4,
         1,
-        1,
+        4,
         1,
         5
       ],
-      "source": "windmill:453",
+      "source": "windmill:2281",
       "validated": true
     },
     {
-      "level_index": 100,
+      "level_index": 85,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -11274,438 +9399,7 @@
       "validated": true
     },
     {
-      "level_index": 101,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "starts": [
-          [
-            0,
-            5
-          ],
-          [
-            5,
-            5
-          ]
-        ],
-        "end": [
-          0,
-          0
-        ],
-        "tetris": {
-          "3,1": {
-            "shape": [
-              [
-                1,
-                0
-              ],
-              [
-                3,
-                0
-              ],
-              [
-                0,
-                2
-              ],
-              [
-                4,
-                2
-              ],
-              [
-                1,
-                3
-              ],
-              [
-                2,
-                3
-              ],
-              [
-                3,
-                3
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "4,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                0,
-                2
-              ],
-              [
-                0,
-                4
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "3,3": {
-            "shape": [
-              [
-                1,
-                0
-              ],
-              [
-                3,
-                0
-              ],
-              [
-                0,
-                2
-              ],
-              [
-                4,
-                2
-              ],
-              [
-                1,
-                3
-              ],
-              [
-                2,
-                3
-              ],
-              [
-                3,
-                3
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          }
-        }
-      },
-      "baseline": 36,
-      "moves": 29,
-      "solution_actions": [
-        4,
-        4,
-        4,
-        4,
-        4,
-        1,
-        1,
-        1,
-        1,
-        3,
-        1,
-        3,
-        2,
-        2,
-        4,
-        2,
-        3,
-        2,
-        3,
-        1,
-        3,
-        1,
-        4,
-        1,
-        1,
-        3,
-        2,
-        3,
-        1,
-        5
-      ],
-      "source": "windmill:1257",
-      "validated": true
-    },
-    {
-      "level_index": 102,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          5,
-          0
-        ],
-        "tetris": {
-          "1,4": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                1,
-                2
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "2,4": {
-            "shape": [
-              [
-                1,
-                0
-              ],
-              [
-                0,
-                1
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                1,
-                2
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          },
-          "3,4": {
-            "shape": [
-              [
-                1,
-                0
-              ],
-              [
-                1,
-                1
-              ],
-              [
-                0,
-                2
-              ],
-              [
-                1,
-                2
-              ]
-            ],
-            "rotated": false,
-            "negative": false
-          }
-        },
-        "breakpoints": [
-          [
-            [
-              1,
-              0
-            ],
-            [
-              2,
-              0
-            ]
-          ],
-          [
-            [
-              4,
-              2
-            ],
-            [
-              4,
-              3
-            ]
-          ]
-        ]
-      },
-      "baseline": 38,
-      "moves": 30,
-      "solution_actions": [
-        1,
-        4,
-        2,
-        4,
-        4,
-        4,
-        1,
-        4,
-        1,
-        1,
-        1,
-        3,
-        3,
-        2,
-        2,
-        2,
-        3,
-        1,
-        1,
-        3,
-        2,
-        3,
-        1,
-        1,
-        4,
-        4,
-        1,
-        4,
-        4,
-        4,
-        5
-      ],
-      "source": "windmill:714",
-      "validated": true
-    },
-    {
-      "level_index": 103,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          5,
-          0
-        ],
-        "tetris": {
-          "0,0": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                2,
-                0
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "4,0": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                2,
-                0
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "2,2": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                2,
-                0
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "0,4": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                2,
-                0
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          },
-          "4,4": {
-            "shape": [
-              [
-                0,
-                0
-              ],
-              [
-                1,
-                0
-              ],
-              [
-                2,
-                0
-              ]
-            ],
-            "rotated": true,
-            "negative": false
-          }
-        }
-      },
-      "baseline": 38,
-      "moves": 30,
-      "solution_actions": [
-        4,
-        4,
-        4,
-        1,
-        3,
-        3,
-        3,
-        1,
-        4,
-        4,
-        4,
-        4,
-        2,
-        2,
-        4,
-        1,
-        1,
-        1,
-        3,
-        3,
-        3,
-        3,
-        1,
-        1,
-        4,
-        2,
-        4,
-        4,
-        4,
-        1,
-        5
-      ],
-      "source": "windmill:1006",
-      "validated": true
-    },
-    {
-      "level_index": 104,
+      "level_index": 86,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -11866,7 +9560,7 @@
       "validated": true
     },
     {
-      "level_index": 105,
+      "level_index": 87,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -11994,7 +9688,7 @@
       "validated": true
     },
     {
-      "level_index": 106,
+      "level_index": 88,
       "config": {
         "cols": 1,
         "rows": 3,
@@ -12044,7 +9738,7 @@
       "validated": false
     },
     {
-      "level_index": 107,
+      "level_index": 89,
       "config": {
         "cols": 1,
         "rows": 3,
@@ -12094,7 +9788,7 @@
       "validated": false
     },
     {
-      "level_index": 108,
+      "level_index": 90,
       "config": {
         "cols": 1,
         "rows": 4,
@@ -12152,7 +9846,7 @@
       "validated": false
     },
     {
-      "level_index": 109,
+      "level_index": 91,
       "config": {
         "cols": 2,
         "rows": 2,
@@ -12206,7 +9900,7 @@
       "validated": false
     },
     {
-      "level_index": 110,
+      "level_index": 92,
       "config": {
         "cols": 2,
         "rows": 2,
@@ -12264,7 +9958,7 @@
       "validated": false
     },
     {
-      "level_index": 111,
+      "level_index": 93,
       "config": {
         "cols": 2,
         "rows": 3,
@@ -12320,7 +10014,7 @@
       "validated": false
     },
     {
-      "level_index": 112,
+      "level_index": 94,
       "config": {
         "cols": 2,
         "rows": 3,
@@ -12388,7 +10082,7 @@
       "validated": false
     },
     {
-      "level_index": 113,
+      "level_index": 95,
       "config": {
         "cols": 2,
         "rows": 3,
@@ -12458,7 +10152,7 @@
       "validated": false
     },
     {
-      "level_index": 114,
+      "level_index": 96,
       "config": {
         "cols": 4,
         "rows": 2,
@@ -12516,7 +10210,7 @@
       "validated": false
     },
     {
-      "level_index": 115,
+      "level_index": 97,
       "config": {
         "cols": 2,
         "rows": 4,
@@ -12596,7 +10290,7 @@
       "validated": false
     },
     {
-      "level_index": 116,
+      "level_index": 98,
       "config": {
         "cols": 3,
         "rows": 3,
@@ -12646,7 +10340,7 @@
       "validated": false
     },
     {
-      "level_index": 117,
+      "level_index": 99,
       "config": {
         "cols": 3,
         "rows": 3,
@@ -12720,7 +10414,7 @@
       "validated": false
     },
     {
-      "level_index": 118,
+      "level_index": 100,
       "config": {
         "cols": 3,
         "rows": 3,
@@ -12810,7 +10504,7 @@
       "validated": false
     },
     {
-      "level_index": 119,
+      "level_index": 101,
       "config": {
         "cols": 3,
         "rows": 3,
@@ -12950,7 +10644,7 @@
       "validated": false
     },
     {
-      "level_index": 120,
+      "level_index": 102,
       "config": {
         "cols": 3,
         "rows": 3,
@@ -13014,7 +10708,7 @@
       "validated": false
     },
     {
-      "level_index": 121,
+      "level_index": 103,
       "config": {
         "cols": 3,
         "rows": 4,
@@ -13140,7 +10834,7 @@
       "validated": false
     },
     {
-      "level_index": 122,
+      "level_index": 104,
       "config": {
         "cols": 3,
         "rows": 4,
@@ -13220,7 +10914,7 @@
       "validated": false
     },
     {
-      "level_index": 123,
+      "level_index": 105,
       "config": {
         "cols": 3,
         "rows": 4,
@@ -13300,7 +10994,7 @@
       "validated": false
     },
     {
-      "level_index": 124,
+      "level_index": 106,
       "config": {
         "cols": 3,
         "rows": 4,
@@ -13380,7 +11074,7 @@
       "validated": false
     },
     {
-      "level_index": 125,
+      "level_index": 107,
       "config": {
         "cols": 4,
         "rows": 3,
@@ -13474,7 +11168,7 @@
       "validated": false
     },
     {
-      "level_index": 126,
+      "level_index": 108,
       "config": {
         "cols": 4,
         "rows": 3,
@@ -13576,7 +11270,7 @@
       "validated": false
     },
     {
-      "level_index": 127,
+      "level_index": 109,
       "config": {
         "cols": 4,
         "rows": 3,
@@ -13678,7 +11372,7 @@
       "validated": false
     },
     {
-      "level_index": 128,
+      "level_index": 110,
       "config": {
         "cols": 5,
         "rows": 3,
@@ -13758,7 +11452,7 @@
       "validated": false
     },
     {
-      "level_index": 129,
+      "level_index": 111,
       "config": {
         "cols": 5,
         "rows": 3,
@@ -13850,7 +11544,7 @@
       "validated": false
     },
     {
-      "level_index": 130,
+      "level_index": 112,
       "config": {
         "cols": 3,
         "rows": 5,
@@ -13918,7 +11612,7 @@
       "validated": false
     },
     {
-      "level_index": 131,
+      "level_index": 113,
       "config": {
         "cols": 5,
         "rows": 3,
@@ -14002,7 +11696,7 @@
       "validated": false
     },
     {
-      "level_index": 132,
+      "level_index": 114,
       "config": {
         "cols": 5,
         "rows": 3,
@@ -14118,7 +11812,7 @@
       "validated": false
     },
     {
-      "level_index": 133,
+      "level_index": 115,
       "config": {
         "cols": 5,
         "rows": 3,
@@ -14220,7 +11914,7 @@
       "validated": false
     },
     {
-      "level_index": 134,
+      "level_index": 116,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -14312,7 +12006,7 @@
       "validated": false
     },
     {
-      "level_index": 135,
+      "level_index": 117,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -14404,7 +12098,7 @@
       "validated": false
     },
     {
-      "level_index": 136,
+      "level_index": 118,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -14492,7 +12186,7 @@
       "validated": false
     },
     {
-      "level_index": 137,
+      "level_index": 119,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -14558,7 +12252,7 @@
       "validated": false
     },
     {
-      "level_index": 138,
+      "level_index": 120,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -14630,7 +12324,7 @@
       "validated": false
     },
     {
-      "level_index": 139,
+      "level_index": 121,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -14718,7 +12412,7 @@
       "validated": false
     },
     {
-      "level_index": 140,
+      "level_index": 122,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -14798,7 +12492,7 @@
       "validated": false
     },
     {
-      "level_index": 141,
+      "level_index": 123,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -14884,7 +12578,7 @@
       "validated": false
     },
     {
-      "level_index": 142,
+      "level_index": 124,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -14960,7 +12654,7 @@
       "validated": false
     },
     {
-      "level_index": 143,
+      "level_index": 125,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -15046,7 +12740,7 @@
       "validated": false
     },
     {
-      "level_index": 144,
+      "level_index": 126,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -15126,7 +12820,7 @@
       "validated": false
     },
     {
-      "level_index": 145,
+      "level_index": 127,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -15228,7 +12922,7 @@
       "validated": false
     },
     {
-      "level_index": 146,
+      "level_index": 128,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -15324,7 +13018,7 @@
       "validated": false
     },
     {
-      "level_index": 147,
+      "level_index": 129,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -15394,7 +13088,7 @@
       "validated": false
     },
     {
-      "level_index": 148,
+      "level_index": 130,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -15502,7 +13196,7 @@
       "validated": false
     },
     {
-      "level_index": 149,
+      "level_index": 131,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -15686,7 +13380,7 @@
       "validated": false
     },
     {
-      "level_index": 150,
+      "level_index": 132,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -15794,7 +13488,7 @@
       "validated": false
     },
     {
-      "level_index": 151,
+      "level_index": 133,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -15902,7 +13596,7 @@
       "validated": false
     },
     {
-      "level_index": 152,
+      "level_index": 134,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -16010,7 +13704,7 @@
       "validated": false
     },
     {
-      "level_index": 153,
+      "level_index": 135,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -16112,7 +13806,7 @@
       "validated": false
     },
     {
-      "level_index": 154,
+      "level_index": 136,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -16230,7 +13924,7 @@
       "validated": false
     },
     {
-      "level_index": 155,
+      "level_index": 137,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -16314,7 +14008,7 @@
       "validated": false
     },
     {
-      "level_index": 156,
+      "level_index": 138,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -16380,7 +14074,7 @@
       "validated": false
     },
     {
-      "level_index": 157,
+      "level_index": 139,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -16468,7 +14162,7 @@
       "validated": false
     },
     {
-      "level_index": 158,
+      "level_index": 140,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -16630,7 +14324,7 @@
       "validated": false
     },
     {
-      "level_index": 159,
+      "level_index": 141,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -16718,7 +14412,7 @@
       "validated": false
     },
     {
-      "level_index": 160,
+      "level_index": 142,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -16846,7 +14540,7 @@
       "validated": false
     },
     {
-      "level_index": 161,
+      "level_index": 143,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -16944,7 +14638,7 @@
       "validated": false
     },
     {
-      "level_index": 162,
+      "level_index": 144,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -17034,7 +14728,7 @@
       "validated": false
     },
     {
-      "level_index": 163,
+      "level_index": 145,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -17100,7 +14794,7 @@
       "validated": false
     },
     {
-      "level_index": 164,
+      "level_index": 146,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -17200,7 +14894,7 @@
       "validated": false
     },
     {
-      "level_index": 165,
+      "level_index": 147,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -17330,7 +15024,7 @@
       "validated": false
     },
     {
-      "level_index": 166,
+      "level_index": 148,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -17440,7 +15134,7 @@
       "validated": false
     },
     {
-      "level_index": 167,
+      "level_index": 149,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -17520,7 +15214,7 @@
       "validated": false
     },
     {
-      "level_index": 168,
+      "level_index": 150,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -17648,7 +15342,7 @@
       "validated": false
     },
     {
-      "level_index": 169,
+      "level_index": 151,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -17754,7 +15448,7 @@
       "validated": false
     },
     {
-      "level_index": 170,
+      "level_index": 152,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -17872,7 +15566,7 @@
       "validated": false
     },
     {
-      "level_index": 171,
+      "level_index": 153,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -17970,7 +15664,7 @@
       "validated": false
     },
     {
-      "level_index": 172,
+      "level_index": 154,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -18108,7 +15802,7 @@
       "validated": false
     },
     {
-      "level_index": 173,
+      "level_index": 155,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -18224,7 +15918,7 @@
       "validated": false
     },
     {
-      "level_index": 174,
+      "level_index": 156,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -18304,7 +15998,7 @@
       "validated": false
     },
     {
-      "level_index": 175,
+      "level_index": 157,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -18388,7 +16082,7 @@
       "validated": false
     },
     {
-      "level_index": 176,
+      "level_index": 158,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -18490,7 +16184,7 @@
       "validated": false
     },
     {
-      "level_index": 177,
+      "level_index": 159,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -18580,7 +16274,7 @@
       "validated": false
     },
     {
-      "level_index": 178,
+      "level_index": 160,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -18656,7 +16350,7 @@
       "validated": false
     },
     {
-      "level_index": 179,
+      "level_index": 161,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -18780,7 +16474,7 @@
       "validated": false
     },
     {
-      "level_index": 180,
+      "level_index": 162,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -18884,7 +16578,7 @@
       "validated": false
     },
     {
-      "level_index": 181,
+      "level_index": 163,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -19022,7 +16716,7 @@
       "validated": false
     },
     {
-      "level_index": 182,
+      "level_index": 164,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -19122,7 +16816,7 @@
       "validated": false
     },
     {
-      "level_index": 183,
+      "level_index": 165,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -19244,7 +16938,7 @@
       "validated": false
     },
     {
-      "level_index": 184,
+      "level_index": 166,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -19400,7 +17094,7 @@
       "validated": false
     },
     {
-      "level_index": 185,
+      "level_index": 167,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -19488,7 +17182,7 @@
       "validated": false
     },
     {
-      "level_index": 186,
+      "level_index": 168,
       "config": {
         "cols": 5,
         "rows": 4,
@@ -19624,7 +17318,7 @@
       "validated": false
     },
     {
-      "level_index": 187,
+      "level_index": 169,
       "config": {
         "cols": 5,
         "rows": 4,
@@ -19762,7 +17456,7 @@
       "validated": false
     },
     {
-      "level_index": 188,
+      "level_index": 170,
       "config": {
         "cols": 5,
         "rows": 4,
@@ -19890,7 +17584,7 @@
       "validated": false
     },
     {
-      "level_index": 189,
+      "level_index": 171,
       "config": {
         "cols": 5,
         "rows": 4,
@@ -20008,7 +17702,7 @@
       "validated": false
     },
     {
-      "level_index": 190,
+      "level_index": 172,
       "config": {
         "cols": 5,
         "rows": 4,
@@ -20316,7 +18010,7 @@
       "validated": false
     },
     {
-      "level_index": 191,
+      "level_index": 173,
       "config": {
         "cols": 4,
         "rows": 5,
@@ -20424,7 +18118,7 @@
       "validated": false
     },
     {
-      "level_index": 192,
+      "level_index": 174,
       "config": {
         "cols": 4,
         "rows": 5,
@@ -20570,7 +18264,7 @@
       "validated": false
     },
     {
-      "level_index": 193,
+      "level_index": 175,
       "config": {
         "cols": 4,
         "rows": 6,
@@ -20756,7 +18450,7 @@
       "validated": false
     },
     {
-      "level_index": 194,
+      "level_index": 176,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -20824,7 +18518,7 @@
       "validated": false
     },
     {
-      "level_index": 195,
+      "level_index": 177,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -20918,7 +18612,7 @@
       "validated": false
     },
     {
-      "level_index": 196,
+      "level_index": 178,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -21006,7 +18700,7 @@
       "validated": false
     },
     {
-      "level_index": 197,
+      "level_index": 179,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -21090,7 +18784,171 @@
       "validated": false
     },
     {
-      "level_index": 198,
+      "level_index": 180,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "tetris": {
+          "1,1": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "0,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "3,3": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          }
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "witness:94",
+      "validated": false
+    },
+    {
+      "level_index": 181,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "tetris": {
+          "3,0": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                1,
+                1
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "3,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                1,
+                1
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "3,4": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                1,
+                1
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          }
+        },
+        "breakpoints": [
+          [
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              3
+            ]
+          ]
+        ]
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:31",
+      "validated": false
+    },
+    {
+      "level_index": 182,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -21244,7 +19102,7 @@
       "validated": false
     },
     {
-      "level_index": 199,
+      "level_index": 183,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -21442,7 +19300,7 @@
       "validated": false
     },
     {
-      "level_index": 200,
+      "level_index": 184,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -21578,7 +19436,123 @@
       "validated": false
     },
     {
-      "level_index": 201,
+      "level_index": 185,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "starts": [
+          [
+            5,
+            0
+          ],
+          [
+            0,
+            5
+          ]
+        ],
+        "end": [
+          0,
+          0
+        ],
+        "tetris": {
+          "0,0": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "2,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "4,4": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          }
+        },
+        "breakpoints": [
+          [
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              2
+            ]
+          ],
+          [
+            [
+              2,
+              2
+            ],
+            [
+              2,
+              3
+            ]
+          ]
+        ]
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:180",
+      "validated": false
+    },
+    {
+      "level_index": 186,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -21698,7 +19672,7 @@
       "validated": false
     },
     {
-      "level_index": 202,
+      "level_index": 187,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -21770,7 +19744,75 @@
       "validated": false
     },
     {
-      "level_index": 203,
+      "level_index": 188,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "tetris": {
+          "4,0": {
+            "shape": [
+              [
+                0,
+                0
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "2,2": {
+            "shape": [
+              [
+                2,
+                0
+              ],
+              [
+                2,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                2
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "0,4": {
+            "shape": [
+              [
+                0,
+                0
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          }
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:368",
+      "validated": false
+    },
+    {
+      "level_index": 189,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -21876,7 +19918,7 @@
       "validated": false
     },
     {
-      "level_index": 204,
+      "level_index": 190,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -22012,7 +20054,87 @@
       "validated": false
     },
     {
-      "level_index": 205,
+      "level_index": 191,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "tetris": {
+          "4,0": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "1,1": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "0,4": {
+            "shape": [
+              [
+                2,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                2,
+                1
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          }
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:453",
+      "validated": false
+    },
+    {
+      "level_index": 192,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -22166,7 +20288,103 @@
       "validated": false
     },
     {
-      "level_index": 206,
+      "level_index": 193,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "starts": [
+          [
+            0,
+            5
+          ],
+          [
+            5,
+            5
+          ]
+        ],
+        "end": [
+          0,
+          0
+        ],
+        "tetris": {
+          "1,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "3,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          }
+        },
+        "breakpoints": [
+          [
+            [
+              4,
+              0
+            ],
+            [
+              5,
+              0
+            ]
+          ],
+          [
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              2
+            ]
+          ],
+          [
+            [
+              2,
+              4
+            ],
+            [
+              2,
+              5
+            ]
+          ]
+        ]
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:637",
+      "validated": false
+    },
+    {
+      "level_index": 194,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -22330,7 +20548,7 @@
       "validated": false
     },
     {
-      "level_index": 207,
+      "level_index": 195,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -22466,7 +20684,7 @@
       "validated": false
     },
     {
-      "level_index": 208,
+      "level_index": 196,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -22544,7 +20762,117 @@
       "validated": false
     },
     {
-      "level_index": 209,
+      "level_index": 197,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "tetris": {
+          "1,4": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "2,4": {
+            "shape": [
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "3,4": {
+            "shape": [
+              [
+                1,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          }
+        },
+        "breakpoints": [
+          [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          [
+            [
+              4,
+              2
+            ],
+            [
+              4,
+              3
+            ]
+          ]
+        ]
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:714",
+      "validated": false
+    },
+    {
+      "level_index": 198,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -22646,7 +20974,7 @@
       "validated": false
     },
     {
-      "level_index": 210,
+      "level_index": 199,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -22748,7 +21076,7 @@
       "validated": false
     },
     {
-      "level_index": 211,
+      "level_index": 200,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -22832,7 +21160,7 @@
       "validated": false
     },
     {
-      "level_index": 212,
+      "level_index": 201,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -22944,7 +21272,7 @@
       "validated": false
     },
     {
-      "level_index": 213,
+      "level_index": 202,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -23230,7 +21558,119 @@
       "validated": false
     },
     {
-      "level_index": 214,
+      "level_index": 203,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "tetris": {
+          "0,0": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                2,
+                0
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "4,0": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                2,
+                0
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "2,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                2,
+                0
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "0,4": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                2,
+                0
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "4,4": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                2,
+                0
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          }
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:1006",
+      "validated": false
+    },
+    {
+      "level_index": 204,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -23330,7 +21770,119 @@
       "validated": false
     },
     {
-      "level_index": 215,
+      "level_index": 205,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          4,
+          0
+        ],
+        "end": [
+          5,
+          4
+        ],
+        "tetris": {
+          "4,0": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "4,1": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "4,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                1,
+                2
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          }
+        },
+        "breakpoints": [
+          [
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ]
+        ]
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:1010",
+      "validated": false
+    },
+    {
+      "level_index": 206,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -23430,7 +21982,7 @@
       "validated": false
     },
     {
-      "level_index": 216,
+      "level_index": 207,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -23562,7 +22114,127 @@
       "validated": false
     },
     {
-      "level_index": 217,
+      "level_index": 208,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "tetris": {
+          "2,0": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                0,
+                2
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "0,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                0,
+                2
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "2,2": {
+            "shape": [
+              [
+                0,
+                0
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "4,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                0,
+                2
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "2,4": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                0,
+                2
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          }
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:1105",
+      "validated": false
+    },
+    {
+      "level_index": 209,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -23726,7 +22398,383 @@
       "validated": false
     },
     {
-      "level_index": 218,
+      "level_index": 210,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "starts": [
+          [
+            0,
+            5
+          ],
+          [
+            5,
+            5
+          ]
+        ],
+        "end": [
+          0,
+          0
+        ],
+        "tetris": {
+          "3,1": {
+            "shape": [
+              [
+                1,
+                0
+              ],
+              [
+                3,
+                0
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                4,
+                2
+              ],
+              [
+                1,
+                3
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                3
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "4,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                0,
+                4
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "3,3": {
+            "shape": [
+              [
+                1,
+                0
+              ],
+              [
+                3,
+                0
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                4,
+                2
+              ],
+              [
+                1,
+                3
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                3
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          }
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:1257",
+      "validated": false
+    },
+    {
+      "level_index": 211,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "tetris": {
+          "0,0": {
+            "shape": [
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "4,0": {
+            "shape": [
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "2,1": {
+            "shape": [
+              [
+                0,
+                0
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "1,2": {
+            "shape": [
+              [
+                0,
+                0
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "2,2": {
+            "shape": [
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "3,2": {
+            "shape": [
+              [
+                0,
+                0
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "2,3": {
+            "shape": [
+              [
+                0,
+                0
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "0,4": {
+            "shape": [
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "4,4": {
+            "shape": [
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          }
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:1477",
+      "validated": false
+    },
+    {
+      "level_index": 212,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "tetris": {
+          "0,0": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "4,0": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "0,4": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "4,4": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          }
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:1480",
+      "validated": false
+    },
+    {
+      "level_index": 213,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -23814,7 +22862,7 @@
       "validated": false
     },
     {
-      "level_index": 219,
+      "level_index": 214,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -23940,7 +22988,151 @@
       "validated": false
     },
     {
-      "level_index": 220,
+      "level_index": 215,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          0,
+          4
+        ],
+        "tetris": {
+          "2,0": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "2,1": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "0,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "1,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "2,2": {
+            "shape": [
+              [
+                0,
+                0
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "3,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "4,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "2,3": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "2,4": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          }
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:1594",
+      "validated": false
+    },
+    {
+      "level_index": 216,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -24020,7 +23212,7 @@
       "validated": false
     },
     {
-      "level_index": 221,
+      "level_index": 217,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -24152,7 +23344,7 @@
       "validated": false
     },
     {
-      "level_index": 222,
+      "level_index": 218,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -24262,7 +23454,7 @@
       "validated": false
     },
     {
-      "level_index": 223,
+      "level_index": 219,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -24416,7 +23608,201 @@
       "validated": false
     },
     {
-      "level_index": 224,
+      "level_index": 220,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "tetris": {
+          "0,1": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                0,
+                3
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "4,1": {
+            "shape": [
+              [
+                0,
+                0
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "0,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                2
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "3,4": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                2,
+                0
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          }
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:2041",
+      "validated": false
+    },
+    {
+      "level_index": 221,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "tetris": {
+          "1,2": {
+            "shape": [
+              [
+                3,
+                0
+              ],
+              [
+                2,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                0,
+                3
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "2,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                2,
+                2
+              ],
+              [
+                3,
+                3
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          },
+          "3,2": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                2,
+                2
+              ],
+              [
+                3,
+                3
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          }
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:2045",
+      "validated": false
+    },
+    {
+      "level_index": 222,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -24528,7 +23914,7 @@
       "validated": false
     },
     {
-      "level_index": 225,
+      "level_index": 223,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -24660,7 +24046,85 @@
       "validated": false
     },
     {
-      "level_index": 226,
+      "level_index": 224,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "tetris": {
+          "3,3": {
+            "shape": [
+              [
+                1,
+                0
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                2,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                2
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "rotated": true,
+            "negative": false
+          }
+        },
+        "breakpoints": [
+          [
+            [
+              3,
+              1
+            ],
+            [
+              4,
+              1
+            ]
+          ],
+          [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ]
+          ]
+        ]
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:2151",
+      "validated": false
+    },
+    {
+      "level_index": 225,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -24800,7 +24264,7 @@
       "validated": false
     },
     {
-      "level_index": 227,
+      "level_index": 226,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -24912,7 +24376,7 @@
       "validated": false
     },
     {
-      "level_index": 228,
+      "level_index": 227,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -25002,7 +24466,7 @@
       "validated": false
     },
     {
-      "level_index": 229,
+      "level_index": 228,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -25108,7 +24572,7 @@
       "validated": false
     },
     {
-      "level_index": 230,
+      "level_index": 229,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -25228,7 +24692,7 @@
       "validated": false
     },
     {
-      "level_index": 231,
+      "level_index": 230,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -25328,7 +24792,7 @@
       "validated": false
     },
     {
-      "level_index": 232,
+      "level_index": 231,
       "config": {
         "cols": 5,
         "rows": 6,
@@ -25501,6 +24965,112 @@
       "moves": 0,
       "solution_actions": [],
       "source": "witness:57",
+      "validated": false
+    },
+    {
+      "level_index": 232,
+      "config": {
+        "cols": 5,
+        "rows": 6,
+        "start": [
+          0,
+          6
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "tetris": {
+          "1,1": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                2,
+                2
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "2,1": {
+            "shape": [
+              [
+                0,
+                0
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "2,2": {
+            "shape": [
+              [
+                0,
+                0
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "2,3": {
+            "shape": [
+              [
+                0,
+                0
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "2,4": {
+            "shape": [
+              [
+                0,
+                0
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          },
+          "3,4": {
+            "shape": [
+              [
+                0,
+                0
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                2,
+                2
+              ]
+            ],
+            "rotated": false,
+            "negative": false
+          }
+        }
+      },
+      "baseline": 18,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:1532",
       "validated": false
     },
     {

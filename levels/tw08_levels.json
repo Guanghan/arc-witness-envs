@@ -1,8 +1,8 @@
 {
   "game": "tw08",
   "total_candidates": 121,
-  "total_validated": 65,
-  "total_unvalidated": 47,
+  "total_validated": 60,
+  "total_unvalidated": 52,
   "selected_count": 108,
   "levels": [
     {
@@ -1994,63 +1994,6 @@
     {
       "level_index": 34,
       "config": {
-        "cols": 5,
-        "rows": 5,
-        "starts": [
-          [
-            2,
-            5
-          ],
-          [
-            3,
-            5
-          ]
-        ],
-        "end": [
-          2,
-          0
-        ],
-        "squares": {
-          "2,0": 10,
-          "2,1": 10,
-          "0,2": 6,
-          "1,2": 6,
-          "3,2": 6,
-          "4,2": 6,
-          "2,3": 10,
-          "2,4": 10
-        },
-        "stars": {
-          "0,0": 6,
-          "4,4": 6
-        }
-      },
-      "baseline": 20,
-      "moves": 15,
-      "solution_actions": [
-        1,
-        1,
-        4,
-        4,
-        2,
-        2,
-        4,
-        1,
-        1,
-        1,
-        3,
-        3,
-        3,
-        1,
-        1,
-        5
-      ],
-      "source": "witness:127",
-      "validated": true
-    },
-    {
-      "level_index": 35,
-      "config": {
         "cols": 3,
         "rows": 5,
         "start": [
@@ -2160,7 +2103,7 @@
       "validated": true
     },
     {
-      "level_index": 36,
+      "level_index": 35,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -2240,7 +2183,7 @@
       "validated": true
     },
     {
-      "level_index": 37,
+      "level_index": 36,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -2332,7 +2275,7 @@
       "validated": true
     },
     {
-      "level_index": 38,
+      "level_index": 37,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -2435,7 +2378,7 @@
       "validated": true
     },
     {
-      "level_index": 39,
+      "level_index": 38,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -2484,7 +2427,7 @@
       "validated": true
     },
     {
-      "level_index": 40,
+      "level_index": 39,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -2538,7 +2481,7 @@
       "validated": true
     },
     {
-      "level_index": 41,
+      "level_index": 40,
       "config": {
         "cols": 7,
         "rows": 3,
@@ -2598,7 +2541,7 @@
       "validated": true
     },
     {
-      "level_index": 42,
+      "level_index": 41,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -2670,7 +2613,7 @@
       "validated": true
     },
     {
-      "level_index": 43,
+      "level_index": 42,
       "config": {
         "cols": 5,
         "rows": 4,
@@ -2733,67 +2676,7 @@
       "validated": true
     },
     {
-      "level_index": 44,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          5,
-          0
-        ],
-        "squares": {
-          "1,0": 6,
-          "4,0": 10,
-          "0,1": 6,
-          "1,1": 10,
-          "0,3": 10,
-          "1,4": 10
-        },
-        "stars": {
-          "0,0": 6,
-          "3,0": 10,
-          "3,1": 6,
-          "4,1": 10,
-          "1,3": 10,
-          "3,3": 10,
-          "4,3": 6,
-          "0,4": 10,
-          "3,4": 6,
-          "4,4": 10
-        }
-      },
-      "baseline": 23,
-      "moves": 18,
-      "solution_actions": [
-        4,
-        4,
-        1,
-        1,
-        3,
-        3,
-        1,
-        4,
-        1,
-        4,
-        4,
-        2,
-        4,
-        4,
-        1,
-        3,
-        1,
-        4,
-        5
-      ],
-      "source": "windmill:835",
-      "validated": true
-    },
-    {
-      "level_index": 45,
+      "level_index": 43,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -2852,7 +2735,7 @@
       "validated": true
     },
     {
-      "level_index": 46,
+      "level_index": 44,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -2940,17 +2823,17 @@
       "validated": true
     },
     {
-      "level_index": 47,
+      "level_index": 45,
       "config": {
         "cols": 5,
         "rows": 5,
         "starts": [
           [
-            2,
+            3,
             5
           ],
           [
-            3,
+            2,
             5
           ]
         ],
@@ -2973,35 +2856,36 @@
           "4,4": 6
         }
       },
-      "baseline": 24,
-      "moves": 19,
+      "baseline": 26,
+      "moves": 20,
       "solution_actions": [
+        4,
+        4,
+        1,
+        3,
+        3,
         1,
         1,
+        1,
+        1,
+        3,
+        3,
+        3,
+        2,
         4,
         4,
         2,
         2,
-        4,
-        1,
-        1,
-        1,
-        3,
-        3,
         3,
         3,
         1,
-        1,
-        3,
-        2,
-        2,
         5
       ],
       "source": "witness:128",
       "validated": true
     },
     {
-      "level_index": 48,
+      "level_index": 46,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -3094,7 +2978,7 @@
       "validated": true
     },
     {
-      "level_index": 49,
+      "level_index": 47,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -3214,7 +3098,7 @@
       "validated": true
     },
     {
-      "level_index": 50,
+      "level_index": 48,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -3302,7 +3186,7 @@
       "validated": true
     },
     {
-      "level_index": 51,
+      "level_index": 49,
       "config": {
         "cols": 6,
         "rows": 6,
@@ -3360,7 +3244,7 @@
       "validated": true
     },
     {
-      "level_index": 52,
+      "level_index": 50,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -3441,7 +3325,7 @@
       "validated": true
     },
     {
-      "level_index": 53,
+      "level_index": 51,
       "config": {
         "cols": 3,
         "rows": 5,
@@ -3540,7 +3424,7 @@
       "validated": true
     },
     {
-      "level_index": 54,
+      "level_index": 52,
       "config": {
         "cols": 3,
         "rows": 5,
@@ -3639,73 +3523,7 @@
       "validated": true
     },
     {
-      "level_index": 55,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          0,
-          0
-        ],
-        "squares": {
-          "0,0": 6,
-          "4,0": 6,
-          "2,2": 10,
-          "0,4": 6,
-          "4,4": 6
-        },
-        "stars": {
-          "1,0": 10,
-          "2,0": 10,
-          "3,0": 10,
-          "0,1": 6,
-          "4,1": 10,
-          "0,2": 6,
-          "4,2": 10,
-          "0,3": 6,
-          "4,3": 10,
-          "1,4": 6,
-          "2,4": 6,
-          "3,4": 6
-        }
-      },
-      "baseline": 29,
-      "moves": 23,
-      "solution_actions": [
-        4,
-        4,
-        4,
-        1,
-        3,
-        3,
-        3,
-        1,
-        4,
-        4,
-        4,
-        4,
-        1,
-        4,
-        1,
-        3,
-        3,
-        3,
-        1,
-        3,
-        2,
-        3,
-        1,
-        5
-      ],
-      "source": "windmill:1369",
-      "validated": true
-    },
-    {
-      "level_index": 56,
+      "level_index": 53,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -3718,25 +3536,24 @@
           0
         ],
         "squares": {
-          "0,0": 6,
-          "4,0": 6,
-          "2,2": 10,
-          "0,4": 6,
-          "4,4": 6
+          "1,0": 6,
+          "4,0": 10,
+          "0,1": 6,
+          "1,1": 10,
+          "0,3": 10,
+          "1,4": 10
         },
         "stars": {
-          "1,0": 10,
-          "2,0": 10,
+          "0,0": 6,
           "3,0": 10,
-          "0,1": 6,
+          "3,1": 6,
           "4,1": 10,
-          "0,2": 6,
-          "4,2": 10,
-          "0,3": 6,
-          "4,3": 10,
-          "1,4": 6,
-          "2,4": 6,
-          "3,4": 6
+          "1,3": 10,
+          "3,3": 10,
+          "4,3": 6,
+          "0,4": 10,
+          "3,4": 6,
+          "4,4": 10
         }
       },
       "baseline": 30,
@@ -3744,181 +3561,35 @@
       "solution_actions": [
         4,
         4,
-        1,
-        4,
-        4,
         4,
         1,
+        4,
         1,
         3,
         3,
         2,
         3,
         3,
-        3,
+        1,
+        4,
         1,
         1,
         4,
-        4,
-        4,
-        1,
         4,
         2,
-        4,
-        1,
-        5
-      ],
-      "source": "windmill:1368",
-      "validated": true
-    },
-    {
-      "level_index": 57,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          5,
-          0
-        ],
-        "squares": {
-          "0,0": 6,
-          "2,0": 10,
-          "4,0": 6,
-          "2,1": 10,
-          "0,2": 10,
-          "1,2": 10,
-          "2,2": 10,
-          "3,2": 10,
-          "4,2": 10,
-          "2,3": 10,
-          "0,4": 6,
-          "2,4": 10,
-          "4,4": 6
-        },
-        "stars": {
-          "1,1": 6,
-          "3,1": 6,
-          "1,3": 6,
-          "3,3": 6
-        }
-      },
-      "baseline": 33,
-      "moves": 26,
-      "solution_actions": [
         4,
         4,
         1,
         3,
-        3,
-        1,
-        1,
-        4,
-        1,
-        4,
-        1,
-        4,
-        2,
-        2,
-        2,
-        2,
-        2,
-        4,
-        1,
-        4,
-        1,
-        1,
-        3,
-        1,
         1,
         4,
         5
       ],
-      "source": "windmill:78",
+      "source": "windmill:835",
       "validated": true
     },
     {
-      "level_index": 58,
-      "config": {
-        "cols": 5,
-        "rows": 5,
-        "start": [
-          0,
-          5
-        ],
-        "end": [
-          5,
-          0
-        ],
-        "squares": {
-          "2,0": 6,
-          "1,1": 6,
-          "2,1": 6,
-          "3,1": 6,
-          "1,2": 10,
-          "2,2": 10,
-          "3,2": 10,
-          "1,3": 10,
-          "3,3": 10,
-          "1,4": 10,
-          "3,4": 10
-        },
-        "stars": {
-          "0,0": 6,
-          "1,0": 6,
-          "3,0": 6,
-          "4,0": 6,
-          "0,1": 6,
-          "4,1": 6,
-          "0,2": 10,
-          "4,2": 10,
-          "0,3": 10,
-          "2,3": 12,
-          "4,3": 10,
-          "0,4": 10,
-          "2,4": 12,
-          "4,4": 10
-        }
-      },
-      "baseline": 33,
-      "moves": 26,
-      "solution_actions": [
-        4,
-        4,
-        4,
-        4,
-        1,
-        1,
-        4,
-        1,
-        3,
-        3,
-        3,
-        3,
-        2,
-        2,
-        3,
-        1,
-        1,
-        1,
-        4,
-        4,
-        1,
-        4,
-        2,
-        4,
-        4,
-        1,
-        5
-      ],
-      "source": "windmill:1350",
-      "validated": true
-    },
-    {
-      "level_index": 59,
+      "level_index": 54,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -3988,7 +3659,7 @@
       "validated": true
     },
     {
-      "level_index": 60,
+      "level_index": 55,
       "config": {
         "cols": 6,
         "rows": 7,
@@ -4083,7 +3754,7 @@
       "validated": true
     },
     {
-      "level_index": 61,
+      "level_index": 56,
       "config": {
         "cols": 2,
         "rows": 2,
@@ -4110,7 +3781,7 @@
       "validated": false
     },
     {
-      "level_index": 62,
+      "level_index": 57,
       "config": {
         "cols": 2,
         "rows": 3,
@@ -4137,7 +3808,7 @@
       "validated": false
     },
     {
-      "level_index": 63,
+      "level_index": 58,
       "config": {
         "cols": 2,
         "rows": 4,
@@ -4169,7 +3840,7 @@
       "validated": false
     },
     {
-      "level_index": 64,
+      "level_index": 59,
       "config": {
         "cols": 3,
         "rows": 3,
@@ -4197,7 +3868,7 @@
       "validated": false
     },
     {
-      "level_index": 65,
+      "level_index": 60,
       "config": {
         "cols": 3,
         "rows": 3,
@@ -4251,7 +3922,7 @@
       "validated": false
     },
     {
-      "level_index": 66,
+      "level_index": 61,
       "config": {
         "cols": 3,
         "rows": 3,
@@ -4285,7 +3956,7 @@
       "validated": false
     },
     {
-      "level_index": 67,
+      "level_index": 62,
       "config": {
         "cols": 3,
         "rows": 3,
@@ -4374,7 +4045,7 @@
       "validated": false
     },
     {
-      "level_index": 68,
+      "level_index": 63,
       "config": {
         "cols": 3,
         "rows": 3,
@@ -4417,7 +4088,7 @@
       "validated": false
     },
     {
-      "level_index": 69,
+      "level_index": 64,
       "config": {
         "cols": 5,
         "rows": 3,
@@ -4456,7 +4127,7 @@
       "validated": false
     },
     {
-      "level_index": 70,
+      "level_index": 65,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -4489,7 +4160,7 @@
       "validated": false
     },
     {
-      "level_index": 71,
+      "level_index": 66,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -4523,7 +4194,7 @@
       "validated": false
     },
     {
-      "level_index": 72,
+      "level_index": 67,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -4556,7 +4227,7 @@
       "validated": false
     },
     {
-      "level_index": 73,
+      "level_index": 68,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -4589,7 +4260,7 @@
       "validated": false
     },
     {
-      "level_index": 74,
+      "level_index": 69,
       "config": {
         "cols": 4,
         "rows": 4,
@@ -4622,7 +4293,88 @@
       "validated": false
     },
     {
-      "level_index": 75,
+      "level_index": 70,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "starts": [
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            5
+          ]
+        ],
+        "end": [
+          2,
+          0
+        ],
+        "squares": {
+          "2,0": 10,
+          "2,1": 10,
+          "0,2": 6,
+          "1,2": 6,
+          "3,2": 6,
+          "4,2": 6,
+          "2,3": 10,
+          "2,4": 10
+        },
+        "stars": {
+          "0,0": 6,
+          "4,4": 6
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "witness:127",
+      "validated": false
+    },
+    {
+      "level_index": 71,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "squares": {
+          "0,0": 6,
+          "2,0": 10,
+          "4,0": 6,
+          "2,1": 10,
+          "0,2": 10,
+          "1,2": 10,
+          "2,2": 10,
+          "3,2": 10,
+          "4,2": 10,
+          "2,3": 10,
+          "0,4": 6,
+          "2,4": 10,
+          "4,4": 6
+        },
+        "stars": {
+          "1,1": 6,
+          "3,1": 6,
+          "1,3": 6,
+          "3,3": 6
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:78",
+      "validated": false
+    },
+    {
+      "level_index": 72,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -4658,7 +4410,7 @@
       "validated": false
     },
     {
-      "level_index": 76,
+      "level_index": 73,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -4690,7 +4442,7 @@
       "validated": false
     },
     {
-      "level_index": 77,
+      "level_index": 74,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -4722,7 +4474,7 @@
       "validated": false
     },
     {
-      "level_index": 78,
+      "level_index": 75,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -4753,7 +4505,7 @@
       "validated": false
     },
     {
-      "level_index": 79,
+      "level_index": 76,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -4784,7 +4536,7 @@
       "validated": false
     },
     {
-      "level_index": 80,
+      "level_index": 77,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -4815,7 +4567,7 @@
       "validated": false
     },
     {
-      "level_index": 81,
+      "level_index": 78,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -4846,7 +4598,7 @@
       "validated": false
     },
     {
-      "level_index": 82,
+      "level_index": 79,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -4881,7 +4633,7 @@
       "validated": false
     },
     {
-      "level_index": 83,
+      "level_index": 80,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -4922,7 +4674,7 @@
       "validated": false
     },
     {
-      "level_index": 84,
+      "level_index": 81,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -4953,7 +4705,7 @@
       "validated": false
     },
     {
-      "level_index": 85,
+      "level_index": 82,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -4984,7 +4736,7 @@
       "validated": false
     },
     {
-      "level_index": 86,
+      "level_index": 83,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -5024,7 +4776,7 @@
       "validated": false
     },
     {
-      "level_index": 87,
+      "level_index": 84,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -5054,7 +4806,7 @@
       "validated": false
     },
     {
-      "level_index": 88,
+      "level_index": 85,
       "config": {
         "cols": 5,
         "rows": 5,
@@ -5093,6 +4845,137 @@
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1133",
+      "validated": false
+    },
+    {
+      "level_index": 86,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "squares": {
+          "2,0": 6,
+          "1,1": 6,
+          "2,1": 6,
+          "3,1": 6,
+          "1,2": 10,
+          "2,2": 10,
+          "3,2": 10,
+          "1,3": 10,
+          "3,3": 10,
+          "1,4": 10,
+          "3,4": 10
+        },
+        "stars": {
+          "0,0": 6,
+          "1,0": 6,
+          "3,0": 6,
+          "4,0": 6,
+          "0,1": 6,
+          "4,1": 6,
+          "0,2": 10,
+          "4,2": 10,
+          "0,3": 10,
+          "2,3": 12,
+          "4,3": 10,
+          "0,4": 10,
+          "2,4": 12,
+          "4,4": 10
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:1350",
+      "validated": false
+    },
+    {
+      "level_index": 87,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          5,
+          0
+        ],
+        "squares": {
+          "0,0": 6,
+          "4,0": 6,
+          "2,2": 10,
+          "0,4": 6,
+          "4,4": 6
+        },
+        "stars": {
+          "1,0": 10,
+          "2,0": 10,
+          "3,0": 10,
+          "0,1": 6,
+          "4,1": 10,
+          "0,2": 6,
+          "4,2": 10,
+          "0,3": 6,
+          "4,3": 10,
+          "1,4": 6,
+          "2,4": 6,
+          "3,4": 6
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:1368",
+      "validated": false
+    },
+    {
+      "level_index": 88,
+      "config": {
+        "cols": 5,
+        "rows": 5,
+        "start": [
+          0,
+          5
+        ],
+        "end": [
+          0,
+          0
+        ],
+        "squares": {
+          "0,0": 6,
+          "4,0": 6,
+          "2,2": 10,
+          "0,4": 6,
+          "4,4": 6
+        },
+        "stars": {
+          "1,0": 10,
+          "2,0": 10,
+          "3,0": 10,
+          "0,1": 6,
+          "4,1": 10,
+          "0,2": 6,
+          "4,2": 10,
+          "0,3": 6,
+          "4,3": 10,
+          "1,4": 6,
+          "2,4": 6,
+          "3,4": 6
+        }
+      },
+      "baseline": 17,
+      "moves": 0,
+      "solution_actions": [],
+      "source": "windmill:1369",
       "validated": false
     },
     {
