@@ -766,8 +766,20 @@ def calibrate_baseline(solution_path: List[Tuple[int, int]]) -> int:
     return baseline
 
 
+def _get_starts(config: dict) -> list:
+    """从 config 提取起点列表。支持 'starts' (多起点) 和 'start' (单起点)。"""
+    if "starts" in config:
+        return [tuple(s) for s in config["starts"]]
+    if "start" in config:
+        return [tuple(config["start"])]
+    return []
+
+
 def validate_config(config: dict, game_type: str, timeout: float = 5.0) -> dict:
-    """验证一个 level_config，返回验证结果。"""
+    """验证一个 level_config，返回验证结果。
+
+    多起点谜题：依次尝试每个起点，返回最短解。
+    """
     solvers = {
         "tw01": solve_tw01,
         "tw02": solve_tw02,
@@ -784,24 +796,53 @@ def validate_config(config: dict, game_type: str, timeout: float = 5.0) -> dict:
         return {"valid": False, "solution": None, "moves": 0, "baseline": 0,
                 "error": f"Unknown game type: {game_type}"}
 
-    try:
-        solution = solver(config, timeout=timeout)
-    except Exception as e:
+    # tw04 有自己的起点处理逻辑（blue_start/yellow_start），直接调用
+    if game_type == "tw04":
+        try:
+            solution = solver(config, timeout=timeout)
+        except Exception as e:
+            return {"valid": False, "solution": None, "moves": 0, "baseline": 0,
+                    "error": str(e)}
+        if solution is None:
+            return {"valid": False, "solution": None, "moves": 0, "baseline": 0,
+                    "error": "No solution found"}
+        moves = len(solution) - 1
+        return {"valid": True, "solution": solution, "moves": moves,
+                "baseline": calibrate_baseline(solution), "error": None}
+
+    # 非 tw04 游戏：检查起点
+    starts = _get_starts(config)
+    if not starts:
         return {"valid": False, "solution": None, "moves": 0, "baseline": 0,
-                "error": str(e)}
+                "error": "No start point in config"}
 
-    if solution is None:
+    # 对每个起点独立尝试求解
+    best_solution = None
+    last_error = "No solution found"
+    per_start_timeout = timeout / len(starts) if len(starts) > 1 else timeout
+
+    for start in starts:
+        single_config = {**config, "start": list(start)}
+        single_config.pop("starts", None)
+        try:
+            solution = solver(single_config, timeout=per_start_timeout)
+        except Exception as e:
+            last_error = str(e)
+            continue
+        if solution is not None:
+            if best_solution is None or len(solution) < len(best_solution):
+                best_solution = solution
+
+    if best_solution is None:
         return {"valid": False, "solution": None, "moves": 0, "baseline": 0,
-                "error": "No solution found"}
+                "error": last_error}
 
-    moves = len(solution) - 1
-    baseline = calibrate_baseline(solution)
-
+    moves = len(best_solution) - 1
     return {
         "valid": True,
-        "solution": solution,
+        "solution": best_solution,
         "moves": moves,
-        "baseline": baseline,
+        "baseline": calibrate_baseline(best_solution),
         "error": None,
     }
 

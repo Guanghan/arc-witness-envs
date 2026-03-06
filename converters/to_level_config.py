@@ -49,23 +49,31 @@ def _map_colors(color_dict: Dict[Tuple[int, int], str]) -> Dict[Tuple[int, int],
 
 
 def _pick_end(puzzle: UnifiedPuzzle) -> Tuple[int, int]:
-    """选择距起点最远的终点。"""
-    start = puzzle.starts[0]
-    return max(puzzle.ends, key=lambda e: abs(e[0] - start[0]) + abs(e[1] - start[1]))
+    """选择距起点（组）最远的终点。多起点时用起点质心。"""
+    starts = puzzle.starts
+    cx = sum(s[0] for s in starts) / len(starts)
+    cy = sum(s[1] for s in starts) / len(starts)
+    return max(puzzle.ends, key=lambda e: abs(e[0] - cx) + abs(e[1] - cy))
+
+
+def _start_fields(puzzle: UnifiedPuzzle) -> dict:
+    """生成 start/starts 字段。单起点用 'start'，多起点用 'starts'。"""
+    if len(puzzle.starts) == 1:
+        return {"start": list(puzzle.starts[0])}
+    return {"starts": [list(s) for s in puzzle.starts]}
 
 
 def convert_tw01(puzzle: UnifiedPuzzle) -> Optional[dict]:
     """将 UnifiedPuzzle 转换为 tw01 PathDots level_config。"""
-    if len(puzzle.starts) != 1 or not puzzle.ends:
+    if len(puzzle.starts) < 1 or not puzzle.ends:
         return None
 
-    start = puzzle.starts[0]
     end = _pick_end(puzzle)
 
     config = {
         "cols": puzzle.cols,
         "rows": puzzle.rows,
-        "start": list(start),
+        **_start_fields(puzzle),
         "end": list(end),
         "dots": [list(h) for h in puzzle.hexagons],
     }
@@ -87,10 +95,9 @@ def convert_tw01(puzzle: UnifiedPuzzle) -> Optional[dict]:
 
 def convert_tw02(puzzle: UnifiedPuzzle) -> Optional[dict]:
     """将 UnifiedPuzzle 转换为 tw02 ColorSplit level_config。"""
-    if len(puzzle.starts) != 1 or not puzzle.ends:
+    if len(puzzle.starts) < 1 or not puzzle.ends:
         return None
 
-    start = puzzle.starts[0]
     end = _pick_end(puzzle)
 
     mapped_colors = _map_colors(puzzle.squares)
@@ -100,7 +107,7 @@ def convert_tw02(puzzle: UnifiedPuzzle) -> Optional[dict]:
     return {
         "cols": puzzle.cols,
         "rows": puzzle.rows,
-        "start": list(start),
+        **_start_fields(puzzle),
         "end": list(end),
         "squares": {f"{c},{r}": v for (c, r), v in mapped_colors.items()},
     }
@@ -109,12 +116,11 @@ def convert_tw02(puzzle: UnifiedPuzzle) -> Optional[dict]:
 def convert_tw03(puzzle: UnifiedPuzzle) -> Optional[dict]:
     """将 UnifiedPuzzle 转换为 tw03 ShapeFill level_config。
 
-    格式: {cols, rows, start, end, tetris: {"c,r": {shape, rotated, negative}}}
+    格式: {cols, rows, start(s), end, tetris: {"c,r": {shape, rotated, negative}}}
     """
-    if len(puzzle.starts) != 1 or not puzzle.ends:
+    if len(puzzle.starts) < 1 or not puzzle.ends:
         return None
 
-    start = puzzle.starts[0]
     end = _pick_end(puzzle)
 
     tetris = {}
@@ -128,7 +134,7 @@ def convert_tw03(puzzle: UnifiedPuzzle) -> Optional[dict]:
     return {
         "cols": puzzle.cols,
         "rows": puzzle.rows,
-        "start": list(start),
+        **_start_fields(puzzle),
         "end": list(end),
         "tetris": tetris,
     }
@@ -246,12 +252,11 @@ def convert_tw04(puzzle: UnifiedPuzzle) -> Optional[dict]:
 def convert_tw05(puzzle: UnifiedPuzzle) -> Optional[dict]:
     """将 UnifiedPuzzle 转换为 tw05 StarPair level_config。
 
-    格式: {cols, rows, start, end, stars: {"c,r": color_index}}
+    格式: {cols, rows, start(s), end, stars: {"c,r": color_index}}
     """
-    if len(puzzle.starts) != 1 or not puzzle.ends:
+    if len(puzzle.starts) < 1 or not puzzle.ends:
         return None
 
-    start = puzzle.starts[0]
     end = _pick_end(puzzle)
 
     mapped_colors = _map_colors(puzzle.stars)
@@ -261,7 +266,7 @@ def convert_tw05(puzzle: UnifiedPuzzle) -> Optional[dict]:
     return {
         "cols": puzzle.cols,
         "rows": puzzle.rows,
-        "start": list(start),
+        **_start_fields(puzzle),
         "end": list(end),
         "stars": {f"{c},{r}": v for (c, r), v in mapped_colors.items()},
     }
@@ -270,18 +275,17 @@ def convert_tw05(puzzle: UnifiedPuzzle) -> Optional[dict]:
 def convert_tw06(puzzle: UnifiedPuzzle) -> Optional[dict]:
     """将 UnifiedPuzzle 转换为 tw06 TriCount level_config。
 
-    格式: {cols, rows, start, end, triangles: {"c,r": count}}
+    格式: {cols, rows, start(s), end, triangles: {"c,r": count}}
     """
-    if len(puzzle.starts) != 1 or not puzzle.ends:
+    if len(puzzle.starts) < 1 or not puzzle.ends:
         return None
 
-    start = puzzle.starts[0]
     end = _pick_end(puzzle)
 
     return {
         "cols": puzzle.cols,
         "rows": puzzle.rows,
-        "start": list(start),
+        **_start_fields(puzzle),
         "end": list(end),
         "triangles": {f"{c},{r}": v for (c, r), v in puzzle.triangles.items()},
     }
@@ -290,18 +294,17 @@ def convert_tw06(puzzle: UnifiedPuzzle) -> Optional[dict]:
 def convert_tw07(puzzle: UnifiedPuzzle) -> Optional[dict]:
     """将 UnifiedPuzzle 转换为 tw07 EraserLogic level_config。
 
-    格式: {cols, rows, start, end, erasers: [[c,r],...], + squares/stars/triangles}
+    格式: {cols, rows, start(s), end, erasers: [[c,r],...], + squares/stars/triangles}
     """
-    if len(puzzle.starts) != 1 or not puzzle.ends:
+    if len(puzzle.starts) < 1 or not puzzle.ends:
         return None
 
-    start = puzzle.starts[0]
     end = _pick_end(puzzle)
 
     config = {
         "cols": puzzle.cols,
         "rows": puzzle.rows,
-        "start": list(start),
+        **_start_fields(puzzle),
         "end": list(end),
         "erasers": [list(e) for e in puzzle.eliminations],
     }
@@ -328,12 +331,11 @@ def convert_tw07(puzzle: UnifiedPuzzle) -> Optional[dict]:
 def convert_tw08(puzzle: UnifiedPuzzle) -> Optional[dict]:
     """将 UnifiedPuzzle 转换为 tw08 ComboBasic level_config。
 
-    格式: {cols, rows, start, end, squares: {...}, stars: {...}}
+    格式: {cols, rows, start(s), end, squares: {...}, stars: {...}}
     """
-    if len(puzzle.starts) != 1 or not puzzle.ends:
+    if len(puzzle.starts) < 1 or not puzzle.ends:
         return None
 
-    start = puzzle.starts[0]
     end = _pick_end(puzzle)
 
     mapped_sq = _map_colors(puzzle.squares)
@@ -347,7 +349,7 @@ def convert_tw08(puzzle: UnifiedPuzzle) -> Optional[dict]:
     return {
         "cols": puzzle.cols,
         "rows": puzzle.rows,
-        "start": list(start),
+        **_start_fields(puzzle),
         "end": list(end),
         "squares": {f"{c},{r}": v for (c, r), v in mapped_sq.items()},
         "stars": {f"{c},{r}": v for (c, r), v in mapped_st.items()},

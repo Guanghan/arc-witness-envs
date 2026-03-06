@@ -266,6 +266,13 @@ def run_pipeline(max_solve_time: float = 10.0, output_dir: str = "levels",
             elapsed = time.time() - t0
 
             if result["valid"]:
+                # 多起点：重排 starts 使 solver 选中的起点在首位
+                if "starts" in config and result["solution"]:
+                    solver_start = list(result["solution"][0])
+                    starts = config["starts"]
+                    if solver_start in starts and starts[0] != solver_start:
+                        starts.remove(solver_start)
+                        starts.insert(0, solver_start)
                 valid_levels.append({
                     "config": config,
                     "moves": result["moves"],

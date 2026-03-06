@@ -50,7 +50,8 @@ class Tw01(ARCBaseGame):
         # 因为 super().__init__() 会调用 on_set_level() 设置这些值
         self._path: List[Tuple[int, int]] = []
         self._grid: Optional[WitnessGrid] = None
-        self._start: Tuple[int, int] = (0, 0)
+        self._starts: List[Tuple[int, int]] = [(0, 0)]
+        self._start: Tuple[int, int] = (0, 0)  # 当前选中的起点
         self._end: Tuple[int, int] = (0, 0)
         self._dots: List[Tuple[int, int]] = []
         self._breakpoints: Set[Tuple[Tuple[int, int], Tuple[int, int]]] = set()
@@ -83,6 +84,13 @@ class Tw01(ARCBaseGame):
             pass
         return None
 
+    @staticmethod
+    def _parse_starts(cfg: dict) -> List[Tuple[int, int]]:
+        """从 config 解析起点列表。支持 'starts' (多起点) 和 'start' (单起点)。"""
+        if "starts" in cfg:
+            return [tuple(s) for s in cfg["starts"]]
+        return [tuple(cfg["start"])]
+
     def _create_levels(self) -> List[Level]:
         """创建所有关卡。优先从 JSON 加载，回退到硬编码。"""
         json_entries = self._load_json_levels()
@@ -90,10 +98,11 @@ class Tw01(ARCBaseGame):
             level_configs = []
             for entry in json_entries:
                 cfg = entry["config"]
+                starts = self._parse_starts(cfg)
                 config = {
                     "cols": cfg["cols"],
                     "rows": cfg["rows"],
-                    "start": tuple(cfg["start"]),
+                    "starts": starts,
                     "end": tuple(cfg["end"]),
                     "dots": [tuple(d) for d in cfg["dots"]],
                     "validated": entry.get("validated", True),
@@ -108,27 +117,27 @@ class Tw01(ARCBaseGame):
             level_configs = [
                 {
                     "cols": 3, "rows": 3,
-                    "start": (0, 0), "end": (3, 0),
+                    "starts": [(0, 0)], "end": (3, 0),
                     "dots": [(2, 0)],
                 },
                 {
                     "cols": 3, "rows": 3,
-                    "start": (0, 0), "end": (3, 0),
+                    "starts": [(0, 0)], "end": (3, 0),
                     "dots": [(1, 1)],
                 },
                 {
                     "cols": 4, "rows": 4,
-                    "start": (0, 0), "end": (4, 4),
+                    "starts": [(0, 0)], "end": (4, 4),
                     "dots": [(2, 0), (2, 4)],
                 },
                 {
                     "cols": 4, "rows": 4,
-                    "start": (0, 0), "end": (4, 4),
+                    "starts": [(0, 0)], "end": (4, 4),
                     "dots": [(0, 2), (4, 2), (2, 4)],
                 },
                 {
                     "cols": 5, "rows": 5,
-                    "start": (0, 0), "end": (5, 5),
+                    "starts": [(0, 0)], "end": (5, 5),
                     "dots": [(1, 0), (5, 1), (3, 5), (0, 3)],
                 },
             ]
@@ -138,8 +147,9 @@ class Tw01(ARCBaseGame):
             grid = WitnessGrid(config["cols"], config["rows"])
             frame = grid.render_grid()
 
-            # 绘制起点和终点
-            grid.draw_start(frame, config["start"])
+            # 绘制所有起点和终点
+            for s in config["starts"]:
+                grid.draw_start(frame, s)
             grid.draw_end(frame, config["end"])
 
             # 绘制必经点
@@ -161,8 +171,8 @@ class Tw01(ARCBaseGame):
                 tags=["sys_static"],
             )
 
-            # 创建光标 sprite（在起点位置）
-            sx, sy = grid.node_to_pixel(*config["start"])
+            # 创建光标 sprite（在第一个起点位置）
+            sx, sy = grid.node_to_pixel(*config["starts"][0])
             cursor_sprite = Sprite(
                 pixels=[[CURSOR_COLOR]],
                 name="cursor",
@@ -175,7 +185,7 @@ class Tw01(ARCBaseGame):
             level_data = {
                 "cols": config["cols"],
                 "rows": config["rows"],
-                "start": config["start"],
+                "starts": config["starts"],
                 "end": config["end"],
                 "dots": config["dots"],
                 "validated": config.get("validated", True),
@@ -197,7 +207,12 @@ class Tw01(ARCBaseGame):
         """关卡切换时重置状态。"""
         data = level._data
         self._grid = WitnessGrid(data["cols"], data["rows"])
-        self._start = tuple(data["start"])
+        # 支持多起点
+        if "starts" in data:
+            self._starts = [tuple(s) for s in data["starts"]]
+        else:
+            self._starts = [tuple(data["start"])]
+        self._start = self._starts[0]
         self._end = tuple(data["end"])
         self._dots = [tuple(d) for d in data["dots"]]
         self._breakpoints = set()
@@ -229,6 +244,22 @@ class Tw01(ARCBaseGame):
 
         return best_node
 
+    def _try_auto_select_start(self, dc: int, dr: int) -> bool:
+        """多起点时，尝试根据第一步方向自动选择起点。
+
+        仅在路径只有初始起点（len==1）且当前起点无法移动时触发。
+        遍历所有起点，选择第一个能向 (dc,dr) 方向移动的起点。
+        """
+        if len(self._path) != 1 or len(self._starts) <= 1:
+            return False
+        for alt in self._starts:
+            alt_target = (alt[0] + dc, alt[1] + dr)
+            if self._is_valid_move(alt, alt_target):
+                self._start = alt
+                self._path = [alt]
+                return True
+        return False
+
     def step(self) -> None:
         """核心游戏逻辑。"""
         if not self._grid or not self._drawing:
@@ -257,15 +288,23 @@ class Tw01(ARCBaseGame):
             target = (current[0] + dc, current[1] + dr)
 
             # 验证移动合法性
-            if self._is_valid_move(current, target):
-                # 如果回退到上一个节点
-                if len(self._path) >= 2 and target == self._path[-2]:
-                    self._path.pop()
-                elif target not in self._path:
-                    self._path.append(target)
-                # else: target already in path (would create loop), ignore
+            if not self._is_valid_move(current, target):
+                # 多起点：尝试自动切换起点
+                if self._try_auto_select_start(dc, dr):
+                    current = self._current_node()
+                    target = (current[0] + dc, current[1] + dr)
+                else:
+                    self.complete_action()
+                    return
 
-                self._update_display()
+            # 如果回退到上一个节点
+            if len(self._path) >= 2 and target == self._path[-2]:
+                self._path.pop()
+            elif target not in self._path:
+                self._path.append(target)
+            # else: target already in path (would create loop), ignore
+
+            self._update_display()
 
         self.complete_action()
 
@@ -313,7 +352,8 @@ class Tw01(ARCBaseGame):
 
     def _show_error(self) -> None:
         """显示错误反馈（短暂闪红）。"""
-        # 重置路径
+        # 重置路径到第一个起点
+        self._start = self._starts[0]
         self._path = [self._start]
         self._update_display()
 
@@ -330,8 +370,9 @@ class Tw01(ARCBaseGame):
         data = self.current_level._data
         frame = self._grid.render_grid()
 
-        # 绘制起点和终点
-        self._grid.draw_start(frame, self._start)
+        # 绘制所有起点和终点
+        for s in self._starts:
+            self._grid.draw_start(frame, s)
         self._grid.draw_end(frame, self._end)
 
         # 绘制必经点

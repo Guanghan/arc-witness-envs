@@ -40,6 +40,7 @@ class Tw06(ARCBaseGame):
         self._seed = seed
         self._path: List[Tuple[int, int]] = []
         self._grid: Optional[WitnessGrid] = None
+        self._starts: List[Tuple[int, int]] = [(0, 0)]
         self._start: Tuple[int, int] = (0, 0)
         self._end: Tuple[int, int] = (0, 0)
         self._triangles: Dict[Tuple[int, int], int] = {}  # cell -> count
@@ -54,6 +55,13 @@ class Tw06(ARCBaseGame):
             available_actions=[1, 2, 3, 4, 5],
             seed=seed,
         )
+
+    @staticmethod
+    def _parse_starts(cfg: dict) -> List[Tuple[int, int]]:
+        """从 config 解析起点列表。支持 'starts' (多起点) 和 'start' (单起点)。"""
+        if "starts" in cfg:
+            return [tuple(s) for s in cfg["starts"]]
+        return [tuple(cfg["start"])]
 
     @staticmethod
     def _load_json_levels() -> Optional[list]:
@@ -82,7 +90,7 @@ class Tw06(ARCBaseGame):
                 config = {
                     "cols": cfg["cols"],
                     "rows": cfg["rows"],
-                    "start": tuple(cfg["start"]),
+                    "starts": self._parse_starts(cfg),
                     "end": tuple(cfg["end"]),
                     "triangles": {
                         tuple(int(x) for x in k.split(",")): v
@@ -96,12 +104,12 @@ class Tw06(ARCBaseGame):
             level_configs = [
                 {
                     "cols": 3, "rows": 3,
-                    "start": (0, 0), "end": (3, 3),
+                    "starts": [(0, 0)], "end": (3, 3),
                     "triangles": {(1, 1): 2},
                 },
                 {
                     "cols": 3, "rows": 3,
-                    "start": (0, 0), "end": (3, 3),
+                    "starts": [(0, 0)], "end": (3, 3),
                     "triangles": {(0, 0): 1, (2, 2): 3},
                 },
             ]
@@ -111,7 +119,8 @@ class Tw06(ARCBaseGame):
             grid = WitnessGrid(config["cols"], config["rows"])
             frame = grid.render_grid()
 
-            grid.draw_start(frame, config["start"])
+            for s in config["starts"]:
+                grid.draw_start(frame, s)
             grid.draw_end(frame, config["end"])
 
             for cell, count in config["triangles"].items():
@@ -128,7 +137,7 @@ class Tw06(ARCBaseGame):
                 tags=["sys_static"],
             )
 
-            sx, sy = grid.node_to_pixel(*config["start"])
+            sx, sy = grid.node_to_pixel(*config["starts"][0])
             cursor_sprite = Sprite(
                 pixels=[[CURSOR_COLOR]], name="cursor",
                 x=sx, y=sy, layer=10,
@@ -142,7 +151,7 @@ class Tw06(ARCBaseGame):
                 data={
                     "cols": config["cols"],
                     "rows": config["rows"],
-                    "start": config["start"],
+                    "starts": config["starts"],
                     "end": config["end"],
                     "triangles": {f"{k[0]},{k[1]}": v for k, v in config["triangles"].items()},
                     "validated": config.get("validated", True),
@@ -156,13 +165,34 @@ class Tw06(ARCBaseGame):
     def on_set_level(self, level: Level) -> None:
         data = level._data
         self._grid = WitnessGrid(data["cols"], data["rows"])
-        self._start = tuple(data["start"])
+        # 支持多起点
+        if "starts" in data:
+            self._starts = [tuple(s) for s in data["starts"]]
+        else:
+            self._starts = [tuple(data["start"])]
+        self._start = self._starts[0]
         self._end = tuple(data["end"])
         self._triangles = {}
         for k, v in data["triangles"].items():
             parts = k.split(",")
             self._triangles[(int(parts[0]), int(parts[1]))] = v
         self._path = [self._start]
+
+    def _try_auto_select_start(self, dc: int, dr: int) -> bool:
+        """多起点时，尝试根据第一步方向自动选择起点。
+
+        仅在路径只有初始起点（len==1）且当前起点无法移动时触发。
+        遍历所有起点，选择第一个能向 (dc,dr) 方向移动的起点。
+        """
+        if len(self._path) != 1 or len(self._starts) <= 1:
+            return False
+        for alt in self._starts:
+            alt_target = (alt[0] + dc, alt[1] + dr)
+            if self._is_valid_move(alt, alt_target):
+                self._start = alt
+                self._path = [alt]
+                return True
+        return False
 
     def step(self) -> None:
         if not self._grid:
@@ -184,12 +214,21 @@ class Tw06(ARCBaseGame):
 
             target = (current[0] + dc, current[1] + dr)
 
-            if self._is_valid_move(current, target):
-                if len(self._path) >= 2 and target == self._path[-2]:
-                    self._path.pop()
-                elif target not in self._path:
-                    self._path.append(target)
-                self._update_display()
+            # 验证移动合法性
+            if not self._is_valid_move(current, target):
+                # 多起点：尝试自动切换起点
+                if self._try_auto_select_start(dc, dr):
+                    current = self._path[-1] if self._path else self._start
+                    target = (current[0] + dc, current[1] + dr)
+                else:
+                    self.complete_action()
+                    return
+
+            if len(self._path) >= 2 and target == self._path[-2]:
+                self._path.pop()
+            elif target not in self._path:
+                self._path.append(target)
+            self._update_display()
 
         self.complete_action()
 
@@ -209,6 +248,7 @@ class Tw06(ARCBaseGame):
             return
 
         if self._path[-1] != self._end:
+            self._start = self._starts[0]
             self._path = [self._start]
             self._update_display()
             return
@@ -218,6 +258,7 @@ class Tw06(ARCBaseGame):
         for cell, expected_count in self._triangles.items():
             actual = self._grid.cell_edge_count(cell, path_edges)
             if actual != expected_count:
+                self._start = self._starts[0]
                 self._path = [self._start]
                 self._update_display()
                 return
@@ -230,7 +271,8 @@ class Tw06(ARCBaseGame):
             return
 
         frame = self._grid.render_grid()
-        self._grid.draw_start(frame, self._start)
+        for s in self._starts:
+            self._grid.draw_start(frame, s)
         self._grid.draw_end(frame, self._end)
 
         for cell, count in self._triangles.items():

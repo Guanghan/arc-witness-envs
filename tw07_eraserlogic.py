@@ -41,6 +41,7 @@ class Tw07(ARCBaseGame):
         self._seed = seed
         self._path: List[Tuple[int, int]] = []
         self._grid: Optional[WitnessGrid] = None
+        self._starts: List[Tuple[int, int]] = [(0, 0)]
         self._start: Tuple[int, int] = (0, 0)
         self._end: Tuple[int, int] = (0, 0)
         self._erasers: Set[Tuple[int, int]] = set()
@@ -58,6 +59,13 @@ class Tw07(ARCBaseGame):
             available_actions=[1, 2, 3, 4, 5],
             seed=seed,
         )
+
+    @staticmethod
+    def _parse_starts(cfg: dict) -> List[Tuple[int, int]]:
+        """从 config 解析起点列表。支持 'starts' (多起点) 和 'start' (单起点)。"""
+        if "starts" in cfg:
+            return [tuple(s) for s in cfg["starts"]]
+        return [tuple(cfg["start"])]
 
     @staticmethod
     def _load_json_levels() -> Optional[list]:
@@ -82,10 +90,11 @@ class Tw07(ARCBaseGame):
             level_configs = []
             for entry in json_entries:
                 cfg = entry["config"]
+                starts = self._parse_starts(cfg)
                 config = {
                     "cols": cfg["cols"],
                     "rows": cfg["rows"],
-                    "start": tuple(cfg["start"]),
+                    "starts": starts,
                     "end": tuple(cfg["end"]),
                     "erasers": set(tuple(e) for e in cfg["erasers"]),
                     "squares": {
@@ -108,7 +117,7 @@ class Tw07(ARCBaseGame):
             level_configs = [
                 {
                     "cols": 3, "rows": 3,
-                    "start": (0, 0), "end": (3, 3),
+                    "starts": [(0, 0)], "end": (3, 3),
                     "erasers": {(1, 1)},
                     "squares": {(0, 0): SQUARE_A, (2, 0): SQUARE_B, (0, 2): SQUARE_A},
                     "stars": {},
@@ -121,7 +130,8 @@ class Tw07(ARCBaseGame):
             grid = WitnessGrid(config["cols"], config["rows"])
             frame = grid.render_grid()
 
-            grid.draw_start(frame, config["start"])
+            for s in config["starts"]:
+                grid.draw_start(frame, s)
             grid.draw_end(frame, config["end"])
 
             for cell, color in config["squares"].items():
@@ -144,7 +154,7 @@ class Tw07(ARCBaseGame):
                 tags=["sys_static"],
             )
 
-            sx, sy = grid.node_to_pixel(*config["start"])
+            sx, sy = grid.node_to_pixel(*config["starts"][0])
             cursor_sprite = Sprite(
                 pixels=[[CURSOR_COLOR]], name="cursor",
                 x=sx, y=sy, layer=10,
@@ -158,7 +168,7 @@ class Tw07(ARCBaseGame):
                 data={
                     "cols": config["cols"],
                     "rows": config["rows"],
-                    "start": config["start"],
+                    "starts": config["starts"],
                     "end": config["end"],
                     "erasers": [list(e) for e in config["erasers"]],
                     "squares": {f"{k[0]},{k[1]}": v for k, v in config["squares"].items()},
@@ -175,7 +185,11 @@ class Tw07(ARCBaseGame):
     def on_set_level(self, level: Level) -> None:
         data = level._data
         self._grid = WitnessGrid(data["cols"], data["rows"])
-        self._start = tuple(data["start"])
+        if "starts" in data:
+            self._starts = [tuple(s) for s in data["starts"]]
+        else:
+            self._starts = [tuple(data["start"])]
+        self._start = self._starts[0]
         self._end = tuple(data["end"])
         self._erasers = set(tuple(e) for e in data["erasers"])
         self._squares = {}
@@ -191,6 +205,18 @@ class Tw07(ARCBaseGame):
             parts = k.split(",")
             self._triangles[(int(parts[0]), int(parts[1]))] = v
         self._path = [self._start]
+
+    def _try_auto_select_start(self, dc: int, dr: int) -> bool:
+        """多起点时，尝试根据第一步方向自动选择起点。"""
+        if len(self._path) != 1 or len(self._starts) <= 1:
+            return False
+        for alt in self._starts:
+            alt_target = (alt[0] + dc, alt[1] + dr)
+            if self._is_valid_move(alt, alt_target):
+                self._start = alt
+                self._path = [alt]
+                return True
+        return False
 
     def step(self) -> None:
         if not self._grid:
@@ -212,12 +238,20 @@ class Tw07(ARCBaseGame):
 
             target = (current[0] + dc, current[1] + dr)
 
-            if self._is_valid_move(current, target):
-                if len(self._path) >= 2 and target == self._path[-2]:
-                    self._path.pop()
-                elif target not in self._path:
-                    self._path.append(target)
-                self._update_display()
+            # 多起点：尝试自动切换起点
+            if not self._is_valid_move(current, target):
+                if self._try_auto_select_start(dc, dr):
+                    current = self._path[-1]
+                    target = (current[0] + dc, current[1] + dr)
+                else:
+                    self.complete_action()
+                    return
+
+            if len(self._path) >= 2 and target == self._path[-2]:
+                self._path.pop()
+            elif target not in self._path:
+                self._path.append(target)
+            self._update_display()
 
         self.complete_action()
 
@@ -272,6 +306,7 @@ class Tw07(ARCBaseGame):
             return
 
         if self._path[-1] != self._end:
+            self._start = self._starts[0]
             self._path = [self._start]
             self._update_display()
             return
@@ -282,6 +317,7 @@ class Tw07(ARCBaseGame):
             eraser_count = sum(1 for cell in region if cell in self._erasers)
             violations = self._count_violations(region)
             if violations != eraser_count:
+                self._start = self._starts[0]
                 self._path = [self._start]
                 self._update_display()
                 return
@@ -294,7 +330,8 @@ class Tw07(ARCBaseGame):
             return
 
         frame = self._grid.render_grid()
-        self._grid.draw_start(frame, self._start)
+        for s in self._starts:
+            self._grid.draw_start(frame, s)
         self._grid.draw_end(frame, self._end)
 
         for cell, color in self._squares.items():

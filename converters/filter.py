@@ -2,12 +2,12 @@
 filter.py — 按游戏类型筛选和过滤谜题
 
 筛选条件：
-- tw01 PathDots: hex-only, max(cols,rows)<=7, 1 start, >=1 end, 仅节点 hex
-- tw02 ColorSplit: sq-only, max(cols,rows)<=7, 1 start, >=1 end, <=3 colors
-- tw03 ShapeFill: tetris-only, max(cols,rows)<=6, 1 start, >=1 end
+- tw01 PathDots: hex-only, max(cols,rows)<=7, >=1 start, >=1 end, 仅节点 hex
+- tw02 ColorSplit: sq-only, max(cols,rows)<=7, >=1 start, >=1 end, <=3 colors
+- tw03 ShapeFill: tetris-only, max(cols,rows)<=6, >=1 start, >=1 end
 - tw04 SymDraw: symmetry puzzles, max(cols,rows)<=7, >=1 start, >=1 end
-- tw05 StarPair: stars-only, max(cols,rows)<=7, 1 start, >=1 end, >=2 stars
-- tw06 TriCount: triangles-only, max(cols,rows)<=7, 1 start, >=1 end
+- tw05 StarPair: stars-only, max(cols,rows)<=7, >=1 start, >=1 end, >=2 stars
+- tw06 TriCount: triangles-only, max(cols,rows)<=7, >=1 start, >=1 end
 - tw07 EraserLogic: eliminations + other constraint, max(cols,rows)<=6
 - tw08 ComboBasic: squares + stars, max(cols,rows)<=7, <=3 colors
 """
@@ -23,7 +23,7 @@ def filter_tw01(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
             continue
         if max(p.cols, p.rows) > 7:
             continue
-        if len(p.starts) != 1 or len(p.ends) < 1:
+        if len(p.starts) < 1 or len(p.ends) < 1:
             continue
         if p.hex_edges:
             continue
@@ -41,7 +41,7 @@ def filter_tw02(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
             continue
         if max(p.cols, p.rows) > 7:
             continue
-        if len(p.starts) != 1 or len(p.ends) < 1:
+        if len(p.starts) < 1 or len(p.ends) < 1:
             continue
         if p.unique_square_colors() > 3:
             continue
@@ -64,7 +64,7 @@ def filter_tw03(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
             continue
         if max(p.cols, p.rows) > 6:
             continue
-        if len(p.starts) != 1 or len(p.ends) < 1:
+        if len(p.starts) < 1 or len(p.ends) < 1:
             continue
         if p.missing_edges:
             continue
@@ -99,7 +99,7 @@ def filter_tw05(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
             continue
         if max(p.cols, p.rows) > 7:
             continue
-        if len(p.starts) != 1 or len(p.ends) < 1:
+        if len(p.starts) < 1 or len(p.ends) < 1:
             continue
         if len(p.stars) < 2:
             continue
@@ -120,7 +120,7 @@ def filter_tw06(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
             continue
         if max(p.cols, p.rows) > 7:
             continue
-        if len(p.starts) != 1 or len(p.ends) < 1:
+        if len(p.starts) < 1 or len(p.ends) < 1:
             continue
         if p.missing_edges:
             continue
@@ -139,7 +139,7 @@ def filter_tw07(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
             continue
         if max(p.cols, p.rows) > 6:
             continue
-        if len(p.starts) != 1 or len(p.ends) < 1:
+        if len(p.starts) < 1 or len(p.ends) < 1:
             continue
         if p.missing_edges:
             continue
@@ -158,7 +158,7 @@ def filter_tw08(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
             continue
         if max(p.cols, p.rows) > 7:
             continue
-        if len(p.starts) != 1 or len(p.ends) < 1:
+        if len(p.starts) < 1 or len(p.ends) < 1:
             continue
         if p.unique_square_colors() > 3:
             continue
