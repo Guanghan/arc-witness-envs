@@ -225,6 +225,7 @@ async function loadGames() {
   try {
     const res = await fetch('/api/games');
     const games = await res.json();
+    games.sort((a, b) => a.game_id.localeCompare(b.game_id, undefined, { numeric: true }));
     selectEl.innerHTML = '';
     for (const g of games) {
       const btn = document.createElement('button');
