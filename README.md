@@ -4,6 +4,10 @@ Interactive reasoning environments for [ARC-AGI-3](https://arcprize.org/arc-agi/
 
 Built on the official [ARC-AGI SDK](https://docs.arcprize.org) (`arcengine`). Each game renders to a 64x64 pixel grid with a 16-color palette, playable by both AI agents and humans.
 
+**Drop-in compatible with ARC-AGI-3**: All 13 games implement the same `ARCBaseGame` interface as official ARC-AGI-3 environments. Any agent built for the competition can run these games with zero code changes — just point it at this `environment_files/` directory. This gives you 1,872 extra training/evaluation levels across 13 puzzle types to develop and stress-test your agent before the real competition.
+
+**Also RL-ready**: An [OpenEnv](https://github.com/meta-pytorch/OpenEnv) adapter is included for reinforcement learning training (see [OpenEnv Adapter](#openenv-adapter-rl-training) section).
+
 ## Why The Witness?
 
 The Witness contains 523+ hand-crafted line-drawing puzzles that teach abstract rules through progressive difficulty — no text, no tutorials. Each puzzle type maps cleanly to ARC-AGI [Core Knowledge](https://arxiv.org/abs/1911.01547) priors:
@@ -292,6 +296,40 @@ python run_pipeline.py --keep-all
 ```
 
 Pipeline: decode protobuf -> classify by game type -> convert coordinates -> solve with BFS/DFS -> calibrate baselines -> export JSON. Unsolved puzzles are kept as unvalidated levels.
+
+### Use with Your ARC-AGI-3 Agent
+
+If you already have an agent built for the ARC-AGI-3 competition, just point it at this repo's `environment_files/` directory — no code changes needed:
+
+```python
+from arc_agi import Arcade, OperationMode
+
+arcade = Arcade(
+    operation_mode=OperationMode.OFFLINE,
+    environments_dir="path/to/arc-witness-envs/environment_files",
+)
+
+# Your agent sees tw01-tw13 exactly like official ARC-AGI-3 games
+for env_info in arcade.get_environments():
+    print(env_info.game_id, env_info.title)
+
+scorecard_id = arcade.create_scorecard(tags=["witness"])
+env = arcade.make(game_id="tw03", scorecard_id=scorecard_id)
+obs = env.reset()
+
+# ... run your agent as usual ...
+```
+
+Or serve them via the SDK's REST API for remote agents:
+
+```python
+arcade = Arcade(
+    operation_mode=OperationMode.OFFLINE,
+    environments_dir="path/to/arc-witness-envs/environment_files",
+)
+arcade.listen_and_serve(port=8001)
+# Your agent connects to http://localhost:8001/api/cmd/ACTION1 etc.
+```
 
 ## Architecture
 
