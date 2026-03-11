@@ -359,8 +359,17 @@ The `openenv_adapter/` module wraps all 13 games as [OpenEnv](https://github.com
 - **Episode = one level**: `reset()` starts (or restarts) the current level; the episode ends when the level is solved or truncated
 - **Observation**: 64x64 int grid (color indices 0-15) + level metadata
 - **Action**: discrete 1-5 (UP/DOWN/LEFT/RIGHT/CONFIRM)
-- **Reward shaping**: step penalty `-1/baseline`, CONFIRM success `+1.0`, CONFIRM failure `-0.5`
 - **Truncation**: `max_steps = baseline × 3`
+
+#### Reward Modes (`reward_mode` / `WITNESS_REWARD`)
+
+| Mode | Solve | Step | Wrong CONFIRM | Best for |
+|------|-------|------|---------------|----------|
+| `sparse` | +1.0 | 0 | 0 | Exploration-heavy algorithms (RND, ICM) |
+| `shaped` (default) | +1.0 | -0.01 | -0.1 | PPO, SAC — solve always net positive |
+| `arc_score` | min(baseline/steps, 1) | 0 | -0.1 | Directly mirrors ARC-AGI-3 scoring |
+
+Key property: **solving a level is always a positive reward signal**, regardless of how many steps it took. This avoids the failure mode where step penalties drown out the solve signal when the agent is slower than baseline (which is the common case).
 
 ### Install
 
@@ -376,8 +385,8 @@ cd arc-witness-envs
 # Serve tw01 (default)
 uvicorn openenv_adapter.server.app:app --host 0.0.0.0 --port 8000
 
-# Serve a specific game
-WITNESS_GAME=tw03 uvicorn openenv_adapter.server.app:app --port 8000
+# Serve a specific game with specific reward mode
+WITNESS_GAME=tw03 WITNESS_REWARD=arc_score uvicorn openenv_adapter.server.app:app --port 8000
 ```
 
 ### Use Client

@@ -82,11 +82,16 @@ class WitnessEnvironment(Environment):
     - step(): executes one game action, returns observation with shaped reward
     - Automatically advances to next level when current level is solved
 
-    Reward shaping:
-    - Each step: -1 / baseline_actions (penalize inefficiency)
-    - CONFIRM success (level solved): +1.0
-    - CONFIRM failure (wrong solution): -0.5
-    - Episode truncation: max_steps = baseline × 3
+    Reward modes (reward_mode parameter):
+    - "sparse": solve → +1.0, everything else → 0.0. Simplest signal,
+      always non-negative, works with any RL algorithm.
+    - "shaped": solve → +1.0, step → -0.01 (small constant penalty),
+      wrong CONFIRM → -0.1. Solving is always net positive even at
+      3× baseline steps. Encourages efficiency without drowning the
+      solve signal.
+    - "arc_score": solve → min(baseline/steps, 1.0) ∈ (0, 1].
+      Directly mirrors ARC-AGI-3 scoring. No step penalty.
+      Solve is always positive; efficiency gives higher reward.
     """
 
     def __init__(
@@ -94,11 +99,15 @@ class WitnessEnvironment(Environment):
         game_id: str = "tw01",
         seed: int = 0,
         max_steps_multiplier: int = 3,
+        reward_mode: str = "shaped",
     ):
         super().__init__()
+        if reward_mode not in ("sparse", "shaped", "arc_score"):
+            raise ValueError(f"reward_mode must be 'sparse', 'shaped', or 'arc_score', got '{reward_mode}'")
         self._game_id = game_id
         self._seed = seed
         self._max_steps_multiplier = max_steps_multiplier
+        self._reward_mode = reward_mode
 
         # Load game
         game_cls = _load_game_class(game_id)
@@ -192,29 +201,46 @@ class WitnessEnvironment(Environment):
         baseline = self._baseline_for_level()
 
         # Determine reward and done
-        if curr_completed > prev_completed:
-            # Level solved
-            reward = 1.0
+        solved = curr_completed > prev_completed
+        wrong_confirm = (action.action == WitnessGameAction.CONFIRM
+                         and not solved)
+        truncated = self._step_count >= self._max_steps()
+
+        if solved:
             self._levels_completed = curr_completed
             self._level_index = curr_completed
             done = True
             message = f"Level solved! ({self._step_count} steps, baseline {baseline})"
-        elif (action.action == WitnessGameAction.CONFIRM
-              and curr_completed == prev_completed):
-            # CONFIRM but level not solved (wrong solution)
-            reward = -0.5
+        elif wrong_confirm:
             done = False
             message = "Wrong solution, try again."
-        elif self._step_count >= self._max_steps():
-            # Truncated
-            reward = -1.0 / baseline
+        elif truncated:
             done = True
             message = f"Truncated at {self._step_count} steps (max {self._max_steps()})."
         else:
-            # Normal step
-            reward = -1.0 / baseline
             done = False
             message = ""
+
+        # Compute reward based on mode
+        if self._reward_mode == "sparse":
+            # Simplest: only reward on solve, always non-negative
+            reward = 1.0 if solved else 0.0
+        elif self._reward_mode == "shaped":
+            # Solve is always net positive; small step penalty for efficiency
+            if solved:
+                reward = 1.0
+            elif wrong_confirm:
+                reward = -0.1
+            else:
+                reward = -0.01  # small constant, not scaled by baseline
+        elif self._reward_mode == "arc_score":
+            # Mirrors ARC-AGI-3 scoring: min(baseline/steps, 1.0)
+            if solved:
+                reward = min(baseline / self._step_count, 1.0)
+            elif wrong_confirm:
+                reward = -0.1
+            else:
+                reward = 0.0
 
         return self._make_obs(reward=reward, done=done, message=message)
 
