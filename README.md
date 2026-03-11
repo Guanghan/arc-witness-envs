@@ -222,6 +222,13 @@ arc-witness-envs/
 │   ├── tw11_levels.json       # 410 levels (145v + 265u)
 │   ├── tw12_levels.json       # 160 levels (4v + 156u)
 │   └── tw13_levels.json       # 131 levels (61v + 70u)
+├── openenv_adapter/           # OpenEnv RL training adapter
+│   ├── models.py              # Action/Observation Pydantic models
+│   ├── client.py              # WebSocket client (EnvClient subclass)
+│   ├── openenv.yaml           # OpenEnv manifest
+│   └── server/
+│       ├── witness_environment.py  # Environment wrapper (ARCBaseGame → OpenEnv)
+│       └── app.py             # FastAPI entry point
 └── converters/                # Puzzle extraction pipeline
     ├── unified_puzzle.py      # Intermediate data model + classifier
     ├── ingest_ttws.py         # Decode protobuf puzzles from ttws
@@ -331,6 +338,81 @@ WitnessGrid(cols, rows)
 | Left | 3 | `ACTION3` |
 | Right | 4 | `ACTION4` |
 | Confirm | 5 | `ACTION5` |
+
+## OpenEnv Adapter (RL Training)
+
+The `openenv_adapter/` module wraps all 13 games as [OpenEnv](https://github.com/meta-pytorch/OpenEnv) environments for RL training, while the game implementations remain fully ARC-AGI-3 SDK compatible.
+
+```
+┌─────────────────────────────────────────────┐
+│          tw01-tw13 (ARCBaseGame)            │  ← game logic, untouched
+├──────────────────┬──────────────────────────┤
+│  ARC-AGI-3 SDK   │     OpenEnv Adapter      │  ← two independent interfaces
+│  Arcade.make()   │  Environment subclass    │
+│  play_human.py   │  models.py / client.py   │
+│  test_games.py   │  openenv.yaml            │
+└──────────────────┴──────────────────────────┘
+```
+
+### Design
+
+- **Episode = one level**: `reset()` starts (or restarts) the current level; the episode ends when the level is solved or truncated
+- **Observation**: 64x64 int grid (color indices 0-15) + level metadata
+- **Action**: discrete 1-5 (UP/DOWN/LEFT/RIGHT/CONFIRM)
+- **Reward shaping**: step penalty `-1/baseline`, CONFIRM success `+1.0`, CONFIRM failure `-0.5`
+- **Truncation**: `max_steps = baseline × 3`
+
+### Install
+
+```bash
+pip install arc-agi openenv
+```
+
+### Start Server
+
+```bash
+cd arc-witness-envs
+
+# Serve tw01 (default)
+uvicorn openenv_adapter.server.app:app --host 0.0.0.0 --port 8000
+
+# Serve a specific game
+WITNESS_GAME=tw03 uvicorn openenv_adapter.server.app:app --port 8000
+```
+
+### Use Client
+
+```python
+import asyncio
+from openenv_adapter.client import WitnessEnvClient
+from openenv_adapter.models import WitnessAction, WitnessGameAction
+
+async def main():
+    client = WitnessEnvClient(base_url="ws://localhost:8000")
+    async with client:
+        result = await client.reset()
+        print(f"Level: {result.observation.level_index}")
+
+        for action in [WitnessGameAction.RIGHT, WitnessGameAction.UP, WitnessGameAction.CONFIRM]:
+            result = await client.step(WitnessAction(action=action))
+            print(f"Reward: {result.reward}, Done: {result.done}")
+
+asyncio.run(main())
+```
+
+### Use Directly (No Server)
+
+```python
+from openenv_adapter.server.witness_environment import WitnessEnvironment
+from openenv_adapter.models import WitnessAction, WitnessGameAction
+
+env = WitnessEnvironment(game_id="tw01", seed=0)
+obs = env.reset()
+
+obs = env.step(WitnessAction(action=WitnessGameAction.RIGHT))
+print(f"Reward: {obs.reward}, Done: {obs.done}")
+print(f"Frame shape: {len(obs.frame)}x{len(obs.frame[0])}")  # 64x64
+```
 
 ## ARC-AGI-3 Context
 
