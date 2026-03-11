@@ -37,19 +37,19 @@ _ACTION_MAP: Dict[WitnessGameAction, GameAction] = {
 
 # All known game classes and their modules
 _GAME_REGISTRY: Dict[str, tuple] = {
-    "tw01": ("tw01_pathdots", "Tw01"),
-    "tw02": ("tw02_colorsplit", "Tw02"),
-    "tw03": ("tw03_shapefill", "Tw03"),
-    "tw04": ("tw04_symdraw", "Tw04"),
-    "tw05": ("tw05_starpair", "Tw05"),
-    "tw06": ("tw06_tricount", "Tw06"),
-    "tw07": ("tw07_eraserlogic", "Tw07"),
-    "tw08": ("tw08_combobasic", "Tw08"),
-    "tw09": ("tw09_cylinderwrap", "Tw09"),
-    "tw10": ("tw10_colorfilter", "Tw10"),
-    "tw11": ("tw11_multiregion", "Tw11"),
-    "tw12": ("tw12_hexcombo", "Tw12"),
-    "tw13": ("tw13_eraserall", "Tw13"),
+    "tw01": ("environment_files.tw01.tw01", "Tw01"),
+    "tw02": ("environment_files.tw02.tw02", "Tw02"),
+    "tw03": ("environment_files.tw03.tw03", "Tw03"),
+    "tw04": ("environment_files.tw04.tw04", "Tw04"),
+    "tw05": ("environment_files.tw05.tw05", "Tw05"),
+    "tw06": ("environment_files.tw06.tw06", "Tw06"),
+    "tw07": ("environment_files.tw07.tw07", "Tw07"),
+    "tw08": ("environment_files.tw08.tw08", "Tw08"),
+    "tw09": ("environment_files.tw09.tw09", "Tw09"),
+    "tw10": ("environment_files.tw10.tw10", "Tw10"),
+    "tw11": ("environment_files.tw11.tw11", "Tw11"),
+    "tw12": ("environment_files.tw12.tw12", "Tw12"),
+    "tw13": ("environment_files.tw13.tw13", "Tw13"),
 }
 
 

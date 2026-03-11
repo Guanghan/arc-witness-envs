@@ -192,26 +192,19 @@ TTWS total puzzles:           2,605   (100%)
 ```
 arc-witness-envs/
 ├── witness_grid.py            # Shared grid renderer (64x64, 16-color)
-├── tw01_pathdots.py           # PathDots game (ARCBaseGame subclass)
-├── tw02_colorsplit.py         # ColorSplit game
-├── tw03_shapefill.py          # ShapeFill game
-├── tw04_symdraw.py            # SymDraw game
-├── tw05_starpair.py           # StarPair game
-├── tw06_tricount.py           # TriCount game
-├── tw07_eraserlogic.py        # EraserLogic game
-├── tw08_combobasic.py         # ComboBasic game
-├── tw09_cylinderwrap.py       # CylinderWrap game
-├── tw10_colorfilter.py        # ColorFilter game
-├── tw11_multiregion.py        # MultiRegion game (2+ constraints)
-├── tw12_hexcombo.py           # HexCombo game (hex dots + regions)
-├── tw13_eraserall.py          # EraserAll game (generalized erasers)
 ├── test_games.py              # Automated test suite (959 validated levels)
 ├── play_human.py              # Local web server for browser play
-├── environment_files/         # Game metadata (for SDK discovery)
-│   ├── tw01/metadata.json
-│   ├── tw02/metadata.json
-│   ├── ...
-│   └── tw13/metadata.json
+├── environment_files/         # Game code + metadata (SDK-compatible layout)
+│   ├── tw01/
+│   │   ├── tw01.py            # PathDots game (ARCBaseGame subclass)
+│   │   └── metadata.json
+│   ├── tw02/
+│   │   ├── tw02.py            # ColorSplit game
+│   │   └── metadata.json
+│   ├── ...                    # tw03-tw12
+│   └── tw13/
+│       ├── tw13.py            # EraserAll game
+│       └── metadata.json
 ├── levels/                    # Level configs with verified solutions
 │   ├── tw01_levels.json       # 16 levels (10v + 6u)
 │   ├── tw02_levels.json       # 62 levels (51v + 11u)
@@ -263,7 +256,7 @@ python play_human.py
 
 ```python
 from arcengine import GameAction, ActionInput
-from tw01_pathdots import Tw01
+from environment_files.tw01.tw01 import Tw01
 
 game = Tw01(seed=0)
 

@@ -115,7 +115,7 @@ def test_game(game_class, game_name, level_solutions, total_levels=None):
 
 
 def test_tw01():
-    from tw01_pathdots import Tw01
+    from environment_files.tw01.tw01 import Tw01
     result = load_solutions_from_json("tw01")
     if result:
         solutions, total = result
@@ -131,7 +131,7 @@ def test_tw01():
 
 
 def test_tw02():
-    from tw02_colorsplit import Tw02
+    from environment_files.tw02.tw02 import Tw02
     result = load_solutions_from_json("tw02")
     if result:
         solutions, total = result
@@ -142,7 +142,7 @@ def test_tw02():
 
 
 def test_tw03():
-    from tw03_shapefill import Tw03
+    from environment_files.tw03.tw03 import Tw03
     result = load_solutions_from_json("tw03")
     if result:
         solutions, total = result
@@ -154,7 +154,7 @@ def test_tw03():
 
 
 def test_tw04():
-    from tw04_symdraw import Tw04
+    from environment_files.tw04.tw04 import Tw04
     result = load_solutions_from_json("tw04")
     if result:
         solutions, total = result
@@ -165,7 +165,7 @@ def test_tw04():
 
 
 def test_tw05():
-    from tw05_starpair import Tw05
+    from environment_files.tw05.tw05 import Tw05
     result = load_solutions_from_json("tw05")
     if result:
         solutions, total = result
@@ -177,7 +177,7 @@ def test_tw05():
 
 
 def test_tw06():
-    from tw06_tricount import Tw06
+    from environment_files.tw06.tw06 import Tw06
     result = load_solutions_from_json("tw06")
     if result:
         solutions, total = result
@@ -189,7 +189,7 @@ def test_tw06():
 
 
 def test_tw07():
-    from tw07_eraserlogic import Tw07
+    from environment_files.tw07.tw07 import Tw07
     result = load_solutions_from_json("tw07")
     if result:
         solutions, total = result
@@ -201,7 +201,7 @@ def test_tw07():
 
 
 def test_tw08():
-    from tw08_combobasic import Tw08
+    from environment_files.tw08.tw08 import Tw08
     result = load_solutions_from_json("tw08")
     if result:
         solutions, total = result
@@ -213,7 +213,7 @@ def test_tw08():
 
 
 def test_tw09():
-    from tw09_cylinderwrap import Tw09
+    from environment_files.tw09.tw09 import Tw09
     result = load_solutions_from_json("tw09")
     if result:
         solutions, total = result
@@ -224,7 +224,7 @@ def test_tw09():
 
 
 def test_tw10():
-    from tw10_colorfilter import Tw10
+    from environment_files.tw10.tw10 import Tw10
     result = load_solutions_from_json("tw10")
     if result:
         solutions, total = result
@@ -235,7 +235,7 @@ def test_tw10():
 
 
 def test_tw11():
-    from tw11_multiregion import Tw11
+    from environment_files.tw11.tw11 import Tw11
     result = load_solutions_from_json("tw11")
     if result:
         solutions, total = result
@@ -246,7 +246,7 @@ def test_tw11():
 
 
 def test_tw12():
-    from tw12_hexcombo import Tw12
+    from environment_files.tw12.tw12 import Tw12
     result = load_solutions_from_json("tw12")
     if result:
         solutions, total = result
@@ -257,7 +257,7 @@ def test_tw12():
 
 
 def test_tw13():
-    from tw13_eraserall import Tw13
+    from environment_files.tw13.tw13 import Tw13
     result = load_solutions_from_json("tw13")
     if result:
         solutions, total = result
