@@ -63,7 +63,7 @@ class Tw01(ARCBaseGame):
             game_id="tw01",
             levels=levels,
             camera=camera,
-            win_score=len(levels),
+            win_score=min(len(levels), 254),
             available_actions=[1, 2, 3, 4, 5],  # 上下左右 + 确认
             seed=seed,
         )
