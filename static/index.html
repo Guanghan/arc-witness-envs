@@ -145,7 +145,7 @@ async function sendAction(action) {
     const lc = data.levels_completed ?? 0;
     const wl = data.win_levels ?? '?';
     const state = data.state ?? '';
-    actionCount++;
+    if (action !== 'RESET') actionCount++;
     if (wl !== '?') totalWinLevels = wl;
 
     // Current level number (1-indexed): level being played = lc + 1
