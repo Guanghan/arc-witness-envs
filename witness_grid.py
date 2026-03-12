@@ -40,7 +40,7 @@ COLOR_PURPLE = 15
 
 # === 语义颜色 ===
 GRID_BG = COLOR_DARK_GRAY      # 网格背景（面板底色）
-GRID_LINE = COLOR_NEAR_BLACK   # 网格线
+GRID_LINE = COLOR_BLACK        # 网格线（黑色，与深灰背景形成高对比）
 PATH_COLOR = COLOR_BLUE        # 已画路径
 CURSOR_COLOR = COLOR_YELLOW    # 光标/活跃位置
 START_COLOR = COLOR_GREEN      # 起点

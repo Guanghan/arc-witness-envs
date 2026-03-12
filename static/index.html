@@ -68,11 +68,13 @@ let currentGameId = null;
 let guid = null;
 let busy = false;
 let actionCount = 0;
+let levelPaused = false;      // true during 3s completion pause
 
 // Validation tracking
 let levelStatuses = {};       // {level_index: {validated, ...}}
 let currentLevelActions = []; // action IDs for current level
 let lastLevelsCompleted = 0;  // track level completion
+let totalWinLevels = 0;       // total levels in current game
 
 // ACTION name → action ID mapping
 const ACTION_ID = { ACTION1: 1, ACTION2: 2, ACTION3: 3, ACTION4: 4, ACTION5: 5 };
@@ -105,7 +107,7 @@ function renderFrame(frames) {
 }
 
 async function sendAction(action) {
-  if (busy || !currentGameId) return;
+  if (busy || levelPaused || !currentGameId) return;
   busy = true;
 
   const body = { game_id: currentGameId };
@@ -134,9 +136,6 @@ async function sendAction(action) {
     // Update guid from response
     if (data.guid) guid = data.guid;
 
-    // Render
-    if (data.frame) renderFrame(data.frame);
-
     // Track action for validation
     if (action !== 'RESET' && ACTION_ID[action]) {
       currentLevelActions.push(ACTION_ID[action]);
@@ -147,30 +146,65 @@ async function sendAction(action) {
     const wl = data.win_levels ?? '?';
     const state = data.state ?? '';
     actionCount++;
+    if (wl !== '?') totalWinLevels = wl;
+
+    // Current level number (1-indexed): level being played = lc + 1
+    const currentLevelNum = Math.min(lc + 1, totalWinLevels || lc + 1);
 
     // Check if current level is unvalidated
-    const currentLevelIdx = lc;  // next level to play = levels_completed
-    const lvStatus = levelStatuses[lastLevelsCompleted] || {};
-    const unverifiedTag = (lvStatus.validated === false) ? ' [UNVERIFIED]' : '';
-    statusEl.textContent = `${currentGameId} | Levels: ${lc}/${wl} | Actions: ${actionCount} | ${state}${unverifiedTag}`;
+    const nextLvStatus = levelStatuses[lc] || {};
+    const unverifiedTag = (nextLvStatus.validated === false) ? ' [UNVERIFIED]' : '';
 
     // Detect level completion
     if (lc > lastLevelsCompleted) {
       const completedIdx = lastLevelsCompleted;
+      const completedLevelNum = completedIdx + 1;
       const completedStatus = levelStatuses[completedIdx];
       if (completedStatus && !completedStatus.validated) {
-        // Auto-validate: POST actions to server
         autoValidateLevel(completedIdx, currentLevelActions.slice());
       }
       currentLevelActions = [];
       lastLevelsCompleted = lc;
-    }
 
-    if (state === 'WIN') {
-      statusEl.textContent += ' 🎉';
-      log('ALL LEVELS COMPLETE!', 'ok');
+      // DON'T render the new frame yet — keep canvas showing the completed level
+      // (the engine already advanced, so data.frame is the next level)
+
+      if (state === 'WIN') {
+        statusEl.textContent = `${currentGameId} | Level ${completedLevelNum}/${totalWinLevels} | COMPLETE — ALL LEVELS FINISHED!`;
+        statusEl.style.color = '#4fcc30';
+        log('ALL LEVELS COMPLETE!', 'ok');
+      } else {
+        // Freeze on completed level with countdown
+        const pendingFrame = data.frame;
+        levelPaused = true;
+        busy = false;
+        let countdown = 3;
+        statusEl.style.color = '#4fcc30';
+        statusEl.textContent = `${currentGameId} | Level ${completedLevelNum}/${totalWinLevels} | COMPLETE — next level in ${countdown}s`;
+        log(`Level ${completedLevelNum} COMPLETE! (${actionCount} actions)`, 'ok');
+
+        const timer = setInterval(() => {
+          countdown--;
+          if (countdown > 0) {
+            statusEl.textContent = `${currentGameId} | Level ${completedLevelNum}/${totalWinLevels} | COMPLETE — next level in ${countdown}s`;
+          } else {
+            clearInterval(timer);
+            // Now show the next level
+            if (pendingFrame) renderFrame(pendingFrame);
+            levelPaused = false;
+            statusEl.style.color = '';
+            statusEl.textContent = `${currentGameId} | Level: ${lc + 1}/${totalWinLevels} | Actions: ${actionCount} | NOT_FINISHED${unverifiedTag}`;
+          }
+        }, 1000);
+        return;  // skip normal render & status
+      }
+    } else {
+      // Normal action — render immediately
+      if (data.frame) renderFrame(data.frame);
+      statusEl.style.color = '';
+      statusEl.textContent = `${currentGameId} | Level: ${currentLevelNum}/${totalWinLevels || '?'} | Actions: ${actionCount} | ${state}${unverifiedTag}`;
     }
-    log(`${action} → levels=${lc} state=${state}`);
+    log(`${action} → level=${currentLevelNum} state=${state}`);
 
   } catch(e) {
     log(`Fetch error: ${e.message}`, 'err');
@@ -265,6 +299,9 @@ async function startGame(gameId, btn) {
   lastLevelsCompleted = 0;
   currentLevelActions = [];
   levelStatuses = {};
+  totalWinLevels = 0;
+  levelPaused = false;
+  statusEl.style.color = '';
   document.querySelectorAll('#game-select button').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   log(`Starting ${gameId}...`, 'info');
