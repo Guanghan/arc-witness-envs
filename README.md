@@ -15,6 +15,8 @@
 
 **Witness-inspired puzzle environments for [ARC-AGI-3](https://arcprize.org/arc-agi/3/)** — 13 games, 1,872 levels of interactive reasoning challenges built on the official [ARC-AGI SDK](https://docs.arcprize.org).
 
+> 📝 **[Blog: From The Witness to ARC-AGI-3: "Teaching" Fluid Intelligence via 1,872 Puzzles](https://blog.guanghan.ai/post/260312_arc_witness_env/)** — design decisions, puzzle mechanics, and how these environments connect to ARC-AGI-3
+
 ### ✨ Highlights
 - **Drop-in compatible** with any ARC-AGI-3 agent — just point at `environment_files/`
 - **RL-ready** via [OpenEnv](https://github.com/meta-pytorch/OpenEnv) adapter with 3 reward modes
