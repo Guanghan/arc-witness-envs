@@ -1,10 +1,12 @@
 # arc-witness-envs
 
-[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![ARC-AGI-3 Compatible](https://img.shields.io/badge/ARC--AGI--3-Compatible-green.svg)](https://arcprize.org/arc-agi/3/)
+[![OpenEnv Compatible](https://img.shields.io/badge/OpenEnv-Compatible-green.svg)](https://github.com/meta-pytorch/OpenEnv)
 [![Games: 13](https://img.shields.io/badge/Games-13-orange.svg)](#games)
 [![Levels: 1,872](https://img.shields.io/badge/Levels-1%2C872-orange.svg)](#dataset-statistics)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Guanghan/arc-witness-envs/blob/main/examples/quickstart.ipynb)
 
 <p align="center">
   <img src="assets/icon.png" alt="arc-witness-envs" width="480">
@@ -12,6 +14,7 @@
 
 **Witness-inspired puzzle environments for [ARC-AGI-3](https://arcprize.org/arc-agi/3/)** — 13 games, 1,872 levels of interactive reasoning challenges built on the official [ARC-AGI SDK](https://docs.arcprize.org).
 
+### ✨ Highlights
 - **Drop-in compatible** with any ARC-AGI-3 agent — just point at `environment_files/`
 - **RL-ready** via [OpenEnv](https://github.com/meta-pytorch/OpenEnv) adapter with 3 reward modes
 - **64×64 pixel grid** with 16-color palette, 5 discrete actions
@@ -31,7 +34,6 @@
 - [Citation](#citation)
 - [Contributing](#contributing)
 - [License](#license)
-- [Author](#author)
 
 ## Quick Start
 
@@ -263,14 +265,30 @@ The `openenv_adapter/` module wraps all 13 games as [OpenEnv](https://github.com
 
 Key property: **solving a level is always a positive reward signal**, regardless of how many steps it took.
 
-#### RL Framework Compatibility
+#### Compatible RL Training Frameworks
 
-- **PPO / APPO** — shaped reward mode (solve always net positive)
-- **DQN** — natural fit for discrete 5-action space
-- **SAC** — with discretized action space
-- **RND / ICM** — sparse reward mode for intrinsic motivation
-- OpenEnv uses WebSocket protocol; any framework with a WebSocket client works
-- 64×64 int grid observation → simple CNN encoder (no complex preprocessing)
+Because arc-witness-envs implements the [OpenEnv](https://github.com/meta-pytorch/OpenEnv) protocol (HTTP/FastAPI + Gymnasium-style `reset()`/`step()` API), it integrates with the growing ecosystem of RL frameworks that support OpenEnv:
+
+| Framework | OpenEnv Support | RL Algorithms | Notes |
+|-----------|----------------|---------------|-------|
+| [**TRL**](https://huggingface.co/docs/trl/main/en/openenv) (HuggingFace) | Official | GRPO | `GRPOTrainer` with custom `rollout_func`; vLLM inference |
+| [**TorchForge**](https://github.com/meta-pytorch/torchforge) (Meta) | Native | GRPO, PPO | Direct plug-in, no adapter needed; scales to 512 GPUs |
+| [**SkyRL**](https://docs.skyrl.ai/docs) | Official | GRPO, PPO, DAPO | SkyRL-Gym `BaseTextEnv` interface; Megatron 5D parallelism |
+| [**ART**](https://art.openpipe.ai/integrations/openenv-integration) (OpenPipe) | Official | GRPO | Automatic — any OpenEnv environment works out of the box |
+| [**VeRL**](https://github.com/volcengine/verl) (ByteDance) | Planned | PPO, GRPO | Gym-style agent loop is architecturally compatible; explicit integration underway |
+| [**Oumi**](https://github.com/oumi-ai/oumi) | Via TRL | GRPO | Uses TRL's `GRPOTrainer` under the hood |
+
+> **Note on observation space**: These frameworks are primarily designed for LLM-based agents (text in, text out). For arc-witness-envs' **64×64 int grid** observations, you'll likely need a vision encoder (simple CNN) or a multimodal model. The OpenEnv adapter handles the environment side — the model architecture is up to you.
+
+#### Algorithm-Reward Pairing Guide
+
+| Algorithm | Recommended Reward Mode | Why |
+|-----------|------------------------|-----|
+| PPO / APPO | `shaped` | Step penalty encourages efficiency; solve is always net positive |
+| DQN | `shaped` | Natural fit for discrete 5-action space |
+| GRPO | `arc_score` | Directly mirrors ARC-AGI-3 scoring for outcome-based RL |
+| RND / ICM | `sparse` | Pure exploration signal; intrinsic motivation handles the rest |
+| SAC | `shaped` | With discretized action space |
 
 ### Install
 
@@ -482,14 +500,8 @@ arc-witness-envs/
 
 ## Contributing
 
-Bug reports and level contributions welcome. Please open an issue before submitting large PRs.
+Contributions welcome — new games, level packs, bug fixes, documentation improvements. Please open an issue before submitting large PRs so we can discuss the approach.
 
 ## License
 
-This project is licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) (non-commercial, share-alike).
-
-The vendored puzzle data in `converters/vendor_ttws/` is from [barrycohen/ttws](https://github.com/barrycohen/ttws) and retains its original MIT license.
-
-## Author
-
-**Guanghan Ning** — Independent AI researcher, Bay Area. PhD in ECE, former ByteDance Seed-Code LLM research scientist.
+[MIT](https://opensource.org/licenses/MIT). The vendored puzzle data in `converters/vendor_ttws/` is from [barrycohen/ttws](https://github.com/barrycohen/ttws) under the same MIT license.
