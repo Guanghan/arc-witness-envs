@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/icon.png" alt="arc-witness-envs" width="256">
+  <img src="assets/icon.png" alt="arc-witness-envs" width="512">
 </p>
 
 # arc-witness-envs
