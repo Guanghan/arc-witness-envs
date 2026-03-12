@@ -43,6 +43,9 @@ def _save_levels_json(game_id, data):
 
 def add_frontend_routes(arcade, app):
     """添加前端 HTML 页面路由 + 自定义 API。"""
+    # 让 Flask 内置的 /static/ 路由指向我们的 static 目录
+    app.static_folder = STATIC_DIR
+
     @app.route("/")
     def index():
         return send_from_directory(STATIC_DIR, "index.html")

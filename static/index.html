@@ -333,6 +333,17 @@ document.addEventListener('keyup', (e) => {
   document.getElementById(m[1])?.classList.remove('active');
 });
 
+// Show cover image on canvas before any game is selected
+function showCover() {
+  const img = new Image();
+  img.onload = () => {
+    // Draw image scaled to fill the canvas (512x512)
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  };
+  img.src = '/static/images/cover.jpg';
+}
+showCover();
+
 loadGames();
 </script>
 </body>
