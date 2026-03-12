@@ -177,17 +177,17 @@ Draw a path that partitions the grid; each region must satisfy **2 or more** con
 - Trains: compositional reasoning, multi-constraint satisfaction
 
 ### tw12 — HexCombo
-Draw a path through **all hex waypoints** (mandatory dots) that also partitions the grid into valid regions satisfying at least one region constraint.
+Draw a path through **all hex waypoints** (mandatory dots) that also partitions the grid into valid regions where all present constraints must hold simultaneously.
 - 160 levels (4 validated + 156 unvalidated)
 - Combines path constraint (hex dots) with region constraints (squares, stars, triangles, tetris)
 - Low validation rate due to BFS complexity with dot-tracking + region validation at 3s timeout
 - Trains: path planning + region reasoning, dual-objective optimization
 
 ### tw13 — EraserAll
-Generalization of tw07 EraserLogic — erasers absorb constraint violations from **any** constraint type, including tetris and hex dots.
+Generalization of tw07 EraserLogic — erasers absorb constraint violations from squares, stars, triangles, and tetris. Hex dots remain a hard constraint (all must be visited).
 - 131 levels (61 validated + 70 unvalidated)
-- Extends tw07 to support tetris violations (failed exact cover) and hex dot violations
-- Per region: `#erasers == #violations` across all constraint types
+- Extends tw07 to support tetris violations (failed exact cover)
+- Per region: `#erasers == #violations` across all absorbable constraint types
 - Trains: meta-reasoning, generalized error balancing
 
 </details>
@@ -485,7 +485,7 @@ arc-witness-envs/
 | Color filters (perception transform) | Perception — transform-then-apply | `tw10` |
 | Multi-constraint regions | Composition — 2+ simultaneous region constraints | `tw11` |
 | Hex dots + region constraints | Composition — path waypoints + region rules | `tw12` |
-| Erasers + any constraint | Meta-reasoning — generalized error absorption | `tw13` |
+| Erasers + multi-constraint | Meta-reasoning — generalized error absorption | `tw13` |
 
 ## Citation
 
