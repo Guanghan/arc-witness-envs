@@ -1,8 +1,8 @@
 """
-filter.py — 按游戏类型筛选和过滤谜题
+filter.py — Filter and select puzzles by game type
 
-筛选条件：
-- tw01 PathDots: hex-only, max(cols,rows)<=7, >=1 start, >=1 end, 仅节点 hex
+Filter criteria:
+- tw01 PathDots: hex-only, max(cols,rows)<=7, >=1 start, >=1 end, node hex only
 - tw02 ColorSplit: sq-only, max(cols,rows)<=7, >=1 start, >=1 end, <=3 colors
 - tw03 ShapeFill: tetris-only, max(cols,rows)<=6, >=1 start, >=1 end
 - tw04 SymDraw: symmetry puzzles, max(cols,rows)<=7, >=1 start, >=1 end
@@ -16,7 +16,7 @@ from unified_puzzle import UnifiedPuzzle
 
 
 def filter_tw01(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
-    """筛选 tw01 PathDots 候选谜题。"""
+    """Filter candidate puzzles for tw01 PathDots."""
     results = []
     for p in puzzles:
         if p.squares or p.stars or p.triangles or p.tetris or p.eliminations or p.symmetry:
@@ -34,7 +34,7 @@ def filter_tw01(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
 
 
 def filter_tw02(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
-    """筛选 tw02 ColorSplit 候选谜题。"""
+    """Filter candidate puzzles for tw02 ColorSplit."""
     results = []
     for p in puzzles:
         if p.classify() != "tw02":
@@ -52,9 +52,9 @@ def filter_tw02(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
 
 
 def filter_tw03(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
-    """筛选 tw03 ShapeFill 候选谜题。
+    """Filter candidate puzzles for tw03 ShapeFill.
 
-    条件：仅有 tetris，max(cols,rows)<=6，1 start, >=1 end
+    Criteria: tetris only, max(cols,rows)<=6, 1 start, >=1 end
     """
     results = []
     for p in puzzles:
@@ -69,7 +69,7 @@ def filter_tw03(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
 
 
 def filter_tw04(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
-    """筛选 tw04 SymDraw 候选谜题。"""
+    """Filter candidate puzzles for tw04 SymDraw."""
     results = []
     for p in puzzles:
         if p.symmetry is None:
@@ -85,9 +85,9 @@ def filter_tw04(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
 
 
 def filter_tw05(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
-    """筛选 tw05 StarPair 候选谜题。
+    """Filter candidate puzzles for tw05 StarPair.
 
-    条件：仅有 stars，max(cols,rows)<=7，1 start, >=1 end, >=2 stars, no missing_edges
+    Criteria: stars only, max(cols,rows)<=7, 1 start, >=1 end, >=2 stars, no missing_edges
     """
     results = []
     for p in puzzles:
@@ -104,9 +104,9 @@ def filter_tw05(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
 
 
 def filter_tw06(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
-    """筛选 tw06 TriCount 候选谜题。
+    """Filter candidate puzzles for tw06 TriCount.
 
-    条件：仅有 triangles，max(cols,rows)<=7，1 start, >=1 end
+    Criteria: triangles only, max(cols,rows)<=7, 1 start, >=1 end
     """
     results = []
     for p in puzzles:
@@ -121,9 +121,9 @@ def filter_tw06(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
 
 
 def filter_tw07(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
-    """筛选 tw07 EraserLogic 候选谜题。
+    """Filter candidate puzzles for tw07 EraserLogic.
 
-    条件：有 eliminations 且有至少一种其他约束，max(cols,rows)<=6
+    Criteria: has eliminations and at least one other constraint, max(cols,rows)<=6
     """
     results = []
     for p in puzzles:
@@ -138,9 +138,9 @@ def filter_tw07(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
 
 
 def filter_tw08(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
-    """筛选 tw08 ComboBasic 候选谜题。
+    """Filter candidate puzzles for tw08 ComboBasic.
 
-    条件：同时有 squares AND stars，无其他约束，max(cols,rows)<=7, <=3 colors
+    Criteria: has both squares AND stars, no other constraints, max(cols,rows)<=7, <=3 colors
     """
     results = []
     for p in puzzles:
@@ -157,10 +157,10 @@ def filter_tw08(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
 
 
 def filter_tw11(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
-    """筛选 tw11 MultiRegion 候选谜题。
+    """Filter candidate puzzles for tw11 MultiRegion.
 
-    条件：2+ 区域约束同时满足，max(cols,rows)<=7（有 tetris 时<=6），
-    >=1 start, >=1 end, <=3 色
+    Criteria: 2+ region constraints simultaneously, max(cols,rows)<=7 (<=6 with tetris),
+    >=1 start, >=1 end, <=3 colors
     """
     results = []
     for p in puzzles:
@@ -179,10 +179,10 @@ def filter_tw11(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
 
 
 def filter_tw12(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
-    """筛选 tw12 HexCombo 候选谜题。
+    """Filter candidate puzzles for tw12 HexCombo.
 
-    条件：hex + 至少一种区域约束，max(cols,rows)<=7（有 tetris 时<=6），
-    无 hex_edges，有 hexagons，>=1 start, >=1 end, <=3 色
+    Criteria: hex + at least one region constraint, max(cols,rows)<=7 (<=6 with tetris),
+    no hex_edges, has hexagons, >=1 start, >=1 end, <=3 colors
     """
     results = []
     for p in puzzles:
@@ -205,10 +205,10 @@ def filter_tw12(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
 
 
 def filter_tw13(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
-    """筛选 tw13 EraserAll 候选谜题。
+    """Filter candidate puzzles for tw13 EraserAll.
 
-    条件：有 eliminations（tw07 未覆盖的组合），max(cols,rows)<=6，
-    >=1 start, >=1 end, <=3 色
+    Criteria: has eliminations (combinations not covered by tw07), max(cols,rows)<=6,
+    >=1 start, >=1 end, <=3 colors
     """
     results = []
     for p in puzzles:
@@ -225,7 +225,7 @@ def filter_tw13(puzzles: List[UnifiedPuzzle]) -> List[UnifiedPuzzle]:
 
 
 def filter_all(puzzles: List[UnifiedPuzzle]) -> Dict[str, List[UnifiedPuzzle]]:
-    """对所有谜题进行分类筛选。"""
+    """Filter all puzzles by game type classification."""
     return {
         "tw01": filter_tw01(puzzles),
         "tw02": filter_tw02(puzzles),

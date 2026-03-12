@@ -1,11 +1,12 @@
 """
-tw03_shapefill.py — ShapeFill: 多联骨牌铺满谜题
+tw03_shapefill.py — ShapeFill: Polyomino exact-cover puzzles
 
-The Witness 多联骨牌机制：画线将面板分区后，每区域的多联骨牌必须精确铺满。
-训练 Agent 的空间推理和精确覆盖能力。
+The Witness polyomino mechanic: after the line splits the panel into regions,
+the polyominoes in each region must tile it exactly.
+Trains the Agent's spatial reasoning and exact-cover abilities.
 
-Core Knowledge: Objectness + Geometry — 形状匹配与放置
-ARC-AGI 启示: 拼图/铺砖操作
+Core Knowledge: Objectness + Geometry — shape matching and placement
+ARC-AGI insight: jigsaw / tiling operations
 """
 
 import sys
@@ -30,7 +31,7 @@ from typing import List, Tuple, Set, Dict, Optional
 
 
 def _rotations(shape):
-    """生成形状的所有旋转。"""
+    """Generate all rotations of a shape."""
     shapes = [shape]
     current = shape
     for _ in range(3):
@@ -45,7 +46,7 @@ def _rotations(shape):
 
 
 def _exact_cover(shapes, region_cells, placed, idx):
-    """回溯检查形状能否精确覆盖区域。"""
+    """Backtracking check whether shapes can exactly cover the region."""
     remaining = region_cells - placed
     if not remaining:
         return idx >= len(shapes)
@@ -79,10 +80,10 @@ def _exact_cover(shapes, region_cells, placed, idx):
 
 
 class Tw03(ARCBaseGame):
-    """ShapeFill — 多联骨牌铺满谜题
+    """ShapeFill — Polyomino exact-cover puzzles
 
-    规则：从起点画线到终点，路径将面板分区。
-    每个区域的多联骨牌必须精确铺满（无空隙无重叠）。
+    Rules: Draw a line from start to end; the path partitions the panel.
+    The polyominoes in each region must tile it exactly (no gaps, no overlaps).
     """
 
     def __init__(self, seed: int = 0):
@@ -108,14 +109,14 @@ class Tw03(ARCBaseGame):
 
     @staticmethod
     def _parse_starts(cfg: dict) -> List[Tuple[int, int]]:
-        """从 config 解析起点列表。支持 'starts' (多起点) 和 'start' (单起点)。"""
+        """Parse the list of start points from config. Supports 'starts' (multiple) and 'start' (single)."""
         if "starts" in cfg:
             return [tuple(s) for s in cfg["starts"]]
         return [tuple(cfg["start"])]
 
     @staticmethod
     def _load_json_levels() -> Optional[list]:
-        """加载 JSON 关卡文件，返回包含 config 和 validated 字段的字典列表。"""
+        """Load levels from a JSON file. Returns a list of dicts with 'config' and 'validated' fields."""
         try:
             import json
             levels_path = os.path.join(_code_dir, "levels", "tw03_levels.json")
@@ -156,7 +157,7 @@ class Tw03(ARCBaseGame):
                     ]
                 level_configs.append(config)
         else:
-            # 硬编码回退：简单 2×2 方块
+            # Hardcoded fallback: simple 2x2 square
             level_configs = [
                 {
                     "cols": 3, "rows": 3,
@@ -180,7 +181,7 @@ class Tw03(ARCBaseGame):
             for cell, t in config["tetris"].items():
                 grid.draw_polyomino(frame, cell, t["shape"], POLY_COLOR)
 
-            # 绘制断边
+            # Draw broken edges
             for bp in config.get("breakpoints", []):
                 grid.draw_breakpoint(frame, bp[0], bp[1])
 
@@ -236,7 +237,7 @@ class Tw03(ARCBaseGame):
     def on_set_level(self, level: Level) -> None:
         data = level._data
         self._grid = WitnessGrid(data["cols"], data["rows"])
-        # 支持多起点
+        # Support multiple start points
         if "starts" in data:
             self._starts = [tuple(s) for s in data["starts"]]
         else:
@@ -259,10 +260,11 @@ class Tw03(ARCBaseGame):
         self._path = [self._start]
 
     def _try_auto_select_start(self, dc: int, dr: int) -> bool:
-        """多起点时，尝试根据第一步方向自动选择起点。
+        """With multiple start points, try to auto-select one based on the first move direction.
 
-        仅在路径只有初始起点（len==1）且当前起点无法移动时触发。
-        遍历所有起点，选择第一个能向 (dc,dr) 方向移动的起点。
+        Only triggered when the path has just the initial start (len==1) and the
+        current start cannot move. Iterates over all start points and selects the
+        first one that can move in the (dc, dr) direction.
         """
         if len(self._path) != 1 or len(self._starts) <= 1:
             return False
@@ -294,9 +296,9 @@ class Tw03(ARCBaseGame):
 
             target = (current[0] + dc, current[1] + dr)
 
-            # 验证移动合法性
+            # Validate move legality
             if not self._is_valid_move(current, target):
-                # 多起点：尝试自动切换起点
+                # Multiple start points: try auto-switching start
                 if self._try_auto_select_start(dc, dr):
                     current = self._path[-1]
                     target = (current[0] + dc, current[1] + dr)
@@ -336,7 +338,7 @@ class Tw03(ARCBaseGame):
             self._update_display()
             return
 
-        # 区域铺砖检查
+        # Region tiling check
         regions = self._grid.path_splits_regions(self._path)
         for region in regions:
             shapes_in_region = []
@@ -389,7 +391,7 @@ class Tw03(ARCBaseGame):
         for cell, t in self._tetris.items():
             self._grid.draw_polyomino(frame, cell, t["shape"], POLY_COLOR)
 
-        # 绘制断边
+        # Draw broken edges
         for bp in self._breakpoints:
             self._grid.draw_breakpoint(frame, bp[0], bp[1])
 
@@ -399,7 +401,7 @@ class Tw03(ARCBaseGame):
         if self._path:
             self._grid.draw_dot(frame, self._path[-1], CURSOR_COLOR)
 
-        # 未验证标记
+        # Unvalidated indicator
         if not self.current_level._data.get("validated", True):
             self._grid.draw_unvalidated_indicator(frame)
 

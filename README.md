@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="assets/icon.png" alt="arc-witness-envs" width="512">
-</p>
-
 # arc-witness-envs
 
 Interactive reasoning environments for [ARC-AGI-3](https://arcprize.org/arc-agi/3/), inspired by the puzzle mechanics of [The Witness](https://en.wikipedia.org/wiki/The_Witness_(2016_video_game)).
@@ -257,6 +253,9 @@ cd arc-witness-envs
 python play_human.py
 # Open http://localhost:8001
 ```
+<p align="center">
+  <img src="assets/icon.png" alt="arc-witness-envs"> 
+</p>
 
 ### Use Programmatically
 

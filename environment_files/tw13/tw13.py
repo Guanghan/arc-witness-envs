@@ -1,12 +1,12 @@
 """
-tw13_eraserall.py — EraserAll: 全约束消除逻辑谜题
+tw13_eraserall.py — EraserAll: Full-Constraint Eraser Logic Puzzle
 
-扩展 tw07 EraserLogic，支持 elim + tetris, elim + hex 等所有组合。
-消除符号吸收约束违反，每个区域：消除符号数 = 约束违反数。
-训练 Agent 的元推理能力——推理规则的例外。
+Extends tw07 EraserLogic to support all constraint combinations (elim + tetris, elim + hex, etc.).
+Eraser symbols absorb constraint violations; per region: eraser count = violation count.
+Trains the agent's meta-reasoning ability -- reasoning about exceptions to rules.
 
-Core Knowledge: Meta-reasoning — 规则的例外
-ARC-AGI 启示: 错误修正模式（扩展版）
+Core Knowledge: Meta-reasoning — exceptions to rules
+ARC-AGI Insight: Error correction pattern (extended)
 """
 
 import sys
@@ -32,7 +32,7 @@ from typing import List, Tuple, Set, Dict, Optional
 
 
 def _rotations(shape):
-    """生成形状的所有旋转。"""
+    """Generate all rotations of a shape."""
     shapes = [shape]
     current = shape
     for _ in range(3):
@@ -47,7 +47,7 @@ def _rotations(shape):
 
 
 def _exact_cover(shapes, region_cells, placed, idx):
-    """回溯检查形状能否精确覆盖区域。"""
+    """Backtracking check whether shapes can exactly cover the region."""
     remaining = region_cells - placed
     if not remaining:
         return idx >= len(shapes)
@@ -81,11 +81,11 @@ def _exact_cover(shapes, region_cells, placed, idx):
 
 
 class Tw13(ARCBaseGame):
-    """EraserAll — 全约束消除逻辑谜题
+    """EraserAll — Full-Constraint Eraser Logic Puzzle
 
-    规则：从起点画线到终点，路径将面板分区。
-    消除符号吸收约束违反：每个区域的消除符号数 = 违反数。
-    支持所有约束类型：squares, stars, triangles, tetris, hex dots。
+    Rules: Draw a line from start to end; the path divides the panel into regions.
+    Eraser symbols absorb constraint violations: per region, eraser count = violation count.
+    Supports all constraint types: squares, stars, triangles, tetris, hex dots.
     """
 
     def __init__(self, seed: int = 0):
@@ -178,7 +178,7 @@ class Tw13(ARCBaseGame):
                     ]
                 level_configs.append(config)
         else:
-            # 硬编码回退
+            # Hardcoded fallback
             level_configs = [
                 {
                     "cols": 3, "rows": 3,
@@ -372,11 +372,11 @@ class Tw13(ARCBaseGame):
         return True
 
     def _count_violations(self, region):
-        """计算区域内的约束违反数（扩展版，支持 tetris）。"""
+        """Count constraint violations in a region (extended, supports tetris)."""
         violations = 0
         path_edges = self._grid.path_to_edges(self._path) if self._grid else set()
 
-        # 方块多色违反
+        # Square multi-color violation
         if self._squares:
             colors = set()
             for cell in region:
@@ -385,7 +385,7 @@ class Tw13(ARCBaseGame):
             if len(colors) > 1:
                 violations += len(colors) - 1
 
-        # 星星配对违反
+        # Star pairing violation
         if self._stars:
             color_counts: Dict[int, int] = {}
             for cell in region:
@@ -396,7 +396,7 @@ class Tw13(ARCBaseGame):
                 if count != 2:
                     violations += abs(count - 2)
 
-        # 三角形计数违反
+        # Triangle count violation
         if self._triangles:
             for cell in region:
                 if cell in self._triangles:
@@ -404,7 +404,7 @@ class Tw13(ARCBaseGame):
                     if actual != self._triangles[cell]:
                         violations += 1
 
-        # tetris 铺砖违反
+        # Tetris tiling violation
         if self._tetris:
             shapes_in_region = []
             total_positive_area = 0
@@ -445,7 +445,7 @@ class Tw13(ARCBaseGame):
             self._update_display()
             return
 
-        # 如果有 hex dots，检查是否全部访问
+        # If hex dots exist, check that all are visited
         if self._dots:
             path_set = set(self._path)
             for dot in self._dots:
@@ -455,7 +455,7 @@ class Tw13(ARCBaseGame):
                     self._update_display()
                     return
 
-        # 消除逻辑检查
+        # Eraser logic check
         regions = self._grid.path_splits_regions(self._path)
 
         for region in regions:
@@ -490,7 +490,7 @@ class Tw13(ARCBaseGame):
         for cell in self._erasers:
             self._grid.draw_eraser(frame, cell, ERASER_COLOR)
 
-        # 绘制 hex dots（覆盖/未覆盖着色）
+        # Draw hex dots (color based on covered/uncovered status)
         for dot in self._dots:
             covered = dot in set(self._path)
             color = SUCCESS_COLOR if covered else DOT_COLOR

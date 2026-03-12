@@ -1,11 +1,11 @@
 """
-tw12_hexcombo.py — HexCombo: 必经点+区域组合谜题
+tw12_hexcombo.py — HexCombo: Mandatory Waypoint + Region Combination Puzzle
 
-Hex 必经点约束（路径必须经过标记节点）+ 区域约束（squares/stars/triangles/tetris）。
-训练 Agent 同时推理路径约束和区域约束的能力。
+Hex mandatory waypoint constraints (path must pass through marked nodes) + region constraints (squares/stars/triangles/tetris).
+Trains the agent's ability to reason about path constraints and region constraints simultaneously.
 
 Core Knowledge: Path + Region constraint integration
-ARC-AGI 启示: 多层约束叠加
+ARC-AGI Insight: Layered constraint stacking
 """
 
 import sys
@@ -30,7 +30,7 @@ from typing import List, Tuple, Set, Dict, Optional
 
 
 def _rotations(shape):
-    """生成形状的所有旋转。"""
+    """Generate all rotations of a shape."""
     shapes = [shape]
     current = shape
     for _ in range(3):
@@ -45,7 +45,7 @@ def _rotations(shape):
 
 
 def _exact_cover(shapes, region_cells, placed, idx):
-    """回溯检查形状能否精确覆盖区域。"""
+    """Backtracking check whether shapes can exactly cover the region."""
     remaining = region_cells - placed
     if not remaining:
         return idx >= len(shapes)
@@ -79,10 +79,10 @@ def _exact_cover(shapes, region_cells, placed, idx):
 
 
 class Tw12(ARCBaseGame):
-    """HexCombo — 必经点+区域组合谜题
+    """HexCombo — Mandatory Waypoint + Region Combination Puzzle
 
-    规则：从起点画线到终点，路径必须经过所有标记的 hex dots，
-    同时路径分区必须满足所有区域约束。
+    Rules: Draw a line from start to end; the path must pass through all marked hex dots,
+    and the path partitioning must satisfy all region constraints.
     """
 
     def __init__(self, seed: int = 0):
@@ -172,7 +172,7 @@ class Tw12(ARCBaseGame):
                     ]
                 level_configs.append(config)
         else:
-            # 硬编码回退
+            # Hardcoded fallback
             level_configs = [
                 {
                     "cols": 3, "rows": 3,
@@ -369,7 +369,7 @@ class Tw12(ARCBaseGame):
             self._update_display()
             return
 
-        # 检查1: 所有 dots 必须被访问
+        # Check 1: All dots must be visited
         path_set = set(self._path)
         for dot in self._dots:
             if dot not in path_set:
@@ -378,12 +378,12 @@ class Tw12(ARCBaseGame):
                 self._update_display()
                 return
 
-        # 检查2: 区域约束
+        # Check 2: Region constraints
         regions = self._grid.path_splits_regions(self._path)
         path_edges = self._grid.path_to_edges(self._path)
 
         for region in regions:
-            # 方块同色检查
+            # Square same-color check
             if self._squares:
                 sq_colors = set()
                 for cell in region:
@@ -395,7 +395,7 @@ class Tw12(ARCBaseGame):
                     self._update_display()
                     return
 
-            # 星星配对检查
+            # Star pairing check
             if self._stars:
                 star_counts: Dict[int, int] = {}
                 for cell in region:
@@ -409,7 +409,7 @@ class Tw12(ARCBaseGame):
                         self._update_display()
                         return
 
-            # 三角形计数检查
+            # Triangle count check
             if self._triangles:
                 for cell in region:
                     if cell in self._triangles:
@@ -420,7 +420,7 @@ class Tw12(ARCBaseGame):
                             self._update_display()
                             return
 
-            # tetris 铺砖检查
+            # Tetris tiling check
             if self._tetris:
                 shapes_in_region = []
                 total_positive_area = 0
@@ -467,7 +467,7 @@ class Tw12(ARCBaseGame):
             self._grid.draw_start(frame, s)
         self._grid.draw_end(frame, self._end)
 
-        # 绘制 dots（覆盖/未覆盖着色）
+        # Draw dots (color based on covered/uncovered status)
         for dot in self._dots:
             covered = dot in set(self._path)
             color = SUCCESS_COLOR if covered else DOT_COLOR

@@ -1,7 +1,7 @@
 """
-unified_puzzle.py — 统一谜题中间表示
+unified_puzzle.py — Unified puzzle intermediate representation
 
-从 ttws protobuf 数据转换为统一格式，再转换为游戏 level_config。
+Converts from ttws protobuf data to a unified format, then to game level_config.
 """
 from dataclasses import dataclass, field
 from typing import List, Tuple, Dict, Optional, Set
@@ -9,39 +9,39 @@ from typing import List, Tuple, Dict, Optional, Set
 
 @dataclass
 class UnifiedPuzzle:
-    """统一谜题表示，与具体数据源无关。"""
-    # 网格尺寸（单元格数）
+    """Unified puzzle representation, source-agnostic."""
+    # Grid dimensions (cell count)
     cols: int
     rows: int
 
-    # 起点和终点（节点坐标）
+    # Start and end points (node coordinates)
     starts: List[Tuple[int, int]] = field(default_factory=list)
     ends: List[Tuple[int, int]] = field(default_factory=list)
 
-    # 约束类型
-    hexagons: List[Tuple[int, int]] = field(default_factory=list)        # 节点必经点
-    hex_edges: List[Tuple[int, int, str]] = field(default_factory=list)  # 边上必经点: (x, y, 'h'|'v')
-    squares: Dict[Tuple[int, int], str] = field(default_factory=dict)    # 彩色方块 cell->(color_name)
-    stars: Dict[Tuple[int, int], str] = field(default_factory=dict)      # 星星 cell->(color_name)
-    triangles: Dict[Tuple[int, int], int] = field(default_factory=dict)  # 三角形 cell->(count)
-    tetris: Dict[Tuple[int, int], dict] = field(default_factory=dict)    # 多联骨牌
-    eliminations: List[Tuple[int, int]] = field(default_factory=list)    # 消除符号
+    # Constraint types
+    hexagons: List[Tuple[int, int]] = field(default_factory=list)        # Required node waypoints
+    hex_edges: List[Tuple[int, int, str]] = field(default_factory=list)  # Required edge waypoints: (x, y, 'h'|'v')
+    squares: Dict[Tuple[int, int], str] = field(default_factory=dict)    # Colored squares cell->(color_name)
+    stars: Dict[Tuple[int, int], str] = field(default_factory=dict)      # Stars cell->(color_name)
+    triangles: Dict[Tuple[int, int], int] = field(default_factory=dict)  # Triangles cell->(count)
+    tetris: Dict[Tuple[int, int], dict] = field(default_factory=dict)    # Polyominoes
+    eliminations: List[Tuple[int, int]] = field(default_factory=list)    # Elimination markers
 
-    # 对称性
+    # Symmetry
     symmetry: Optional[str] = None  # None, "horizontal", "vertical", "rotational"
 
-    # 断开的边
+    # Broken edges
     missing_edges: List[Tuple[int, int, str]] = field(default_factory=list)  # (x, y, 'h'|'v')
 
-    # 元数据
-    source: str = ""  # 来源标识
-    source_index: int = 0  # 在源文件中的索引
+    # Metadata
+    source: str = ""  # Source identifier
+    source_index: int = 0  # Index within the source file
 
     def classify(self) -> str:
-        """分类谜题类型，返回最匹配的游戏标识。
+        """Classify puzzle type, returning the best-matching game identifier.
 
-        优先级：tw07 (elim+other) > tw08 (sq+star) > tw01 (hex) > tw02 (sq) >
-                tw04 (sym) > tw05 (star) > tw06 (tri) > tw03 (tetris) > other
+        Priority: tw07 (elim+other) > tw08 (sq+star) > tw01 (hex) > tw02 (sq) >
+                  tw04 (sym) > tw05 (star) > tw06 (tri) > tw03 (tetris) > other
         """
         has_hex = bool(self.hexagons or self.hex_edges)
         has_sq = bool(self.squares)
@@ -51,47 +51,47 @@ class UnifiedPuzzle:
         has_elim = bool(self.eliminations)
         has_sym = self.symmetry is not None
 
-        # tw07: 消除符号 + 至少一种其他约束
+        # tw07: elimination markers + at least one other constraint
         if has_elim and (has_sq or has_star or has_tri):
             return "tw07"
 
-        # tw08: 方块 + 星星组合（无其他约束）
+        # tw08: squares + stars combo (no other constraints)
         if has_sq and has_star and not has_hex and not has_tri and not has_tetris and not has_elim and not has_sym:
             return "tw08"
 
-        # tw01: 仅有 hexagon 约束（节点必经点）
+        # tw01: hexagon constraints only (required node waypoints)
         if has_hex and not has_sq and not has_star and not has_tri and not has_tetris and not has_elim and not has_sym:
             return "tw01"
 
-        # tw02: 仅有 square 约束（彩色方块分隔）
+        # tw02: square constraints only (colored square separation)
         if has_sq and not has_hex and not has_star and not has_tri and not has_tetris and not has_elim and not has_sym:
             return "tw02"
 
-        # tw04: 对称性谜题
+        # tw04: symmetry puzzles
         if has_sym:
             return "tw04"
 
-        # tw05: 仅有星星
+        # tw05: stars only
         if has_star and not has_sq and not has_hex and not has_tri and not has_tetris and not has_elim:
             return "tw05"
 
-        # tw06: 仅有三角形
+        # tw06: triangles only
         if has_tri and not has_sq and not has_hex and not has_star and not has_tetris and not has_elim:
             return "tw06"
 
-        # tw03: 仅有多联骨牌
+        # tw03: polyominoes only
         if has_tetris and not has_sq and not has_hex and not has_star and not has_tri and not has_elim:
             return "tw03"
 
-        # tw13: 剩余的 elim 组合（tw07 已捕获 elim+(sq|star|tri)）
+        # tw13: remaining elim combos (tw07 already captures elim+(sq|star|tri))
         if has_elim:
             return "tw13"
 
-        # tw12: hex + 至少一种区域约束（tw01 已捕获纯 hex）
+        # tw12: hex + at least one region constraint (tw01 already captures pure hex)
         if has_hex and (has_sq or has_star or has_tri or has_tetris):
             return "tw12"
 
-        # tw11: 2+ 区域约束（无 hex/elim/sym — 已被上方捕获）
+        # tw11: 2+ region constraints (no hex/elim/sym -- already captured above)
         region_count = sum([has_sq, has_star, has_tri, has_tetris])
         if region_count >= 2:
             return "tw11"
@@ -99,7 +99,7 @@ class UnifiedPuzzle:
         return "other"
 
     def feature_set(self) -> Set[str]:
-        """返回谜题包含的特征集合。"""
+        """Return the set of features present in the puzzle."""
         features = set()
         if self.hexagons or self.hex_edges:
             features.add("hex")
@@ -120,5 +120,5 @@ class UnifiedPuzzle:
         return features
 
     def unique_square_colors(self) -> int:
-        """方块使用的颜色数量。"""
+        """Number of distinct colors used by squares."""
         return len(set(self.squares.values()))

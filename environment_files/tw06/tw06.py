@@ -1,11 +1,12 @@
 """
-tw06_tricount.py — TriCount: 三角形计数谜题
+tw06_tricount.py — TriCount: Triangle Counting Puzzle
 
-The Witness 三角形机制：格子中的三角形数 N 表示路径必须经过该格子恰好 N 条边。
-训练 Agent 的边感知和精确路径规划能力。
+The Witness triangle mechanic: the number N of triangles in a cell means
+the path must pass through exactly N edges of that cell.
+Trains the agent's edge awareness and precise path planning abilities.
 
-Core Knowledge: Numbers + Geometry — 路径与格子边界的关系
-ARC-AGI 启示: 计数约束
+Core Knowledge: Numbers + Geometry — relationship between path and cell edges
+ARC-AGI inspiration: counting constraints
 """
 
 import sys
@@ -30,10 +31,10 @@ from typing import List, Tuple, Set, Dict, Optional
 
 
 class Tw06(ARCBaseGame):
-    """TriCount — 三角形计数谜题
+    """TriCount — Triangle Counting Puzzle
 
-    规则：从起点画线到终点。含 N 个三角形的格子，
-    路径必须经过该格子恰好 N 条边。
+    Rules: draw a line from start to end. For a cell containing N triangles,
+    the path must pass through exactly N edges of that cell.
     """
 
     def __init__(self, seed: int = 0):
@@ -59,7 +60,7 @@ class Tw06(ARCBaseGame):
 
     @staticmethod
     def _parse_starts(cfg: dict) -> List[Tuple[int, int]]:
-        """从 config 解析起点列表。支持 'starts' (多起点) 和 'start' (单起点)。"""
+        """Parse start points from config. Supports 'starts' (multiple) and 'start' (single)."""
         if "starts" in cfg:
             return [tuple(s) for s in cfg["starts"]]
         return [tuple(cfg["start"])]
@@ -105,7 +106,7 @@ class Tw06(ARCBaseGame):
                     ]
                 level_configs.append(config)
         else:
-            # 硬编码回退
+            # Hardcoded fallback
             level_configs = [
                 {
                     "cols": 3, "rows": 3,
@@ -131,7 +132,7 @@ class Tw06(ARCBaseGame):
             for cell, count in config["triangles"].items():
                 grid.draw_triangle(frame, cell, count, TRI_COLOR)
 
-            # 绘制断边
+            # Draw breakpoints
             for bp in config.get("breakpoints", []):
                 grid.draw_breakpoint(frame, bp[0], bp[1])
 
@@ -178,7 +179,7 @@ class Tw06(ARCBaseGame):
     def on_set_level(self, level: Level) -> None:
         data = level._data
         self._grid = WitnessGrid(data["cols"], data["rows"])
-        # 支持多起点
+        # Support multiple start points
         if "starts" in data:
             self._starts = [tuple(s) for s in data["starts"]]
         else:
@@ -196,10 +197,11 @@ class Tw06(ARCBaseGame):
         self._path = [self._start]
 
     def _try_auto_select_start(self, dc: int, dr: int) -> bool:
-        """多起点时，尝试根据第一步方向自动选择起点。
+        """With multiple starts, try to auto-select a start based on the first move direction.
 
-        仅在路径只有初始起点（len==1）且当前起点无法移动时触发。
-        遍历所有起点，选择第一个能向 (dc,dr) 方向移动的起点。
+        Only triggered when the path has just the initial start (len==1) and the
+        current start cannot move. Iterates all starts and selects the first one
+        that can move in the (dc, dr) direction.
         """
         if len(self._path) != 1 or len(self._starts) <= 1:
             return False
@@ -231,9 +233,9 @@ class Tw06(ARCBaseGame):
 
             target = (current[0] + dc, current[1] + dr)
 
-            # 验证移动合法性
+            # Validate move legality
             if not self._is_valid_move(current, target):
-                # 多起点：尝试自动切换起点
+                # Multiple starts: try auto-switching start point
                 if self._try_auto_select_start(dc, dr):
                     current = self._path[-1] if self._path else self._start
                     target = (current[0] + dc, current[1] + dr)
@@ -273,7 +275,7 @@ class Tw06(ARCBaseGame):
             self._update_display()
             return
 
-        # 三角形边计数检查
+        # Triangle edge count check
         path_edges = self._grid.path_to_edges(self._path)
         for cell, expected_count in self._triangles.items():
             actual = self._grid.cell_edge_count(cell, path_edges)
@@ -298,7 +300,7 @@ class Tw06(ARCBaseGame):
         for cell, count in self._triangles.items():
             self._grid.draw_triangle(frame, cell, count, TRI_COLOR)
 
-        # 绘制断边
+        # Draw breakpoints
         for bp in self._breakpoints:
             self._grid.draw_breakpoint(frame, bp[0], bp[1])
 
@@ -308,7 +310,7 @@ class Tw06(ARCBaseGame):
         if self._path:
             self._grid.draw_dot(frame, self._path[-1], CURSOR_COLOR)
 
-        # 未验证标记
+        # Unvalidated indicator
         if not self.current_level._data.get("validated", True):
             self._grid.draw_unvalidated_indicator(frame)
 

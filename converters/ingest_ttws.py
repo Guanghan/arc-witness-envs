@@ -1,14 +1,14 @@
 """
-ingest_ttws.py — 从 ttws protobuf 编码解码谜题，转换为 UnifiedPuzzle
+ingest_ttws.py — Decode puzzles from ttws protobuf encoding into UnifiedPuzzle
 
-兼容 Python 3。修复了原始 loader.py 的 Py2 整除和 base64 问题。
+Python 3 compatible. Fixes Py2 integer division and base64 issues from the original loader.py.
 """
 import sys
 import os
 import base64
 from typing import List, Tuple, Optional
 
-# 将 vendor_ttws 加入路径
+# Add vendor_ttws to path
 _here = os.path.dirname(os.path.abspath(__file__))
 _vendor = os.path.join(_here, "vendor_ttws")
 if _vendor not in sys.path:
@@ -23,7 +23,7 @@ from puzzle import Puzzle
 from unified_puzzle import UnifiedPuzzle
 
 
-# === Colour 到字符串名称的映射 ===
+# === Colour to string name mapping ===
 _COLOUR_TO_NAME = {
     Colour.BLACK: "black",
     Colour.WHITE: "white",
@@ -38,7 +38,7 @@ _COLOUR_TO_NAME = {
 
 
 def _decode_protobuf(code: str) -> Puzzle:
-    """将 protobuf base64 编码的谜题字符串解码为 Puzzle 对象（Python 3 兼容）。"""
+    """Decode a protobuf base64-encoded puzzle string into a Puzzle object (Python 3 compatible)."""
     code = code.replace("\x00", "").strip().split("/")[-1]
     if code.endswith("_0"):
         code = code[:-2]
@@ -53,7 +53,7 @@ def _decode_protobuf(code: str) -> Puzzle:
     width = storage_width // 2
     height = (total_count // storage_width) // 2
 
-    # 对称性映射
+    # Symmetry mapping
     symmetry_map = {
         grid_pb2.UNKNOWN_SYMMETRY: SymmetryType.NONE,
         grid_pb2.NO_SYMMETRY: SymmetryType.NONE,
@@ -145,10 +145,10 @@ def _decode_protobuf(code: str) -> Puzzle:
 
 
 def _puzzle_to_unified(puzzle: Puzzle, source: str = "", index: int = 0) -> UnifiedPuzzle:
-    """将 ttws Puzzle 对象转换为 UnifiedPuzzle。"""
+    """Convert a ttws Puzzle object to UnifiedPuzzle."""
     w, h = puzzle.width, puzzle.height
 
-    # 对称性
+    # Symmetry
     sym_map = {
         SymmetryType.NONE: None,
         SymmetryType.HORIZONTAL: "horizontal",
@@ -164,7 +164,7 @@ def _puzzle_to_unified(puzzle: Puzzle, source: str = "", index: int = 0) -> Unif
         source_index=index,
     )
 
-    # 提取节点信息
+    # Extract node information
     for y in range(h + 1):
         for x in range(w + 1):
             node = puzzle.nodes[y][x]
@@ -175,7 +175,7 @@ def _puzzle_to_unified(puzzle: Puzzle, source: str = "", index: int = 0) -> Unif
             if node.is_hexagon():
                 up.hexagons.append((x, y))
 
-    # 提取边信息
+    # Extract edge information
     for y in range(h + 1):
         for x in range(w):
             edge = puzzle.v_edges[y][x]
@@ -192,7 +192,7 @@ def _puzzle_to_unified(puzzle: Puzzle, source: str = "", index: int = 0) -> Unif
             if edge.is_missing():
                 up.missing_edges.append((x, y, "h"))
 
-    # 提取单元格信息
+    # Extract cell information
     for y in range(h):
         for x in range(w):
             cell = puzzle.cells[y][x]
@@ -217,7 +217,7 @@ def _puzzle_to_unified(puzzle: Puzzle, source: str = "", index: int = 0) -> Unif
 
 
 def ingest_file(filepath: str, source_label: str = "") -> List[UnifiedPuzzle]:
-    """从谜题编码文件中读取所有谜题。"""
+    """Read all puzzles from a puzzle encoding file."""
     with open(filepath) as f:
         codes = [line.strip() for line in f if line.strip()]
 
@@ -235,7 +235,7 @@ def ingest_file(filepath: str, source_label: str = "") -> List[UnifiedPuzzle]:
 
 
 def ingest_all() -> List[UnifiedPuzzle]:
-    """从 vendor_ttws/ 中读取所有谜题文件。"""
+    """Read all puzzle files from vendor_ttws/."""
     vendor_dir = os.path.join(_here, "vendor_ttws")
 
     all_puzzles = []

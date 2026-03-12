@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
-run_pipeline.py — 一键提取 The Witness 社区谜题到我们的游戏格式
+run_pipeline.py — One-click extraction of The Witness community puzzles into our game format
 
-用法: python converters/run_pipeline.py [--keep-all] [--max-solve-time 10] [--output-dir levels]
+Usage: python converters/run_pipeline.py [--keep-all] [--max-solve-time 10] [--output-dir levels]
 
-步骤:
-1. 从 vendor_ttws/ 解码所有谜题
-2. 分类筛选
-3. 转换为 level_config 格式
-4. BFS/DFS 求解验证 + baseline 校准
-5. 按难度排序，选取关卡
-6. 输出 JSON 文件 + 自动生成 metadata.json
+Steps:
+1. Decode all puzzles from vendor_ttws/
+2. Filter and classify
+3. Convert to level_config format
+4. BFS/DFS solve + baseline calibration
+5. Sort by difficulty, select levels
+6. Output JSON files + auto-generate metadata.json
 """
 import sys
 import os
@@ -30,70 +30,70 @@ from to_level_config import convert_puzzle
 from validate import validate_config, solution_to_actions, calibrate_baseline
 
 
-# === 游戏元信息注册表 ===
+# === Game metadata registry ===
 GAME_REGISTRY = {
     "tw01": {
-        "title": "PathDots - 路径必经点",
+        "title": "PathDots - Mandatory Waypoints",
         "class_name": "Tw01",
         "tags": ["witness", "path-constraint", "spatial-reasoning"],
     },
     "tw02": {
-        "title": "ColorSplit - 彩色方块分隔",
+        "title": "ColorSplit - Color Block Separation",
         "class_name": "Tw02",
         "tags": ["witness", "partition-constraint", "classification"],
     },
     "tw03": {
-        "title": "ShapeFill - 多联骨牌铺满",
+        "title": "ShapeFill - Polyomino Tiling",
         "class_name": "Tw03",
         "tags": ["witness", "tiling", "exact-cover"],
     },
     "tw04": {
-        "title": "SymDraw - 对称画线",
+        "title": "SymDraw - Symmetric Line Drawing",
         "class_name": "Tw04",
         "tags": ["witness", "symmetry", "dual-control"],
     },
     "tw05": {
-        "title": "StarPair - 星星配对",
+        "title": "StarPair - Star Pairing",
         "class_name": "Tw05",
         "tags": ["witness", "pairing-constraint", "region-partition"],
     },
     "tw06": {
-        "title": "TriCount - 三角形计数",
+        "title": "TriCount - Triangle Counting",
         "class_name": "Tw06",
         "tags": ["witness", "counting-constraint", "edge-awareness"],
     },
     "tw07": {
-        "title": "EraserLogic - 消除逻辑",
+        "title": "EraserLogic - Elimination Logic",
         "class_name": "Tw07",
         "tags": ["witness", "meta-reasoning", "error-correction"],
     },
     "tw08": {
-        "title": "ComboBasic - 基础组合",
+        "title": "ComboBasic - Basic Combination",
         "class_name": "Tw08",
         "tags": ["witness", "multi-constraint", "squares-stars"],
     },
     "tw09": {
-        "title": "CylinderWrap - 圆柱环绕",
+        "title": "CylinderWrap - Cylinder Wrap-Around",
         "class_name": "Tw09",
         "tags": ["witness", "topology", "wrap-around"],
     },
     "tw10": {
-        "title": "ColorFilter - 颜色滤镜",
+        "title": "ColorFilter - Color Filter",
         "class_name": "Tw10",
         "tags": ["witness", "perception", "color-transform"],
     },
     "tw11": {
-        "title": "MultiRegion - 多约束区域组合",
+        "title": "MultiRegion - Multi-Constraint Region Combo",
         "class_name": "Tw11",
         "tags": ["witness", "multi-constraint", "region-combo"],
     },
     "tw12": {
-        "title": "HexCombo - 必经点+区域组合",
+        "title": "HexCombo - Waypoint + Region Combo",
         "class_name": "Tw12",
         "tags": ["witness", "path-constraint", "region-combo"],
     },
     "tw13": {
-        "title": "EraserAll - 全约束消除逻辑",
+        "title": "EraserAll - Full-Constraint Elimination Logic",
         "class_name": "Tw13",
         "tags": ["witness", "meta-reasoning", "error-correction", "extended"],
     },
@@ -101,7 +101,7 @@ GAME_REGISTRY = {
 
 
 def ascii_grid_tw01(config: dict, solution=None) -> str:
-    """生成 tw01 ASCII 可视化。"""
+    """Generate tw01 ASCII visualization."""
     cols, rows = config["cols"], config["rows"]
     start = tuple(config["start"])
     end = tuple(config["end"])
@@ -159,7 +159,7 @@ def ascii_grid_tw01(config: dict, solution=None) -> str:
 
 
 def ascii_grid_tw02(config: dict) -> str:
-    """生成 tw02 ASCII 可视化。"""
+    """Generate tw02 ASCII visualization."""
     cols, rows = config["cols"], config["rows"]
     start = tuple(config["start"])
     end = tuple(config["end"])
@@ -200,7 +200,7 @@ def ascii_grid_tw02(config: dict) -> str:
 
 
 def _generate_metadata(game_id: str, baselines: list, env_dir: str):
-    """自动生成 metadata.json。"""
+    """Auto-generate metadata.json."""
     info = GAME_REGISTRY.get(game_id, {})
     metadata = {
         "game_id": game_id,
@@ -220,22 +220,22 @@ def _generate_metadata(game_id: str, baselines: list, env_dir: str):
 
 
 def _estimate_baseline(config: dict) -> int:
-    """基于网格尺寸估算 baseline（用于 solver 超时的未验证关卡）。
+    """Estimate baseline based on grid dimensions (for unvalidated levels where solver timed out).
 
-    估算逻辑：最短路径大约 = cols + rows 步，baseline = ceil((moves+1)*1.5)
-    比已验证的 1.2 倍数稍宽松，因为我们不知道实际最短路径。
+    Estimation logic: shortest path is approximately cols + rows steps, baseline = ceil((moves+1)*1.5)
+    Slightly more lenient than the 1.2 multiplier for validated levels, since we don't know the actual shortest path.
     """
     import math
     cols = config.get("cols", 3)
     rows = config.get("rows", 3)
-    estimated_moves = cols + rows  # 最乐观的直线路径
+    estimated_moves = cols + rows  # Most optimistic straight-line path
     total_actions = estimated_moves + 1  # +1 for CONFIRM
     return math.ceil(total_actions * 1.5)
 
 
 def run_pipeline(max_solve_time: float = 10.0, output_dir: str = "levels",
                  levels_per_game: int = 10, keep_all: bool = False) -> dict:
-    """运行完整提取管线。"""
+    """Run the complete extraction pipeline."""
     print("=" * 60)
     print("ARC-AGI-3 Witness Puzzle Extraction Pipeline")
     if keep_all:
@@ -281,7 +281,7 @@ def run_pipeline(max_solve_time: float = 10.0, output_dir: str = "levels",
             elapsed = time.time() - t0
 
             if result["valid"]:
-                # 多起点：重排 starts 使 solver 选中的起点在首位
+                # Multi-start: reorder starts so the solver-chosen start comes first
                 if "starts" in config and result["solution"]:
                     solver_start = list(result["solution"][0])
                     starts = config["starts"]
@@ -417,8 +417,8 @@ def run_pipeline(max_solve_time: float = 10.0, output_dir: str = "levels",
 
 
 def _select_levels(levels: list, count: int, min_moves: int = 3) -> list:
-    """从验证通过的关卡中选取关卡。count=0 表示保留全部。"""
-    # 过滤太简单的关卡和去重
+    """Select levels from validated ones. count=0 means keep all."""
+    # Filter out trivially easy levels and deduplicate
     filtered = []
     seen_configs = set()
     for level in levels:
@@ -430,11 +430,11 @@ def _select_levels(levels: list, count: int, min_moves: int = 3) -> list:
         seen_configs.add(config_key)
         filtered.append(level)
 
-    # count=0 表示保留全部
+    # count=0 means keep all
     if count == 0 or len(filtered) <= count:
         return filtered
 
-    # 均匀采样不同难度
+    # Evenly sample across difficulty levels
     step = len(filtered) / count
     selected = []
     for i in range(count):

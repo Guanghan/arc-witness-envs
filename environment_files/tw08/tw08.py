@@ -1,11 +1,11 @@
 """
-tw08_combobasic.py — ComboBasic: 基础组合谜题
+tw08_combobasic.py — ComboBasic: Basic Combination Puzzle
 
-同时满足方块分区约束（tw02）+ 星星配对约束（tw05）。
-训练 Agent 同时推理多种约束的能力。
+Simultaneously satisfy square partition constraints (tw02) + star pairing constraints (tw05).
+Trains the agent's ability to reason about multiple constraints at once.
 
 Core Knowledge: Multi-constraint reasoning
-ARC-AGI 启示: 同时满足多条规则
+ARC-AGI inspiration: satisfying multiple rules simultaneously
 """
 
 import sys
@@ -30,10 +30,10 @@ from typing import List, Tuple, Set, Dict, Optional
 
 
 class Tw08(ARCBaseGame):
-    """ComboBasic — 基础组合谜题
+    """ComboBasic — Basic Combination Puzzle
 
-    规则：从起点画线到终点，路径将面板分区。
-    同时满足：每区域方块同色 + 每区域每色星星恰好 2 个。
+    Rules: draw a line from start to end; the path partitions the panel.
+    Must satisfy both: all squares same color per region + exactly 2 stars of each color per region.
     """
 
     def __init__(self, seed: int = 0):
@@ -77,7 +77,7 @@ class Tw08(ARCBaseGame):
 
     @staticmethod
     def _parse_starts(cfg: dict) -> List[Tuple[int, int]]:
-        """从 config 解析起点列表。支持 'starts' (多起点) 和 'start' (单起点)。"""
+        """Parse start points from config. Supports 'starts' (multiple) and 'start' (single)."""
         if "starts" in cfg:
             return [tuple(s) for s in cfg["starts"]]
         return [tuple(cfg["start"])]
@@ -109,7 +109,7 @@ class Tw08(ARCBaseGame):
                     ]
                 level_configs.append(config)
         else:
-            # 硬编码回退
+            # Hardcoded fallback
             level_configs = [
                 {
                     "cols": 4, "rows": 4,
@@ -134,7 +134,7 @@ class Tw08(ARCBaseGame):
             for cell, color in config["stars"].items():
                 grid.draw_star(frame, cell, color)
 
-            # 绘制断边
+            # Draw breakpoints
             for bp in config.get("breakpoints", []):
                 grid.draw_breakpoint(frame, bp[0], bp[1])
 
@@ -182,7 +182,7 @@ class Tw08(ARCBaseGame):
     def on_set_level(self, level: Level) -> None:
         data = level._data
         self._grid = WitnessGrid(data["cols"], data["rows"])
-        # 支持多起点
+        # Support multiple start points
         if "starts" in data:
             self._starts = [tuple(s) for s in data["starts"]]
         else:
@@ -204,10 +204,11 @@ class Tw08(ARCBaseGame):
         self._path = [self._start]
 
     def _try_auto_select_start(self, dc: int, dr: int) -> bool:
-        """多起点时，尝试根据第一步方向自动选择起点。
+        """With multiple starts, try to auto-select a start based on the first move direction.
 
-        仅在路径只有初始起点（len==1）且当前起点无法移动时触发。
-        遍历所有起点，选择第一个能向 (dc,dr) 方向移动的起点。
+        Only triggered when the path has just the initial start (len==1) and the
+        current start cannot move. Iterates all starts and selects the first one
+        that can move in the (dc, dr) direction.
         """
         if len(self._path) != 1 or len(self._starts) <= 1:
             return False
@@ -239,9 +240,9 @@ class Tw08(ARCBaseGame):
 
             target = (current[0] + dc, current[1] + dr)
 
-            # 验证移动合法性
+            # Validate move legality
             if not self._is_valid_move(current, target):
-                # 多起点：尝试自动切换起点
+                # Multiple starts: try auto-switching start point
                 if self._try_auto_select_start(dc, dr):
                     current = self._path[-1]
                     target = (current[0] + dc, current[1] + dr)
@@ -285,7 +286,7 @@ class Tw08(ARCBaseGame):
         regions = self._grid.path_splits_regions(self._path)
 
         for region in regions:
-            # 方块同色检查
+            # Square same-color check
             sq_colors = set()
             for cell in region:
                 if cell in self._squares:
@@ -296,7 +297,7 @@ class Tw08(ARCBaseGame):
                 self._update_display()
                 return
 
-            # 星星配对检查
+            # Star pairing check
             star_counts: Dict[int, int] = {}
             for cell in region:
                 if cell in self._stars:
@@ -326,7 +327,7 @@ class Tw08(ARCBaseGame):
         for cell, color in self._stars.items():
             self._grid.draw_star(frame, cell, color)
 
-        # 绘制断边
+        # Draw breakpoints
         for bp in self._breakpoints:
             self._grid.draw_breakpoint(frame, bp[0], bp[1])
 
@@ -336,7 +337,7 @@ class Tw08(ARCBaseGame):
         if self._path:
             self._grid.draw_dot(frame, self._path[-1], CURSOR_COLOR)
 
-        # 未验证标记
+        # Unvalidated indicator
         if not self.current_level._data.get("validated", True):
             self._grid.draw_unvalidated_indicator(frame)
 

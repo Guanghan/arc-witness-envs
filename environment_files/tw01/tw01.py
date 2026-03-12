@@ -1,23 +1,25 @@
 """
-tw01_pathdots.py — PathDots: 六边形点（路径必经）谜题
+tw01_pathdots.py — PathDots: Mandatory waypoint (path-through dot) puzzles
 
-The Witness 核心机制之一：在网格上画线，路径必须经过所有标记点。
-这是最基础的约束类型，训练 Agent 的路径规划和空间推理能力。
+One of The Witness's core mechanics: draw a line on a grid whose path must
+pass through every marked dot.
+This is the most basic constraint type, training the Agent's path-planning
+and spatial reasoning abilities.
 
-Core Knowledge: Objectness — 路径上的必经节点
-ARC-AGI 启示: "保留特定元素"规则
+Core Knowledge: Objectness — mandatory waypoints on the path
+ARC-AGI insight: "preserve specific elements" rule
 
-关卡设计（渐进式教学）:
-  Level 1: 3×3网格，1个点在直线路径上（自然经过）
-  Level 2: 3×3网格，1个点需要绕行
-  Level 3: 4×4网格，2个点
-  Level 4: 4×4网格，3个点（需要精确路径规划）
-  Level 5: 5×5网格，4个点（假设打破：点在边上）
+Level design (progressive tutorial):
+  Level 1: 3x3 grid, 1 dot on a straight path (naturally traversed)
+  Level 2: 3x3 grid, 1 dot requiring a detour
+  Level 3: 4x4 grid, 2 dots
+  Level 4: 4x4 grid, 3 dots (requires precise path planning)
+  Level 5: 5x5 grid, 4 dots (assumption-breaking: dots on edges)
 """
 
 import sys
 import os
-# 确保本目录在 sys.path 中（兼容 SDK exec() 和直接运行两种方式）
+# Ensure this directory is in sys.path (compatible with both SDK exec() and direct execution)
 try:
     _code_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
 except NameError:
@@ -38,20 +40,21 @@ from typing import List, Tuple, Set, Optional
 
 
 class Tw01(ARCBaseGame):
-    """PathDots — 路径必经点谜题
+    """PathDots — Mandatory waypoint puzzles
 
-    规则：从起点画线到终点，路径必须经过所有标记的黄色点。
+    Rules: Draw a line from start to end; the path must pass through all
+    marked yellow dots.
     """
 
     def __init__(self, seed: int = 0):
         self._seed = seed
 
-        # 游戏状态 — 必须在 super().__init__() 之前初始化，
-        # 因为 super().__init__() 会调用 on_set_level() 设置这些值
+        # Game state — must be initialised before super().__init__(),
+        # because super().__init__() calls on_set_level() which sets these values
         self._path: List[Tuple[int, int]] = []
         self._grid: Optional[WitnessGrid] = None
         self._starts: List[Tuple[int, int]] = [(0, 0)]
-        self._start: Tuple[int, int] = (0, 0)  # 当前选中的起点
+        self._start: Tuple[int, int] = (0, 0)  # currently selected start
         self._end: Tuple[int, int] = (0, 0)
         self._dots: List[Tuple[int, int]] = []
         self._breakpoints: Set[Tuple[Tuple[int, int], Tuple[int, int]]] = set()
@@ -64,13 +67,13 @@ class Tw01(ARCBaseGame):
             levels=levels,
             camera=camera,
             win_score=min(len(levels), 254),
-            available_actions=[1, 2, 3, 4, 5],  # 上下左右 + 确认
+            available_actions=[1, 2, 3, 4, 5],  # up/down/left/right + confirm
             seed=seed,
         )
 
     @staticmethod
     def _load_json_levels() -> Optional[list]:
-        """尝试从 JSON 文件加载关卡。返回 [{"config": ..., "validated": bool}]。"""
+        """Try to load levels from a JSON file. Returns [{"config": ..., "validated": bool}]."""
         try:
             import json
             levels_path = os.path.join(_code_dir, "levels", "tw01_levels.json")
@@ -86,13 +89,13 @@ class Tw01(ARCBaseGame):
 
     @staticmethod
     def _parse_starts(cfg: dict) -> List[Tuple[int, int]]:
-        """从 config 解析起点列表。支持 'starts' (多起点) 和 'start' (单起点)。"""
+        """Parse the list of start points from config. Supports 'starts' (multiple) and 'start' (single)."""
         if "starts" in cfg:
             return [tuple(s) for s in cfg["starts"]]
         return [tuple(cfg["start"])]
 
     def _create_levels(self) -> List[Level]:
-        """创建所有关卡。优先从 JSON 加载，回退到硬编码。"""
+        """Create all levels. Loads from JSON first, falls back to hardcoded levels."""
         json_entries = self._load_json_levels()
         if json_entries:
             level_configs = []
@@ -113,7 +116,7 @@ class Tw01(ARCBaseGame):
                     ]
                 level_configs.append(config)
         else:
-            # 硬编码回退
+            # Hardcoded fallback
             level_configs = [
                 {
                     "cols": 3, "rows": 3,
@@ -147,24 +150,24 @@ class Tw01(ARCBaseGame):
             grid = WitnessGrid(config["cols"], config["rows"])
             frame = grid.render_grid()
 
-            # 绘制所有起点和终点
+            # Draw all start points and end point
             for s in config["starts"]:
                 grid.draw_start(frame, s)
             grid.draw_end(frame, config["end"])
 
-            # 绘制必经点
+            # Draw mandatory waypoint dots
             for dot in config["dots"]:
                 grid.draw_dot(frame, dot, DOT_COLOR)
 
-            # 绘制断边
+            # Draw broken edges
             for bp in config.get("breakpoints", []):
                 grid.draw_breakpoint(frame, bp[0], bp[1])
 
-            # 未验证标记
+            # Unvalidated indicator
             if not config.get("validated", True):
                 grid.draw_unvalidated_indicator(frame)
 
-            # 创建背景 sprite
+            # Create background sprite
             bg_sprite = Sprite(
                 pixels=frame,
                 name="grid_bg",
@@ -175,7 +178,7 @@ class Tw01(ARCBaseGame):
                 tags=["sys_static"],
             )
 
-            # 创建光标 sprite（在第一个起点位置）
+            # Create cursor sprite (at the first start point)
             sx, sy = grid.node_to_pixel(*config["starts"][0])
             cursor_sprite = Sprite(
                 pixels=[[CURSOR_COLOR]],
@@ -208,10 +211,10 @@ class Tw01(ARCBaseGame):
         return levels
 
     def on_set_level(self, level: Level) -> None:
-        """关卡切换时重置状态。"""
+        """Reset state when switching levels."""
         data = level._data
         self._grid = WitnessGrid(data["cols"], data["rows"])
-        # 支持多起点
+        # Support multiple start points
         if "starts" in data:
             self._starts = [tuple(s) for s in data["starts"]]
         else:
@@ -227,11 +230,11 @@ class Tw01(ARCBaseGame):
         self._drawing = True
 
     def _current_node(self) -> Tuple[int, int]:
-        """当前路径末端节点。"""
+        """Current node at the end of the path."""
         return self._path[-1] if self._path else self._start
 
     def _pixel_to_nearest_node(self, px: int, py: int) -> Optional[Tuple[int, int]]:
-        """将像素坐标转换为最近的网格节点。"""
+        """Convert pixel coordinates to the nearest grid node."""
         if not self._grid:
             return None
 
@@ -249,10 +252,11 @@ class Tw01(ARCBaseGame):
         return best_node
 
     def _try_auto_select_start(self, dc: int, dr: int) -> bool:
-        """多起点时，尝试根据第一步方向自动选择起点。
+        """With multiple start points, try to auto-select one based on the first move direction.
 
-        仅在路径只有初始起点（len==1）且当前起点无法移动时触发。
-        遍历所有起点，选择第一个能向 (dc,dr) 方向移动的起点。
+        Only triggered when the path has just the initial start (len==1) and the
+        current start cannot move. Iterates over all start points and selects the
+        first one that can move in the (dc, dr) direction.
         """
         if len(self._path) != 1 or len(self._starts) <= 1:
             return False
@@ -265,7 +269,7 @@ class Tw01(ARCBaseGame):
         return False
 
     def step(self) -> None:
-        """核心游戏逻辑。"""
+        """Core game logic."""
         if not self._grid or not self._drawing:
             self.complete_action()
             return
@@ -274,26 +278,26 @@ class Tw01(ARCBaseGame):
         current = self._current_node()
 
         if action == GameAction.ACTION5:
-            # 提交路径
+            # Submit path
             self._check_solution()
         elif action in (GameAction.ACTION1, GameAction.ACTION2,
                         GameAction.ACTION3, GameAction.ACTION4):
-            # 方向移动
+            # Directional movement
             dc, dr = 0, 0
             if action == GameAction.ACTION1:
-                dr = -1  # 上
+                dr = -1  # up
             elif action == GameAction.ACTION2:
-                dr = 1   # 下
+                dr = 1   # down
             elif action == GameAction.ACTION3:
-                dc = -1  # 左
+                dc = -1  # left
             elif action == GameAction.ACTION4:
-                dc = 1   # 右
+                dc = 1   # right
 
             target = (current[0] + dc, current[1] + dr)
 
-            # 验证移动合法性
+            # Validate move legality
             if not self._is_valid_move(current, target):
-                # 多起点：尝试自动切换起点
+                # Multiple start points: try auto-switching start
                 if self._try_auto_select_start(dc, dr):
                     current = self._current_node()
                     target = (current[0] + dc, current[1] + dr)
@@ -301,7 +305,7 @@ class Tw01(ARCBaseGame):
                     self.complete_action()
                     return
 
-            # 如果回退到上一个节点
+            # If backtracking to the previous node
             if len(self._path) >= 2 and target == self._path[-2]:
                 self._path.pop()
             elif target not in self._path:
@@ -314,22 +318,22 @@ class Tw01(ARCBaseGame):
 
     def _is_valid_move(self, from_node: Tuple[int, int],
                        to_node: Tuple[int, int]) -> bool:
-        """检查从一个节点移动到另一个节点是否合法。"""
+        """Check whether moving from one node to another is valid."""
         if not self._grid:
             return False
 
         fc, fr = from_node
         tc, tr = to_node
 
-        # 检查目标在网格范围内
+        # Check target is within grid bounds
         if not (0 <= tc <= self._grid.cols and 0 <= tr <= self._grid.rows):
             return False
 
-        # 必须是相邻节点（曼哈顿距离=1）
+        # Must be an adjacent node (Manhattan distance == 1)
         if abs(fc - tc) + abs(fr - tr) != 1:
             return False
 
-        # 检查断点
+        # Check breakpoints
         edge = (min(from_node, to_node), max(from_node, to_node))
         if edge in self._breakpoints:
             return False
@@ -337,72 +341,72 @@ class Tw01(ARCBaseGame):
         return True
 
     def _check_solution(self) -> None:
-        """检查当前路径是否满足所有约束。"""
-        # 检查1: 路径必须到达终点
+        """Check whether the current path satisfies all constraints."""
+        # Check 1: path must reach the end point
         if self._current_node() != self._end:
             self._show_error()
             return
 
-        # 检查2: 路径必须经过所有必经点
+        # Check 2: path must pass through all mandatory waypoints
         path_set = set(self._path)
         for dot in self._dots:
             if dot not in path_set:
                 self._show_error()
                 return
 
-        # 全部通过！
+        # All checks passed!
         self._show_success()
         self.next_level()
 
     def _show_error(self) -> None:
-        """显示错误反馈（短暂闪红）。"""
-        # 重置路径到第一个起点
+        """Show error feedback (brief red flash)."""
+        # Reset path to the first start point
         self._start = self._starts[0]
         self._path = [self._start]
         self._update_display()
 
     def _show_success(self) -> None:
-        """显示成功反馈。"""
-        # 路径变绿
+        """Show success feedback."""
+        # Path turns green
         self._update_display(path_color=SUCCESS_COLOR)
 
     def _update_display(self, path_color: int = PATH_COLOR) -> None:
-        """更新显示。"""
+        """Update the display."""
         if not self._grid:
             return
 
         data = self.current_level._data
         frame = self._grid.render_grid()
 
-        # 绘制所有起点和终点
+        # Draw all start points and end point
         for s in self._starts:
             self._grid.draw_start(frame, s)
         self._grid.draw_end(frame, self._end)
 
-        # 绘制必经点
+        # Draw mandatory waypoint dots
         for dot in self._dots:
             covered = dot in set(self._path)
             color = SUCCESS_COLOR if covered else DOT_COLOR
             self._grid.draw_dot(frame, dot, color)
 
-        # 绘制断边
+        # Draw broken edges
         for bp in self._breakpoints:
             self._grid.draw_breakpoint(frame, bp[0], bp[1])
 
-        # 绘制路径
+        # Draw path
         for i in range(len(self._path) - 1):
             self._grid.draw_path_segment(frame, self._path[i], self._path[i + 1], path_color)
 
-        # 绘制光标
+        # Draw cursor
         if self._path:
             cursor_node = self._path[-1]
             self._grid.draw_dot(frame, cursor_node, CURSOR_COLOR)
 
-        # 未验证标记
+        # Unvalidated indicator
         if not self.current_level._data.get("validated", True):
             self._grid.draw_unvalidated_indicator(frame)
 
-        # 更新背景 sprite
+        # Update background sprite
         bg_sprites = self.current_level.get_sprites_by_name("grid_bg")
         if bg_sprites:
             self.current_level.remove_sprite(bg_sprites[0])
@@ -418,7 +422,7 @@ class Tw01(ARCBaseGame):
         )
         self.current_level.add_sprite(new_bg)
 
-        # 移动光标 sprite
+        # Move cursor sprite
         if self._path:
             cx, cy = self._grid.node_to_pixel(*self._path[-1])
             cursor_sprites = self.current_level.get_sprites_by_name("cursor")

@@ -1,14 +1,14 @@
 """
-tw09_cylinderwrap.py — CylinderWrap: 圆柱环绕谜题
+tw09_cylinderwrap.py — CylinderWrap: Cylinder Wrap Puzzle
 
-面板水平环绕：左边缘连接右边缘。路径可以从一侧走到另一侧。
-基础约束使用 dots（类似 tw01），渐进引入 wrap 需求。
-训练 Agent 的拓扑推理能力。
+The panel wraps horizontally: the left edge connects to the right edge. Paths can cross from one side to the other.
+Base constraints use dots (similar to tw01), progressively introducing wrap requirements.
+Trains the agent's topological reasoning ability.
 
-Core Knowledge: Topology — 非平面空间
-ARC-AGI 启示: 边界条件和拓扑不变量
+Core Knowledge: Topology — Non-planar space
+ARC-AGI Insight: Boundary conditions and topological invariants
 
-手工设计 5 个关卡（无 TTWS 数据）。
+5 hand-designed levels (no TTWS data).
 """
 
 import sys
@@ -33,10 +33,10 @@ from typing import List, Tuple, Set, Optional
 
 
 class Tw09(ARCBaseGame):
-    """CylinderWrap — 圆柱环绕谜题
+    """CylinderWrap — Cylinder Wrap Puzzle
 
-    规则：从起点画线到终点，路径必须经过所有标记点。
-    特殊机制：面板水平环绕，col=0 和 col=cols 相连。
+    Rules: Draw a line from start to end; the path must pass through all marked dots.
+    Special mechanic: The panel wraps horizontally; col=0 and col=cols are connected.
     """
 
     def __init__(self, seed: int = 0):
@@ -88,33 +88,33 @@ class Tw09(ARCBaseGame):
                 }
                 level_configs.append(config)
         else:
-            # 手工设计 5 个关卡
+            # 5 hand-designed levels
             level_configs = [
-                # Level 1: 3×3, 起终点在两侧，需要 wrap
+                # Level 1: 3x3, start and end on opposite sides, wrap required
                 {
                     "cols": 3, "rows": 3,
                     "start": (0, 0), "end": (0, 3),
-                    "dots": [(3, 1)],  # 需要向右走到 col=3 然后 wrap 回来
+                    "dots": [(3, 1)],  # must go right to col=3 then wrap back
                 },
-                # Level 2: 3×3, dot 在对面
+                # Level 2: 3x3, dot on opposite side
                 {
                     "cols": 3, "rows": 3,
                     "start": (0, 0), "end": (3, 3),
                     "dots": [(3, 0), (0, 2)],  # wrap needed to reach dots efficiently
                 },
-                # Level 3: 4×3, 多个 dots
+                # Level 3: 4x3, multiple dots
                 {
                     "cols": 4, "rows": 3,
                     "start": (0, 0), "end": (0, 3),
                     "dots": [(4, 1), (2, 2)],
                 },
-                # Level 4: 4×4, 复杂 wrap 路径
+                # Level 4: 4x4, complex wrap path
                 {
                     "cols": 4, "rows": 4,
                     "start": (0, 0), "end": (4, 4),
                     "dots": [(4, 0), (0, 2), (4, 3)],
                 },
-                # Level 5: 5×4, 需要多次 wrap
+                # Level 5: 5x4, requires multiple wraps
                 {
                     "cols": 5, "rows": 4,
                     "start": (0, 0), "end": (5, 4),
@@ -133,13 +133,13 @@ class Tw09(ARCBaseGame):
             for dot in config["dots"]:
                 grid.draw_dot(frame, dot, DOT_COLOR)
 
-            # 绘制 wrap 指示器（左右边缘用紫色标记）
+            # Draw wrap indicators (mark left and right edges with purple)
             for row in range(config["rows"] + 1):
-                # 左边缘
+                # Left edge
                 lx, ly = grid.node_to_pixel(0, row)
                 if 0 <= lx - 1 < 64 and 0 <= ly < 64:
                     frame[ly][lx - 1] = COLOR_PURPLE
-                # 右边缘
+                # Right edge
                 rx, ry = grid.node_to_pixel(config["cols"], row)
                 if 0 <= rx + 1 < 64 and 0 <= ry < 64:
                     frame[ry][rx + 1] = COLOR_PURPLE
@@ -208,7 +208,7 @@ class Tw09(ARCBaseGame):
 
             target = (current[0] + dc, current[1] + dr)
 
-            # Wrap 逻辑：水平环绕
+            # Wrap logic: horizontal wrapping
             cols = self._grid.cols
             tc, tr = target
             if tc < 0:
@@ -229,7 +229,7 @@ class Tw09(ARCBaseGame):
         if not self._grid:
             return False
         tc, tr = to_node
-        # 水平方向允许 0..cols（wrap 后已处理），垂直方向正常
+        # Horizontal range is 0..cols (already handled after wrap), vertical range is normal
         if not (0 <= tc <= self._grid.cols and 0 <= tr <= self._grid.rows):
             return False
         return True
@@ -263,7 +263,7 @@ class Tw09(ARCBaseGame):
             color = SUCCESS_COLOR if covered else DOT_COLOR
             self._grid.draw_dot(frame, dot, color)
 
-        # Wrap 指示器
+        # Wrap indicators
         for row in range(self._grid.rows + 1):
             lx, ly = self._grid.node_to_pixel(0, row)
             if 0 <= lx - 1 < 64 and 0 <= ly < 64:
@@ -274,21 +274,21 @@ class Tw09(ARCBaseGame):
 
         for i in range(len(self._path) - 1):
             n1, n2 = self._path[i], self._path[i + 1]
-            # 对于 wrap 边（跨越左右），分两段绘制
+            # For wrap edges (crossing left-right boundary), draw in two segments
             if abs(n1[0] - n2[0]) > 1:
                 # Wrap edge: draw to edge on both sides
-                pass  # 简化处理：不绘制 wrap 边的连线
+                pass  # Simplified: skip drawing wrap edge connections
             else:
                 self._grid.draw_path_segment(frame, n1, n2, path_color)
 
         if self._path:
             self._grid.draw_dot(frame, self._path[-1], CURSOR_COLOR)
 
-        # 未验证标记
+        # Unvalidated indicator
         if not self.current_level._data.get("validated", True):
             self._grid.draw_unvalidated_indicator(frame)
 
-        # 更新背景 sprite
+        # Update background sprite
         bg_sprites = self.current_level.get_sprites_by_name("grid_bg")
         if bg_sprites:
             self.current_level.remove_sprite(bg_sprites[0])

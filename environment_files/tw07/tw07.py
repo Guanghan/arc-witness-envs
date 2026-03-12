@@ -1,12 +1,12 @@
 """
-tw07_eraserlogic.py — EraserLogic: 消除逻辑谜题
+tw07_eraserlogic.py — EraserLogic: Eraser Logic Puzzle
 
-The Witness 消除符号(Y)机制：消除符号吸收约束违反。
-每个区域：消除符号数 = 约束违反数。
-训练 Agent 的元推理能力——推理约规则的例外。
+The Witness eraser symbol (Y) mechanic: erasers absorb constraint violations.
+Per region: number of erasers = number of violations.
+Trains the agent's meta-reasoning ability -- reasoning about exceptions to rules.
 
-Core Knowledge: Meta-reasoning — 规则的例外
-ARC-AGI 启示: 错误修正模式
+Core Knowledge: Meta-reasoning — exceptions to rules
+ARC-AGI inspiration: error correction patterns
 """
 
 import sys
@@ -31,10 +31,10 @@ from typing import List, Tuple, Set, Dict, Optional
 
 
 class Tw07(ARCBaseGame):
-    """EraserLogic — 消除逻辑谜题
+    """EraserLogic — Eraser Logic Puzzle
 
-    规则：从起点画线到终点，路径将面板分区。
-    消除符号吸收约束违反：每个区域的消除符号数 = 违反数。
+    Rules: draw a line from start to end; the path partitions the panel.
+    Erasers absorb constraint violations: each region's eraser count = violation count.
     """
 
     def __init__(self, seed: int = 0):
@@ -63,7 +63,7 @@ class Tw07(ARCBaseGame):
 
     @staticmethod
     def _parse_starts(cfg: dict) -> List[Tuple[int, int]]:
-        """从 config 解析起点列表。支持 'starts' (多起点) 和 'start' (单起点)。"""
+        """Parse start points from config. Supports 'starts' (multiple) and 'start' (single)."""
         if "starts" in cfg:
             return [tuple(s) for s in cfg["starts"]]
         return [tuple(cfg["start"])]
@@ -118,7 +118,7 @@ class Tw07(ARCBaseGame):
                     ]
                 level_configs.append(config)
         else:
-            # 硬编码回退：方块 + 消除
+            # Hardcoded fallback: squares + erasers
             level_configs = [
                 {
                     "cols": 3, "rows": 3,
@@ -148,7 +148,7 @@ class Tw07(ARCBaseGame):
             for cell in config["erasers"]:
                 grid.draw_eraser(frame, cell, ERASER_COLOR)
 
-            # 绘制断边
+            # Draw breakpoints
             for bp in config.get("breakpoints", []):
                 grid.draw_breakpoint(frame, bp[0], bp[1])
 
@@ -224,7 +224,7 @@ class Tw07(ARCBaseGame):
         self._path = [self._start]
 
     def _try_auto_select_start(self, dc: int, dr: int) -> bool:
-        """多起点时，尝试根据第一步方向自动选择起点。"""
+        """With multiple starts, try to auto-select a start based on the first move direction."""
         if len(self._path) != 1 or len(self._starts) <= 1:
             return False
         for alt in self._starts:
@@ -255,7 +255,7 @@ class Tw07(ARCBaseGame):
 
             target = (current[0] + dc, current[1] + dr)
 
-            # 多起点：尝试自动切换起点
+            # Multiple starts: try auto-switching start point
             if not self._is_valid_move(current, target):
                 if self._try_auto_select_start(dc, dr):
                     current = self._path[-1]
@@ -287,11 +287,11 @@ class Tw07(ARCBaseGame):
         return True
 
     def _count_violations(self, region):
-        """计算区域内的约束违反数。"""
+        """Count the number of constraint violations in a region."""
         violations = 0
         path_edges = self._grid.path_to_edges(self._path) if self._grid else set()
 
-        # 方块多色违反
+        # Square multi-color violation
         if self._squares:
             colors = set()
             for cell in region:
@@ -300,7 +300,7 @@ class Tw07(ARCBaseGame):
             if len(colors) > 1:
                 violations += len(colors) - 1
 
-        # 星星配对违反
+        # Star pairing violation
         if self._stars:
             color_counts: Dict[int, int] = {}
             for cell in region:
@@ -311,7 +311,7 @@ class Tw07(ARCBaseGame):
                 if count != 2:
                     violations += abs(count - 2)
 
-        # 三角形计数违反
+        # Triangle count violation
         if self._triangles:
             for cell in region:
                 if cell in self._triangles:
@@ -363,7 +363,7 @@ class Tw07(ARCBaseGame):
         for cell in self._erasers:
             self._grid.draw_eraser(frame, cell, ERASER_COLOR)
 
-        # 绘制断边
+        # Draw breakpoints
         for bp in self._breakpoints:
             self._grid.draw_breakpoint(frame, bp[0], bp[1])
 
@@ -373,7 +373,7 @@ class Tw07(ARCBaseGame):
         if self._path:
             self._grid.draw_dot(frame, self._path[-1], CURSOR_COLOR)
 
-        # 未验证标记
+        # Unvalidated indicator
         if not self.current_level._data.get("validated", True):
             self._grid.draw_unvalidated_indicator(frame)
 

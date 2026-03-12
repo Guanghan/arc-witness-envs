@@ -1,19 +1,19 @@
 """
-to_level_config.py — 将 UnifiedPuzzle 转换为游戏 level_config 格式
+to_level_config.py — Convert UnifiedPuzzle to game level_config format
 
-坐标系说明：
-- ttws/Windmill: nodes[y][x]，y 从上到下，x 从左到右
-- 我们的游戏: node (col, row)，col=x, row=y，左上原点
-- 两者一致，无需翻转
+Coordinate system notes:
+- ttws/Windmill: nodes[y][x], y top-to-bottom, x left-to-right
+- Our game: node (col, row), col=x, row=y, origin at top-left
+- Both are consistent, no flipping needed
 
-颜色映射：
-- Witness 9 色 → 我们 3 色 palette (SQUARE_A/B/C)
+Color mapping:
+- Witness 9 colors -> our 3-color palette (SQUARE_A/B/C)
 """
 import sys
 import os
 from typing import List, Dict, Tuple, Optional
 
-# 添加项目根目录到路径
+# Add project root to path
 _here = os.path.dirname(os.path.abspath(__file__))
 _project_root = os.path.dirname(_here)
 if _project_root not in sys.path:
@@ -21,20 +21,20 @@ if _project_root not in sys.path:
 
 from unified_puzzle import UnifiedPuzzle
 
-# === 颜色映射 ===
-# witness_grid.py 中的颜色常量
+# === Color mapping ===
+# Color constants from witness_grid.py
 SQUARE_A = 6   # COLOR_MAGENTA
 SQUARE_B = 10  # COLOR_LIGHT_BLUE
 SQUARE_C = 12  # COLOR_ORANGE
 
-# Witness 颜色名称 → 我们的颜色索引
-# 使用稳定映射：按首次出现顺序分配 A/B/C
+# Witness color names -> our color indices
+# Stable mapping: assign A/B/C by order of first appearance
 _GAME_COLORS = [SQUARE_A, SQUARE_B, SQUARE_C]
 
 
 def _map_colors(color_dict: Dict[Tuple[int, int], str]) -> Dict[Tuple[int, int], int]:
-    """将颜色名称映射为游戏颜色索引。"""
-    # 收集所有出现的颜色，按首次出现顺序
+    """Map color names to game color indices."""
+    # Collect all colors in order of first appearance
     seen = []
     for cell in sorted(color_dict.keys()):
         c = color_dict[cell]
@@ -42,14 +42,14 @@ def _map_colors(color_dict: Dict[Tuple[int, int], str]) -> Dict[Tuple[int, int],
             seen.append(c)
 
     if len(seen) > 3:
-        return {}  # 超过 3 色，无法映射
+        return {}  # More than 3 colors, cannot map
 
     color_map = {c: _GAME_COLORS[i] for i, c in enumerate(seen)}
     return {cell: color_map[color] for cell, color in color_dict.items()}
 
 
 def _pick_end(puzzle: UnifiedPuzzle) -> Tuple[int, int]:
-    """选择距起点（组）最远的终点。多起点时用起点质心。"""
+    """Pick the endpoint farthest from the start(s). Uses centroid for multiple starts."""
     starts = puzzle.starts
     cx = sum(s[0] for s in starts) / len(starts)
     cy = sum(s[1] for s in starts) / len(starts)
@@ -57,14 +57,14 @@ def _pick_end(puzzle: UnifiedPuzzle) -> Tuple[int, int]:
 
 
 def _start_fields(puzzle: UnifiedPuzzle) -> dict:
-    """生成 start/starts 字段。单起点用 'start'，多起点用 'starts'。"""
+    """Generate start/starts fields. Use 'start' for single, 'starts' for multiple."""
     if len(puzzle.starts) == 1:
         return {"start": list(puzzle.starts[0])}
     return {"starts": [list(s) for s in puzzle.starts]}
 
 
 def _breakpoint_fields(puzzle: UnifiedPuzzle) -> dict:
-    """生成 breakpoints 字段。无 missing_edges 时返回空 dict。"""
+    """Generate breakpoints field. Returns empty dict if no missing_edges."""
     if not puzzle.missing_edges:
         return {}
     breakpoints = []
@@ -80,7 +80,7 @@ def _breakpoint_fields(puzzle: UnifiedPuzzle) -> dict:
 
 
 def convert_tw01(puzzle: UnifiedPuzzle) -> Optional[dict]:
-    """将 UnifiedPuzzle 转换为 tw01 PathDots level_config。"""
+    """Convert UnifiedPuzzle to tw01 PathDots level_config."""
     if len(puzzle.starts) < 1 or not puzzle.ends:
         return None
 
@@ -97,7 +97,7 @@ def convert_tw01(puzzle: UnifiedPuzzle) -> Optional[dict]:
 
 
 def convert_tw02(puzzle: UnifiedPuzzle) -> Optional[dict]:
-    """将 UnifiedPuzzle 转换为 tw02 ColorSplit level_config。"""
+    """Convert UnifiedPuzzle to tw02 ColorSplit level_config."""
     if len(puzzle.starts) < 1 or not puzzle.ends:
         return None
 
@@ -118,9 +118,9 @@ def convert_tw02(puzzle: UnifiedPuzzle) -> Optional[dict]:
 
 
 def convert_tw03(puzzle: UnifiedPuzzle) -> Optional[dict]:
-    """将 UnifiedPuzzle 转换为 tw03 ShapeFill level_config。
+    """Convert UnifiedPuzzle to tw03 ShapeFill level_config.
 
-    格式: {cols, rows, start(s), end, tetris: {"c,r": {shape, rotated, negative}}}
+    Format: {cols, rows, start(s), end, tetris: {"c,r": {shape, rotated, negative}}}
     """
     if len(puzzle.starts) < 1 or not puzzle.ends:
         return None
@@ -146,7 +146,7 @@ def convert_tw03(puzzle: UnifiedPuzzle) -> Optional[dict]:
 
 
 def convert_tw04(puzzle: UnifiedPuzzle) -> Optional[dict]:
-    """将 UnifiedPuzzle 转换为 tw04 SymDraw level_config。"""
+    """Convert UnifiedPuzzle to tw04 SymDraw level_config."""
     if not puzzle.symmetry:
         return None
     if len(puzzle.starts) < 1 or len(puzzle.ends) < 1:
@@ -165,7 +165,7 @@ def convert_tw04(puzzle: UnifiedPuzzle) -> Optional[dict]:
             return (cols - x, rows - y)
         return node
 
-    # 配对起点
+    # Pair start points
     blue_start = yellow_start = None
     starts = list(puzzle.starts)
     if len(starts) == 2:
@@ -190,7 +190,7 @@ def convert_tw04(puzzle: UnifiedPuzzle) -> Optional[dict]:
     if blue_start is None:
         return None
 
-    # 配对终点
+    # Pair end points
     blue_end = yellow_end = None
     ends = list(puzzle.ends)
     if len(ends) == 2:
@@ -215,7 +215,7 @@ def convert_tw04(puzzle: UnifiedPuzzle) -> Optional[dict]:
     if blue_end is None:
         return None
 
-    # 确保 blue 在"左半/上半"
+    # Ensure blue is on the left/top half
     if sym == "horizontal" and blue_start[0] > cols // 2:
         blue_start, yellow_start = yellow_start, blue_start
         blue_end, yellow_end = yellow_end, blue_end
@@ -223,7 +223,7 @@ def convert_tw04(puzzle: UnifiedPuzzle) -> Optional[dict]:
         blue_start, yellow_start = yellow_start, blue_start
         blue_end, yellow_end = yellow_end, blue_end
 
-    # 分配 hexagons
+    # Assign hexagons
     blue_dots, yellow_dots = [], []
     for h in puzzle.hexagons:
         m = mirror(h)
@@ -256,9 +256,9 @@ def convert_tw04(puzzle: UnifiedPuzzle) -> Optional[dict]:
 
 
 def convert_tw05(puzzle: UnifiedPuzzle) -> Optional[dict]:
-    """将 UnifiedPuzzle 转换为 tw05 StarPair level_config。
+    """Convert UnifiedPuzzle to tw05 StarPair level_config.
 
-    格式: {cols, rows, start(s), end, stars: {"c,r": color_index}}
+    Format: {cols, rows, start(s), end, stars: {"c,r": color_index}}
     """
     if len(puzzle.starts) < 1 or not puzzle.ends:
         return None
@@ -280,9 +280,9 @@ def convert_tw05(puzzle: UnifiedPuzzle) -> Optional[dict]:
 
 
 def convert_tw06(puzzle: UnifiedPuzzle) -> Optional[dict]:
-    """将 UnifiedPuzzle 转换为 tw06 TriCount level_config。
+    """Convert UnifiedPuzzle to tw06 TriCount level_config.
 
-    格式: {cols, rows, start(s), end, triangles: {"c,r": count}}
+    Format: {cols, rows, start(s), end, triangles: {"c,r": count}}
     """
     if len(puzzle.starts) < 1 or not puzzle.ends:
         return None
@@ -300,9 +300,9 @@ def convert_tw06(puzzle: UnifiedPuzzle) -> Optional[dict]:
 
 
 def convert_tw07(puzzle: UnifiedPuzzle) -> Optional[dict]:
-    """将 UnifiedPuzzle 转换为 tw07 EraserLogic level_config。
+    """Convert UnifiedPuzzle to tw07 EraserLogic level_config.
 
-    格式: {cols, rows, start(s), end, erasers: [[c,r],...], + squares/stars/triangles}
+    Format: {cols, rows, start(s), end, erasers: [[c,r],...], + squares/stars/triangles}
     """
     if len(puzzle.starts) < 1 or not puzzle.ends:
         return None
@@ -318,19 +318,19 @@ def convert_tw07(puzzle: UnifiedPuzzle) -> Optional[dict]:
         **_breakpoint_fields(puzzle),
     }
 
-    # 添加方块约束
+    # Add square constraints
     if puzzle.squares:
         mapped = _map_colors(puzzle.squares)
         if mapped:
             config["squares"] = {f"{c},{r}": v for (c, r), v in mapped.items()}
 
-    # 添加星星约束
+    # Add star constraints
     if puzzle.stars:
         mapped = _map_colors(puzzle.stars)
         if mapped:
             config["stars"] = {f"{c},{r}": v for (c, r), v in mapped.items()}
 
-    # 添加三角形约束
+    # Add triangle constraints
     if puzzle.triangles:
         config["triangles"] = {f"{c},{r}": v for (c, r), v in puzzle.triangles.items()}
 
@@ -338,9 +338,9 @@ def convert_tw07(puzzle: UnifiedPuzzle) -> Optional[dict]:
 
 
 def convert_tw08(puzzle: UnifiedPuzzle) -> Optional[dict]:
-    """将 UnifiedPuzzle 转换为 tw08 ComboBasic level_config。
+    """Convert UnifiedPuzzle to tw08 ComboBasic level_config.
 
-    格式: {cols, rows, start(s), end, squares: {...}, stars: {...}}
+    Format: {cols, rows, start(s), end, squares: {...}, stars: {...}}
     """
     if len(puzzle.starts) < 1 or not puzzle.ends:
         return None
@@ -367,16 +367,16 @@ def convert_tw08(puzzle: UnifiedPuzzle) -> Optional[dict]:
 
 
 def convert_tw11(puzzle: UnifiedPuzzle) -> Optional[dict]:
-    """将 UnifiedPuzzle 转换为 tw11 MultiRegion level_config。
+    """Convert UnifiedPuzzle to tw11 MultiRegion level_config.
 
-    格式: {cols, rows, start(s), end, + squares/stars/triangles/tetris (至少 2 种)}
+    Format: {cols, rows, start(s), end, + squares/stars/triangles/tetris (at least 2 types)}
     """
     if len(puzzle.starts) < 1 or not puzzle.ends:
         return None
 
     end = _pick_end(puzzle)
 
-    # 至少需要 2 种区域约束
+    # Need at least 2 types of region constraints
     constraint_count = sum([
         bool(puzzle.squares), bool(puzzle.stars),
         bool(puzzle.triangles), bool(puzzle.tetris),
@@ -421,10 +421,10 @@ def convert_tw11(puzzle: UnifiedPuzzle) -> Optional[dict]:
 
 
 def convert_tw12(puzzle: UnifiedPuzzle) -> Optional[dict]:
-    """将 UnifiedPuzzle 转换为 tw12 HexCombo level_config。
+    """Convert UnifiedPuzzle to tw12 HexCombo level_config.
 
-    格式: {cols, rows, start(s), end, dots: [...], + squares/stars/triangles/tetris}
-    要求: hex + >=1 区域约束
+    Format: {cols, rows, start(s), end, dots: [...], + squares/stars/triangles/tetris}
+    Requires: hex + >=1 region constraint
     """
     if len(puzzle.starts) < 1 or not puzzle.ends:
         return None
@@ -476,10 +476,10 @@ def convert_tw12(puzzle: UnifiedPuzzle) -> Optional[dict]:
 
 
 def convert_tw13(puzzle: UnifiedPuzzle) -> Optional[dict]:
-    """将 UnifiedPuzzle 转换为 tw13 EraserAll level_config。
+    """Convert UnifiedPuzzle to tw13 EraserAll level_config.
 
-    格式: {cols, rows, start(s), end, erasers: [...], + 所有存在的约束 + 可选 dots}
-    扩展 tw07，覆盖 elim + tetris, elim + hex 等组合
+    Format: {cols, rows, start(s), end, erasers: [...], + all present constraints + optional dots}
+    Extends tw07, covering elim + tetris, elim + hex, and other combinations
     """
     if len(puzzle.starts) < 1 or not puzzle.ends:
         return None
@@ -525,7 +525,7 @@ def convert_tw13(puzzle: UnifiedPuzzle) -> Optional[dict]:
 
 
 def convert_puzzle(puzzle: UnifiedPuzzle, game_type: str) -> Optional[dict]:
-    """根据游戏类型转换谜题。"""
+    """Convert puzzle based on game type."""
     converters = {
         "tw01": convert_tw01,
         "tw02": convert_tw02,

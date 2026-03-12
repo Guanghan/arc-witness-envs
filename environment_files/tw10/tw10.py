@@ -1,13 +1,13 @@
 """
-tw10_colorfilter.py — ColorFilter: 颜色滤镜谜题
+tw10_colorfilter.py — ColorFilter: Color Filter Puzzle
 
-颜色滤镜改变方块的感知颜色，约束基于感知颜色而非真实颜色。
-训练 Agent 的感知变换推理能力。
+Color filters change the perceived color of squares; constraints are based on perceived color rather than true color.
+Trains the agent's perceptual transformation reasoning ability.
 
-Core Knowledge: Perception + Transformation — 颜色空间变换
-ARC-AGI 启示: 变换后应用规则
+Core Knowledge: Perception + Transformation — Color space transformation
+ARC-AGI Insight: Apply rules after transformation
 
-手工设计 5 个关卡（无 TTWS 数据）。
+5 hand-designed levels (no TTWS data).
 """
 
 import sys
@@ -31,16 +31,16 @@ from witness_grid import (
 )
 from typing import List, Tuple, Set, Dict, Optional
 
-# 滤镜颜色：用于标记滤镜格子
-FILTER_COLOR = COLOR_MAROON  # 栗色边框标记滤镜
+# Filter color: used to mark filter cells
+FILTER_COLOR = COLOR_MAROON  # Maroon border marks the filter
 
 
 class Tw10(ARCBaseGame):
-    """ColorFilter — 颜色滤镜谜题
+    """ColorFilter — Color Filter Puzzle
 
-    规则：从起点画线到终点，路径将面板分区。
-    同一区域方块必须"同色"（与 tw02 相同）。
-    但：滤镜格子改变其中方块的感知颜色。
+    Rules: Draw a line from start to end; the path divides the panel into regions.
+    Squares in the same region must be the "same color" (same as tw02).
+    However: filter cells change the perceived color of squares inside them.
     """
 
     def __init__(self, seed: int = 0):
@@ -103,23 +103,23 @@ class Tw10(ARCBaseGame):
                 }
                 level_configs.append(config)
         else:
-            # 手工设计 5 个关卡
+            # 5 hand-designed levels
             level_configs = [
-                # Level 1: 3×3, 一个滤镜将 A 变成 B
+                # Level 1: 3x3, one filter changes A to B
                 {
                     "cols": 3, "rows": 3,
                     "start": (0, 0), "end": (3, 3),
                     "squares": {(0, 0): SQUARE_A, (2, 0): SQUARE_B, (0, 2): SQUARE_A},
-                    "filters": {(0, 0): SQUARE_B},  # 将 (0,0) 的 A 变为 B
+                    "filters": {(0, 0): SQUARE_B},  # Changes A at (0,0) to B
                 },
-                # Level 2: 3×3, 两个滤镜
+                # Level 2: 3x3, two filters
                 {
                     "cols": 3, "rows": 3,
                     "start": (0, 0), "end": (0, 3),
                     "squares": {(0, 1): SQUARE_A, (2, 1): SQUARE_B, (1, 0): SQUARE_B},
                     "filters": {(0, 1): SQUARE_B},  # A->B
                 },
-                # Level 3: 4×3, 颜色交换
+                # Level 3: 4x3, color swap
                 {
                     "cols": 4, "rows": 3,
                     "start": (0, 0), "end": (4, 3),
@@ -127,7 +127,7 @@ class Tw10(ARCBaseGame):
                                 (2, 2): SQUARE_A, (3, 2): SQUARE_B},
                     "filters": {(1, 0): SQUARE_A},  # B->A
                 },
-                # Level 4: 4×4, 三色
+                # Level 4: 4x4, three colors
                 {
                     "cols": 4, "rows": 4,
                     "start": (0, 0), "end": (4, 4),
@@ -135,7 +135,7 @@ class Tw10(ARCBaseGame):
                                 (1, 2): SQUARE_C, (2, 2): SQUARE_A},
                     "filters": {(2, 2): SQUARE_C},  # A->C
                 },
-                # Level 5: 4×4, 多滤镜
+                # Level 5: 4x4, multiple filters
                 {
                     "cols": 4, "rows": 4,
                     "start": (0, 0), "end": (4, 4),
@@ -156,7 +156,7 @@ class Tw10(ARCBaseGame):
             for cell, color in config["squares"].items():
                 grid.draw_cell_symbol(frame, cell, color)
 
-            # 绘制滤镜标记（在有滤镜的格子边缘画栗色边框）
+            # Draw filter markers (maroon border around cells with filters)
             for cell in config["filters"]:
                 cx, cy = grid.cell_center_pixel(*cell)
                 half = 3
@@ -224,7 +224,7 @@ class Tw10(ARCBaseGame):
         self._path = [self._start]
 
     def _perceived_color(self, cell: Tuple[int, int]) -> Optional[int]:
-        """获取格子的感知颜色（应用滤镜后）。"""
+        """Get the perceived color of a cell (after applying filters)."""
         if cell not in self._squares:
             return None
         if cell in self._filters:
@@ -280,7 +280,7 @@ class Tw10(ARCBaseGame):
             self._update_display()
             return
 
-        # 区域分割 + 感知颜色检查
+        # Region splitting + perceived color check
         regions = self._grid.path_splits_regions(self._path)
         for region in regions:
             colors_in_region = set()
@@ -327,7 +327,7 @@ class Tw10(ARCBaseGame):
         if self._path:
             self._grid.draw_dot(frame, self._path[-1], CURSOR_COLOR)
 
-        # 未验证标记
+        # Unvalidated indicator
         if not self.current_level._data.get("validated", True):
             self._grid.draw_unvalidated_indicator(frame)
 

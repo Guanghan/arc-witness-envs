@@ -1,11 +1,12 @@
 """
-tw05_starpair.py — StarPair: 星星配对谜题
+tw05_starpair.py — StarPair: Star Pairing Puzzle
 
-The Witness 星星机制：画线将面板分区，每个区域内每种颜色恰好有 2 个星星。
-训练 Agent 的配对推理和区域规划能力。
+The Witness star mechanic: draw a line to partition the panel into regions,
+each region must contain exactly 2 stars of each color.
+Trains the agent's pairing reasoning and region planning abilities.
 
-Core Knowledge: Objectness + Counting — 按颜色配对
-ARC-AGI 启示: "每组恰好 N 个"规则
+Core Knowledge: Objectness + Counting — pairing by color
+ARC-AGI inspiration: "exactly N per group" rules
 """
 
 import sys
@@ -30,10 +31,10 @@ from typing import List, Tuple, Set, Dict, Optional
 
 
 class Tw05(ARCBaseGame):
-    """StarPair — 星星配对谜题
+    """StarPair — Star Pairing Puzzle
 
-    规则：从起点画线到终点，路径将面板分区。
-    每个区域内每种颜色的星星恰好 2 个。
+    Rules: draw a line from start to end; the path partitions the panel.
+    Each region must contain exactly 2 stars of each color.
     """
 
     def __init__(self, seed: int = 0):
@@ -41,7 +42,7 @@ class Tw05(ARCBaseGame):
         self._path: List[Tuple[int, int]] = []
         self._grid: Optional[WitnessGrid] = None
         self._starts: List[Tuple[int, int]] = [(0, 0)]
-        self._start: Tuple[int, int] = (0, 0)  # 当前选中的起点
+        self._start: Tuple[int, int] = (0, 0)  # currently selected start
         self._end: Tuple[int, int] = (0, 0)
         self._stars: Dict[Tuple[int, int], int] = {}  # cell -> color
         self._breakpoints: Set[Tuple[Tuple[int, int], Tuple[int, int]]] = set()
@@ -73,7 +74,7 @@ class Tw05(ARCBaseGame):
 
     @staticmethod
     def _parse_starts(cfg: dict) -> List[Tuple[int, int]]:
-        """从 config 解析起点列表。支持 'starts' (多起点) 和 'start' (单起点)。"""
+        """Parse start points from config. Supports 'starts' (multiple) and 'start' (single)."""
         if "starts" in cfg:
             return [tuple(s) for s in cfg["starts"]]
         return [tuple(cfg["start"])]
@@ -102,7 +103,7 @@ class Tw05(ARCBaseGame):
                     ]
                 level_configs.append(config)
         else:
-            # 硬编码回退：2 个基础关卡
+            # Hardcoded fallback: 2 basic levels
             level_configs = [
                 {
                     "cols": 3, "rows": 3,
@@ -123,7 +124,7 @@ class Tw05(ARCBaseGame):
             grid = WitnessGrid(config["cols"], config["rows"])
             frame = grid.render_grid()
 
-            # 绘制所有起点和终点
+            # Draw all start points and end point
             for s in config["starts"]:
                 grid.draw_start(frame, s)
             grid.draw_end(frame, config["end"])
@@ -131,7 +132,7 @@ class Tw05(ARCBaseGame):
             for cell, color in config["stars"].items():
                 grid.draw_star(frame, cell, color)
 
-            # 绘制断边
+            # Draw breakpoints
             for bp in config.get("breakpoints", []):
                 grid.draw_breakpoint(frame, bp[0], bp[1])
 
@@ -178,7 +179,7 @@ class Tw05(ARCBaseGame):
     def on_set_level(self, level: Level) -> None:
         data = level._data
         self._grid = WitnessGrid(data["cols"], data["rows"])
-        # 支持多起点
+        # Support multiple start points
         if "starts" in data:
             self._starts = [tuple(s) for s in data["starts"]]
         else:
@@ -196,10 +197,11 @@ class Tw05(ARCBaseGame):
         self._path = [self._start]
 
     def _try_auto_select_start(self, dc: int, dr: int) -> bool:
-        """多起点时，尝试根据第一步方向自动选择起点。
+        """With multiple starts, try to auto-select a start based on the first move direction.
 
-        仅在路径只有初始起点（len==1）且当前起点无法移动时触发。
-        遍历所有起点，选择第一个能向 (dc,dr) 方向移动的起点。
+        Only triggered when the path has just the initial start (len==1) and the
+        current start cannot move. Iterates all starts and selects the first one
+        that can move in the (dc, dr) direction.
         """
         if len(self._path) != 1 or len(self._starts) <= 1:
             return False
@@ -231,9 +233,9 @@ class Tw05(ARCBaseGame):
 
             target = (current[0] + dc, current[1] + dr)
 
-            # 验证移动合法性
+            # Validate move legality
             if not self._is_valid_move(current, target):
-                # 多起点：尝试自动切换起点
+                # Multiple starts: try auto-switching start point
                 if self._try_auto_select_start(dc, dr):
                     current = self._path[-1] if self._path else self._start
                     target = (current[0] + dc, current[1] + dr)
@@ -241,7 +243,7 @@ class Tw05(ARCBaseGame):
                     self.complete_action()
                     return
 
-            # 如果回退到上一个节点
+            # If backtracking to the previous node
             if len(self._path) >= 2 and target == self._path[-2]:
                 self._path.pop()
             elif target not in self._path:
@@ -274,7 +276,7 @@ class Tw05(ARCBaseGame):
             self._update_display()
             return
 
-        # 区域星星配对检查
+        # Region star pairing check
         regions = self._grid.path_splits_regions(self._path)
         for region in regions:
             color_counts: Dict[int, int] = {}
@@ -297,7 +299,7 @@ class Tw05(ARCBaseGame):
             return
 
         frame = self._grid.render_grid()
-        # 绘制所有起点和终点
+        # Draw all start points and end point
         for s in self._starts:
             self._grid.draw_start(frame, s)
         self._grid.draw_end(frame, self._end)
@@ -305,7 +307,7 @@ class Tw05(ARCBaseGame):
         for cell, color in self._stars.items():
             self._grid.draw_star(frame, cell, color)
 
-        # 绘制断边
+        # Draw breakpoints
         for bp in self._breakpoints:
             self._grid.draw_breakpoint(frame, bp[0], bp[1])
 
@@ -315,7 +317,7 @@ class Tw05(ARCBaseGame):
         if self._path:
             self._grid.draw_dot(frame, self._path[-1], CURSOR_COLOR)
 
-        # 未验证标记
+        # Unvalidated indicator
         if not self.current_level._data.get("validated", True):
             self._grid.draw_unvalidated_indicator(frame)
 

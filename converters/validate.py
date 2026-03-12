@@ -1,8 +1,8 @@
 """
-validate.py — IDDFS 求解器 + baseline 校准
+validate.py — IDDFS solver + baseline calibration
 
-为所有 tw 游戏的 level_config 求解最短路径，
-计算 baseline_actions = ceil(shortest_moves * 1.2) + 1（+1 for CONFIRM）。
+Solves shortest paths for all tw game level_configs,
+computes baseline_actions = ceil(shortest_moves * 1.2) + 1 (+1 for CONFIRM).
 """
 import math
 import time
@@ -11,11 +11,11 @@ from collections import deque
 
 
 # ====================================================================
-# 共享工具
+# Shared utilities
 # ====================================================================
 
 def _path_to_edges(path):
-    """路径节点序列→边集合。"""
+    """Convert path node sequence to edge set."""
     edges = set()
     for i in range(len(path) - 1):
         a, b = path[i], path[i + 1]
@@ -24,7 +24,7 @@ def _path_to_edges(path):
 
 
 def _path_splits_regions(path, cols, rows):
-    """根据路径将面板分割为区域。"""
+    """Split the panel into regions based on the path."""
     path_edges = _path_to_edges(path)
 
     visited = set()
@@ -64,7 +64,7 @@ def _path_splits_regions(path, cols, rows):
 
 
 def _cell_edge_count(cell, path_edges):
-    """计算单元格边界被路径经过的边数。"""
+    """Count the number of cell boundary edges traversed by the path."""
     col, row = cell
     edges = [
         ((col, row), (col + 1, row)),
@@ -81,7 +81,7 @@ def _cell_edge_count(cell, path_edges):
 
 
 def _parse_cell_dict(d):
-    """解析 "c,r" -> value 的字典为 (c,r) -> value。"""
+    """Parse "c,r" -> value dict into (c,r) -> value."""
     result = {}
     for k, v in d.items():
         parts = k.split(",")
@@ -90,7 +90,7 @@ def _parse_cell_dict(d):
 
 
 def _parse_breakpoints(config: dict) -> Set[Tuple[Tuple[int, int], Tuple[int, int]]]:
-    """解析 config["breakpoints"] → normalized edge set。"""
+    """Parse config["breakpoints"] into a normalized edge set."""
     breakpoints: Set[Tuple[Tuple[int, int], Tuple[int, int]]] = set()
     for bp in config.get("breakpoints", []):
         n1, n2 = tuple(bp[0]), tuple(bp[1])
@@ -99,11 +99,11 @@ def _parse_breakpoints(config: dict) -> Set[Tuple[Tuple[int, int], Tuple[int, in
 
 
 # ====================================================================
-# tw01 PathDots Solver — BFS 求最短路径
+# tw01 PathDots Solver — BFS for shortest path
 # ====================================================================
 
 def solve_tw01(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, int]]]:
-    """BFS 求解 tw01 PathDots 谜题，返回最短路径（节点序列）。"""
+    """BFS solve tw01 PathDots puzzle, return shortest path (node sequence)."""
     t0 = time.time()
 
     cols = config["cols"]
@@ -157,11 +157,11 @@ def solve_tw01(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
 
 
 # ====================================================================
-# tw02 ColorSplit Solver — DFS + 区域验证
+# tw02 ColorSplit Solver — DFS + region validation
 # ====================================================================
 
 def _check_colorsplit(path, squares, cols, rows):
-    """检查路径是否满足 ColorSplit 约束。"""
+    """Check whether the path satisfies ColorSplit constraints."""
     regions = _path_splits_regions(path, cols, rows)
     for region in regions:
         colors_in_region = set()
@@ -174,7 +174,7 @@ def _check_colorsplit(path, squares, cols, rows):
 
 
 def solve_tw02(config: dict, timeout: float = 5.0) -> Optional[List[Tuple[int, int]]]:
-    """DFS 求解 tw02 ColorSplit 谜题。"""
+    """DFS solve tw02 ColorSplit puzzle."""
     cols = config["cols"]
     rows = config["rows"]
     start = tuple(config["start"])
@@ -230,16 +230,16 @@ def solve_tw02(config: dict, timeout: float = 5.0) -> Optional[List[Tuple[int, i
 
 
 # ====================================================================
-# tw03 ShapeFill Solver — DFS + 回溯铺砖
+# tw03 ShapeFill Solver — DFS + backtracking tiling
 # ====================================================================
 
 def _rotations(shape):
-    """生成形状的所有旋转（0/90/180/270）。"""
+    """Generate all rotations of a shape (0/90/180/270)."""
     shapes = [shape]
     current = shape
     for _ in range(3):
         current = [(y, -x) for x, y in current]
-        # 归一化到正坐标
+        # Normalize to positive coordinates
         min_x = min(x for x, y in current)
         min_y = min(y for x, y in current)
         current = [(x - min_x, y - min_y) for x, y in current]
@@ -250,7 +250,7 @@ def _rotations(shape):
 
 
 def _can_place(shape_cells, region_cells, placed):
-    """检查形状是否能放置在区域中。"""
+    """Check whether a shape can be placed in the region."""
     for cell in shape_cells:
         if cell not in region_cells or cell in placed:
             return False
@@ -258,7 +258,7 @@ def _can_place(shape_cells, region_cells, placed):
 
 
 def _exact_cover(shapes, region_cells, placed, idx):
-    """回溯检查形状能否精确覆盖区域剩余部分。"""
+    """Backtrack to check if shapes can exactly cover the remaining region."""
     remaining = region_cells - placed
     if not remaining:
         return idx >= len(shapes)
@@ -271,16 +271,16 @@ def _exact_cover(shapes, region_cells, placed, idx):
     is_negative = shape_info["negative"]
 
     if is_negative:
-        # 负形状：不放置，跳过（从区域减去面积已在预检中处理）
+        # Negative shape: skip placement (area subtraction handled in pre-check)
         return _exact_cover(shapes, region_cells, placed, idx + 1)
 
-    # 获取所有可能的旋转
+    # Get all possible rotations
     variants = _rotations(cells) if is_rotated else [cells]
 
-    # 尝试在区域中每个位置放置
-    anchor = min(remaining)  # 第一个未覆盖的格子
+    # Try placing at each position in the region
+    anchor = min(remaining)  # First uncovered cell
     for variant in variants:
-        # 以 variant 的第一个格子对齐 anchor
+        # Align variant's first cell with anchor
         for ref in variant:
             offset_x = anchor[0] - ref[0]
             offset_y = anchor[1] - ref[1]
@@ -296,7 +296,7 @@ def _exact_cover(shapes, region_cells, placed, idx):
 
 
 def _check_shapefill(path, tetris, cols, rows):
-    """检查路径是否满足 ShapeFill 约束。"""
+    """Check whether the path satisfies ShapeFill constraints."""
     regions = _path_splits_regions(path, cols, rows)
     tetris_parsed = {}
     for k, v in tetris.items():
@@ -326,12 +326,12 @@ def _check_shapefill(path, tetris, cols, rows):
         if not shapes_in_region:
             continue
 
-        # 面积预检
+        # Area pre-check
         expected_area = total_positive_area - total_negative_area
         if expected_area != len(region):
             return False
 
-        # 只用正形状做精确覆盖
+        # Use only positive shapes for exact cover
         positive_shapes = [s for s in shapes_in_region if not s["negative"]]
         if not _exact_cover(positive_shapes, set(region), set(), 0):
             return False
@@ -340,7 +340,7 @@ def _check_shapefill(path, tetris, cols, rows):
 
 
 def solve_tw03(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, int]]]:
-    """DFS 求解 tw03 ShapeFill 谜题。"""
+    """DFS solve tw03 ShapeFill puzzle."""
     cols = config["cols"]
     rows = config["rows"]
     start = tuple(config["start"])
@@ -397,7 +397,7 @@ def solve_tw03(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
 # ====================================================================
 
 def solve_tw04(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, int]]]:
-    """BFS 求解 tw04 SymDraw 谜题，返回 blue 路径。"""
+    """BFS solve tw04 SymDraw puzzle, return the blue path."""
     t0 = time.time()
 
     cols = config["cols"]
@@ -479,7 +479,7 @@ def solve_tw04(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
 
 
 def _compute_yellow_path(blue_path, yellow_start, sym, cols, rows):
-    """从 blue 路径计算 yellow 路径。"""
+    """Compute yellow path from blue path."""
     y_path = [yellow_start]
     for i in range(1, len(blue_path)):
         bc, br = blue_path[i]
@@ -499,11 +499,11 @@ def _compute_yellow_path(blue_path, yellow_start, sym, cols, rows):
 
 
 # ====================================================================
-# tw05 StarPair Solver — DFS + 区域星星配对验证
+# tw05 StarPair Solver — DFS + region star pairing validation
 # ====================================================================
 
 def _check_starpair(path, stars, cols, rows):
-    """检查路径是否满足 StarPair 约束。每区域每色恰好 2 个星星。"""
+    """Check whether the path satisfies StarPair constraints. Exactly 2 stars per color per region."""
     regions = _path_splits_regions(path, cols, rows)
     for region in regions:
         color_counts = {}
@@ -518,7 +518,7 @@ def _check_starpair(path, stars, cols, rows):
 
 
 def solve_tw05(config: dict, timeout: float = 5.0) -> Optional[List[Tuple[int, int]]]:
-    """DFS 求解 tw05 StarPair 谜题。"""
+    """DFS solve tw05 StarPair puzzle."""
     cols = config["cols"]
     rows = config["rows"]
     start = tuple(config["start"])
@@ -567,11 +567,11 @@ def solve_tw05(config: dict, timeout: float = 5.0) -> Optional[List[Tuple[int, i
 
 
 # ====================================================================
-# tw06 TriCount Solver — DFS + 边计数验证
+# tw06 TriCount Solver — DFS + edge count validation
 # ====================================================================
 
 def _check_tricount(path, triangles, cols, rows):
-    """检查路径是否满足 TriCount 约束。每个三角格的路径边数 = 三角数。"""
+    """Check whether the path satisfies TriCount constraints. Path edge count = triangle count for each triangle cell."""
     path_edges = _path_to_edges(path)
     for cell, expected_count in triangles.items():
         actual = _cell_edge_count(cell, path_edges)
@@ -581,7 +581,7 @@ def _check_tricount(path, triangles, cols, rows):
 
 
 def solve_tw06(config: dict, timeout: float = 5.0) -> Optional[List[Tuple[int, int]]]:
-    """DFS 求解 tw06 TriCount 谜题。"""
+    """DFS solve tw06 TriCount puzzle."""
     cols = config["cols"]
     rows = config["rows"]
     start = tuple(config["start"])
@@ -630,14 +630,14 @@ def solve_tw06(config: dict, timeout: float = 5.0) -> Optional[List[Tuple[int, i
 
 
 # ====================================================================
-# tw07 EraserLogic Solver — DFS + 消除元推理
+# tw07 EraserLogic Solver — DFS + elimination meta-reasoning
 # ====================================================================
 
 def _count_violations(region, squares, stars, triangles, path_edges):
-    """计算区域内的约束违反数。"""
+    """Count constraint violations within a region."""
     violations = 0
 
-    # 方块约束违反：区域内多色
+    # Square constraint violation: multiple colors in region
     if squares:
         colors = set()
         for cell in region:
@@ -646,7 +646,7 @@ def _count_violations(region, squares, stars, triangles, path_edges):
         if len(colors) > 1:
             violations += len(colors) - 1
 
-    # 星星约束违反：每色不是恰好 2
+    # Star constraint violation: not exactly 2 per color
     if stars:
         color_counts = {}
         for cell in region:
@@ -657,7 +657,7 @@ def _count_violations(region, squares, stars, triangles, path_edges):
             if count != 2:
                 violations += abs(count - 2)
 
-    # 三角形约束违反：边数不匹配
+    # Triangle constraint violation: edge count mismatch
     if triangles:
         for cell in region:
             if cell in triangles:
@@ -669,7 +669,7 @@ def _count_violations(region, squares, stars, triangles, path_edges):
 
 
 def _check_eraser(path, erasers, squares, stars, triangles, cols, rows):
-    """检查路径是否满足 EraserLogic 约束。"""
+    """Check whether the path satisfies EraserLogic constraints."""
     regions = _path_splits_regions(path, cols, rows)
     path_edges = _path_to_edges(path)
     eraser_set = set(tuple(e) for e in erasers)
@@ -683,7 +683,7 @@ def _check_eraser(path, erasers, squares, stars, triangles, cols, rows):
 
 
 def solve_tw07(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, int]]]:
-    """DFS 求解 tw07 EraserLogic 谜题。"""
+    """DFS solve tw07 EraserLogic puzzle."""
     cols = config["cols"]
     rows = config["rows"]
     start = tuple(config["start"])
@@ -739,10 +739,10 @@ def solve_tw07(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
 # ====================================================================
 
 def _count_tetris_violations(region, tetris, path_edges, cols, rows):
-    """计算区域内的 tetris 违反数。
+    """Count tetris violations within a region.
 
-    如果区域内的正形状无法精确覆盖区域，返回违反数。
-    违反数 = 1（简化：铺砖失败算 1 个违反）。
+    If positive shapes in the region cannot exactly cover the region, return violation count.
+    Violation count = 1 (simplified: tiling failure counts as 1 violation).
     """
     tetris_parsed = {}
     for k, v in tetris.items():
@@ -786,17 +786,17 @@ def _count_tetris_violations(region, tetris, path_edges, cols, rows):
 
 
 # ====================================================================
-# tw08 ComboBasic Solver — DFS + 双重约束
+# tw08 ComboBasic Solver — DFS + dual constraints
 # ====================================================================
 
 def _check_combo(path, squares, stars, cols, rows):
-    """检查路径是否同时满足 ColorSplit + StarPair。"""
+    """Check whether the path satisfies both ColorSplit + StarPair."""
     return (_check_colorsplit(path, squares, cols, rows) and
             _check_starpair(path, stars, cols, rows))
 
 
 def solve_tw08(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, int]]]:
-    """DFS 求解 tw08 ComboBasic 谜题。"""
+    """DFS solve tw08 ComboBasic puzzle."""
     cols = config["cols"]
     rows = config["rows"]
     start = tuple(config["start"])
@@ -846,11 +846,11 @@ def solve_tw08(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
 
 
 # ====================================================================
-# tw11 MultiRegion Solver — DFS + 多约束验证
+# tw11 MultiRegion Solver — DFS + multi-constraint validation
 # ====================================================================
 
 def _check_multiregion(path, config, cols, rows):
-    """检查路径是否同时满足所有存在的区域约束（AND 逻辑）。"""
+    """Check whether the path satisfies all present region constraints (AND logic)."""
     squares = _parse_cell_dict(config.get("squares", {}))
     stars = _parse_cell_dict(config.get("stars", {}))
     triangles = _parse_cell_dict(config.get("triangles", {}))
@@ -873,7 +873,7 @@ def _check_multiregion(path, config, cols, rows):
 
 
 def solve_tw11(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, int]]]:
-    """DFS 求解 tw11 MultiRegion 谜题。"""
+    """DFS solve tw11 MultiRegion puzzle."""
     cols = config["cols"]
     rows = config["rows"]
     start = tuple(config["start"])
@@ -919,11 +919,11 @@ def solve_tw11(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
 
 
 # ====================================================================
-# tw12 HexCombo Solver — BFS + dots + 区域验证
+# tw12 HexCombo Solver — BFS + dots + region validation
 # ====================================================================
 
 def solve_tw12(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, int]]]:
-    """BFS 求解 tw12 HexCombo 谜题。路径必须经过所有 dots 且满足区域约束。"""
+    """BFS solve tw12 HexCombo puzzle. Path must visit all dots and satisfy region constraints."""
     t0 = time.time()
 
     cols = config["cols"]
@@ -978,14 +978,14 @@ def solve_tw12(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
 
 
 # ====================================================================
-# tw13 EraserAll Solver — DFS/BFS + 扩展消除逻辑
+# tw13 EraserAll Solver — DFS/BFS + extended elimination logic
 # ====================================================================
 
 def _count_violations_extended(region, squares, stars, triangles, tetris, path_edges, cols, rows):
-    """扩展的违反计数，支持 tetris 违反。"""
+    """Extended violation count, with tetris violation support."""
     violations = 0
 
-    # 方块约束违反
+    # Square constraint violation
     if squares:
         colors = set()
         for cell in region:
@@ -994,7 +994,7 @@ def _count_violations_extended(region, squares, stars, triangles, tetris, path_e
         if len(colors) > 1:
             violations += len(colors) - 1
 
-    # 星星约束违反
+    # Star constraint violation
     if stars:
         color_counts = {}
         for cell in region:
@@ -1005,7 +1005,7 @@ def _count_violations_extended(region, squares, stars, triangles, tetris, path_e
             if count != 2:
                 violations += abs(count - 2)
 
-    # 三角形约束违反
+    # Triangle constraint violation
     if triangles:
         for cell in region:
             if cell in triangles:
@@ -1013,7 +1013,7 @@ def _count_violations_extended(region, squares, stars, triangles, tetris, path_e
                 if actual != triangles[cell]:
                     violations += 1
 
-    # tetris 约束违反
+    # Tetris constraint violation
     if tetris:
         violations += _count_tetris_violations(region, tetris, path_edges, cols, rows)
 
@@ -1021,8 +1021,8 @@ def _count_violations_extended(region, squares, stars, triangles, tetris, path_e
 
 
 def _check_eraser_all(path, erasers, config, cols, rows):
-    """检查路径是否满足 EraserAll 约束（扩展版，支持 tetris + hex dots）。"""
-    # 如果有 dots，先检查是否全部访问
+    """Check whether the path satisfies EraserAll constraints (extended, supports tetris + hex dots)."""
+    # If dots exist, first check whether all are visited
     if "dots" in config:
         dots = set(tuple(d) for d in config["dots"])
         path_set = set(path)
@@ -1050,7 +1050,7 @@ def _check_eraser_all(path, erasers, config, cols, rows):
 
 
 def solve_tw13(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, int]]]:
-    """求解 tw13 EraserAll 谜题。有 hex dots 时用 BFS，否则用 DFS。"""
+    """Solve tw13 EraserAll puzzle. Uses BFS when hex dots are present, otherwise DFS."""
     cols = config["cols"]
     rows = config["rows"]
     start = tuple(config["start"])
@@ -1149,10 +1149,10 @@ def solve_tw13(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
 # ====================================================================
 
 def calibrate_baseline(solution_path: List[Tuple[int, int]]) -> int:
-    """计算 baseline_actions。
+    """Compute baseline_actions.
 
     baseline = ceil((moves + 1) * 1.2)
-    其中 moves = len(path) - 1（路径步数），+1 for CONFIRM
+    where moves = len(path) - 1 (path steps), +1 for CONFIRM
     """
     moves = len(solution_path) - 1
     total_actions = moves + 1  # +1 for CONFIRM
@@ -1161,7 +1161,7 @@ def calibrate_baseline(solution_path: List[Tuple[int, int]]) -> int:
 
 
 def _get_starts(config: dict) -> list:
-    """从 config 提取起点列表。支持 'starts' (多起点) 和 'start' (单起点)。"""
+    """Extract start point list from config. Supports 'starts' (multiple) and 'start' (single)."""
     if "starts" in config:
         return [tuple(s) for s in config["starts"]]
     if "start" in config:
@@ -1170,9 +1170,9 @@ def _get_starts(config: dict) -> list:
 
 
 def validate_config(config: dict, game_type: str, timeout: float = 5.0) -> dict:
-    """验证一个 level_config，返回验证结果。
+    """Validate a level_config, return validation result.
 
-    多起点谜题：依次尝试每个起点，返回最短解。
+    Multi-start puzzles: try each start point in turn, return shortest solution.
     """
     solvers = {
         "tw01": solve_tw01,
@@ -1193,7 +1193,7 @@ def validate_config(config: dict, game_type: str, timeout: float = 5.0) -> dict:
         return {"valid": False, "solution": None, "moves": 0, "baseline": 0,
                 "error": f"Unknown game type: {game_type}"}
 
-    # tw04 有自己的起点处理逻辑（blue_start/yellow_start），直接调用
+    # tw04 has its own start handling logic (blue_start/yellow_start), call directly
     if game_type == "tw04":
         try:
             solution = solver(config, timeout=timeout)
@@ -1207,13 +1207,13 @@ def validate_config(config: dict, game_type: str, timeout: float = 5.0) -> dict:
         return {"valid": True, "solution": solution, "moves": moves,
                 "baseline": calibrate_baseline(solution), "error": None}
 
-    # 非 tw04 游戏：检查起点
+    # Non-tw04 games: check start points
     starts = _get_starts(config)
     if not starts:
         return {"valid": False, "solution": None, "moves": 0, "baseline": 0,
                 "error": "No start point in config"}
 
-    # 对每个起点独立尝试求解
+    # Try solving independently for each start point
     best_solution = None
     last_error = "No solution found"
     per_start_timeout = timeout / len(starts) if len(starts) > 1 else timeout
@@ -1245,7 +1245,7 @@ def validate_config(config: dict, game_type: str, timeout: float = 5.0) -> dict:
 
 
 def solution_to_actions(solution: List[Tuple[int, int]]) -> List[int]:
-    """将路径节点序列转换为动作 ID 序列。
+    """Convert path node sequence to action ID sequence.
 
     ACTION1=UP(dr=-1), ACTION2=DOWN(dr=+1), ACTION3=LEFT(dc=-1), ACTION4=RIGHT(dc=+1), ACTION5=CONFIRM
     """

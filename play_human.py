@@ -1,16 +1,16 @@
 """
-play_human.py — 启动本地 Web 服务器，让人类玩家在浏览器中游玩 Witness 游戏。
+play_human.py — Start a local web server for human players to play Witness games in the browser.
 
-用法:
+Usage:
     cd arc-witness-envs
     python play_human.py [port]
 
-然后打开浏览器访问 http://localhost:<port> (默认 8001)
+Then open your browser at http://localhost:<port> (default 8001)
 """
 import os
 import sys
 
-# 确保本目录在 sys.path 中，以便 SDK exec() 能找到 witness_grid
+# Ensure this directory is in sys.path so SDK exec() can find witness_grid
 _code_dir = os.path.dirname(os.path.abspath(__file__))
 if _code_dir not in sys.path:
     sys.path.insert(0, _code_dir)
@@ -26,7 +26,7 @@ LEVELS_DIR = os.path.join(os.path.dirname(__file__), "levels")
 
 
 def _load_levels_json(game_id):
-    """加载游戏的 levels JSON 文件。"""
+    """Load the levels JSON file for a game."""
     filepath = os.path.join(LEVELS_DIR, f"{game_id}_levels.json")
     if not os.path.exists(filepath):
         return None
@@ -35,15 +35,15 @@ def _load_levels_json(game_id):
 
 
 def _save_levels_json(game_id, data):
-    """保存游戏的 levels JSON 文件。"""
+    """Save the levels JSON file for a game."""
     filepath = os.path.join(LEVELS_DIR, f"{game_id}_levels.json")
     with open(filepath, "w") as f:
         json.dump(data, f, indent=2)
 
 
 def add_frontend_routes(arcade, app):
-    """添加前端 HTML 页面路由 + 自定义 API。"""
-    # 让 Flask 内置的 /static/ 路由指向我们的 static 目录
+    """Add frontend HTML page routes + custom API endpoints."""
+    # Point Flask's built-in /static/ route to our static directory
     app.static_folder = STATIC_DIR
 
     @app.route("/")
@@ -56,7 +56,7 @@ def add_frontend_routes(arcade, app):
 
     @app.route("/api/custom/level_status/<game_id>")
     def level_status(game_id):
-        """返回每关的验证状态。"""
+        """Return the validation status for each level."""
         data = _load_levels_json(game_id)
         if not data:
             return jsonify({"error": f"No levels found for {game_id}"}), 404
@@ -78,7 +78,7 @@ def add_frontend_routes(arcade, app):
 
     @app.route("/api/custom/validate_level", methods=["POST"])
     def validate_level():
-        """用户手工通关后，将关卡标记为已验证并记录动作序列。"""
+        """After a user manually completes a level, mark it as validated and record the action sequence."""
         body = request.get_json(force=True)
         game_id = body.get("game_id")
         level_index = body.get("level_index")
@@ -125,7 +125,7 @@ def add_frontend_routes(arcade, app):
 def main():
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8001
 
-    # 指向 environment_files 目录（包含 tw01, tw02, tw04 的 metadata.json）
+    # Point to the environment_files directory (contains metadata.json for tw01, tw02, tw04)
     env_dir = os.path.join(os.path.dirname(__file__), "environment_files")
 
     print("=" * 60)
@@ -133,13 +133,13 @@ def main():
     print("=" * 60)
     print(f"Scanning games from: {env_dir}")
 
-    # 使用 OFFLINE 模式，只加载本地游戏
+    # Use OFFLINE mode to only load local games
     arcade = Arcade(
         operation_mode=OperationMode.OFFLINE,
         environments_dir=env_dir,
     )
 
-    # 列出发现的游戏
+    # List discovered games
     envs = arcade.get_environments()
     print(f"\nFound {len(envs)} games:")
     for env in envs:

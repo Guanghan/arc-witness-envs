@@ -1,18 +1,19 @@
 """
-tw02_colorsplit.py — ColorSplit: 彩色方块分隔谜题
+tw02_colorsplit.py — ColorSplit: Colored square separation puzzles
 
-The Witness 核心机制：画线将面板分割成区域，不同颜色方块不能在同一区域。
-训练 Agent 的分类和区域分割能力。
+Core Witness mechanic: draw a line to split the panel into regions; squares
+of different colors cannot share the same region.
+Trains the Agent's classification and region-partitioning abilities.
 
-Core Knowledge: Objectness + Numbers — 按属性分类
-ARC-AGI 启示: "按颜色/属性分组"操作
+Core Knowledge: Objectness + Numbers — classify by attribute
+ARC-AGI insight: "group by color/attribute" operation
 
-关卡设计:
-  Level 1: 3×3网格，2个方块（双色），垂直分割即可
-  Level 2: 3×3网格，4个方块，需要非显然分割
-  Level 3: 4×4网格，6个方块（双色），更复杂路径
-  Level 4: 4×4网格，6个方块（三色）
-  Level 5: 5×5网格，8个方块，多种颜色
+Level design:
+  Level 1: 3x3 grid, 2 squares (two colors), a vertical split suffices
+  Level 2: 3x3 grid, 4 squares, requires a non-obvious split
+  Level 3: 4x4 grid, 6 squares (two colors), more complex path
+  Level 4: 4x4 grid, 6 squares (three colors)
+  Level 5: 5x5 grid, 8 squares, multiple colors
 """
 
 import sys
@@ -37,20 +38,20 @@ from typing import List, Tuple, Set, Dict, Optional
 
 
 class Tw02(ARCBaseGame):
-    """ColorSplit — 彩色方块分隔谜题
+    """ColorSplit — Colored square separation puzzles
 
-    规则：从起点画线到终点，路径将面板分隔为多个区域。
-    同一区域内的方块必须全部同色。
+    Rules: Draw a line from start to end; the path divides the panel into
+    regions. All squares within the same region must be the same color.
     """
 
     def __init__(self, seed: int = 0):
         self._seed = seed
 
-        # 游戏状态 — 必须在 super().__init__() 之前初始化
+        # Game state — must be initialised before super().__init__()
         self._path: List[Tuple[int, int]] = []
         self._grid: Optional[WitnessGrid] = None
         self._starts: List[Tuple[int, int]] = [(0, 0)]
-        self._start: Tuple[int, int] = (0, 0)  # 当前选中的起点
+        self._start: Tuple[int, int] = (0, 0)  # currently selected start
         self._end: Tuple[int, int] = (0, 0)
         self._squares: Dict[Tuple[int, int], int] = {}  # cell -> color
         self._breakpoints: Set[Tuple[Tuple[int, int], Tuple[int, int]]] = set()
@@ -68,14 +69,14 @@ class Tw02(ARCBaseGame):
 
     @staticmethod
     def _parse_starts(cfg: dict) -> List[Tuple[int, int]]:
-        """从 config 解析起点列表。支持 'starts' (多起点) 和 'start' (单起点)。"""
+        """Parse the list of start points from config. Supports 'starts' (multiple) and 'start' (single)."""
         if "starts" in cfg:
             return [tuple(s) for s in cfg["starts"]]
         return [tuple(cfg["start"])]
 
     @staticmethod
     def _load_json_levels() -> Optional[list]:
-        """尝试从 JSON 文件加载关卡。返回 [{"config": ..., "validated": bool}, ...] 列表。"""
+        """Try to load levels from a JSON file. Returns [{"config": ..., "validated": bool}, ...] list."""
         try:
             import json
             levels_path = os.path.join(_code_dir, "levels", "tw02_levels.json")
@@ -110,7 +111,7 @@ class Tw02(ARCBaseGame):
                     ]
                 level_configs.append(config)
         else:
-            # 硬编码回退
+            # Hardcoded fallback
             level_configs = [
                 {
                     "cols": 3, "rows": 3,
@@ -159,16 +160,16 @@ class Tw02(ARCBaseGame):
             grid = WitnessGrid(config["cols"], config["rows"])
             frame = grid.render_grid()
 
-            # 绘制所有起点和终点
+            # Draw all start points and end point
             for s in config["starts"]:
                 grid.draw_start(frame, s)
             grid.draw_end(frame, config["end"])
 
-            # 绘制彩色方块
+            # Draw colored squares
             for cell, color in config["squares"].items():
                 grid.draw_cell_symbol(frame, cell, color)
 
-            # 绘制断边
+            # Draw broken edges
             for bp in config.get("breakpoints", []):
                 grid.draw_breakpoint(frame, bp[0], bp[1])
 
@@ -217,7 +218,7 @@ class Tw02(ARCBaseGame):
     def on_set_level(self, level: Level) -> None:
         data = level._data
         self._grid = WitnessGrid(data["cols"], data["rows"])
-        # 支持多起点
+        # Support multiple start points
         if "starts" in data:
             self._starts = [tuple(s) for s in data["starts"]]
         else:
@@ -235,10 +236,11 @@ class Tw02(ARCBaseGame):
         self._path = [self._start]
 
     def _try_auto_select_start(self, dc: int, dr: int) -> bool:
-        """多起点时，尝试根据第一步方向自动选择起点。
+        """With multiple start points, try to auto-select one based on the first move direction.
 
-        仅在路径只有初始起点（len==1）且当前起点无法移动时触发。
-        遍历所有起点，选择第一个能向 (dc,dr) 方向移动的起点。
+        Only triggered when the path has just the initial start (len==1) and the
+        current start cannot move. Iterates over all start points and selects the
+        first one that can move in the (dc, dr) direction.
         """
         if len(self._path) != 1 or len(self._starts) <= 1:
             return False
@@ -270,9 +272,9 @@ class Tw02(ARCBaseGame):
 
             target = (current[0] + dc, current[1] + dr)
 
-            # 验证移动合法性
+            # Validate move legality
             if not self._is_valid_move(current, target):
-                # 多起点：尝试自动切换起点
+                # Multiple start points: try auto-switching start
                 if self._try_auto_select_start(dc, dr):
                     current = self._path[-1]
                     target = (current[0] + dc, current[1] + dr)
@@ -280,7 +282,7 @@ class Tw02(ARCBaseGame):
                     self.complete_action()
                     return
 
-            # 如果回退到上一个节点
+            # If backtracking to the previous node
             if len(self._path) >= 2 and target == self._path[-2]:
                 self._path.pop()
             elif target not in self._path:
@@ -308,14 +310,14 @@ class Tw02(ARCBaseGame):
         if not self._grid:
             return
 
-        # 检查路径到达终点
+        # Check that the path reaches the end point
         if self._path[-1] != self._end:
             self._start = self._starts[0]
             self._path = [self._start]
             self._update_display()
             return
 
-        # 检查区域分割
+        # Check region partitioning
         regions = self._grid.path_splits_regions(self._path)
 
         for region in regions:
@@ -324,13 +326,13 @@ class Tw02(ARCBaseGame):
                 if cell in self._squares:
                     colors_in_region.add(self._squares[cell])
             if len(colors_in_region) > 1:
-                # 违反约束：同区域多种颜色
+                # Constraint violation: multiple colors in the same region
                 self._start = self._starts[0]
                 self._path = [self._start]
                 self._update_display()
                 return
 
-        # 全部通过
+        # All checks passed
         self._update_display(path_color=SUCCESS_COLOR)
         self.next_level()
 
@@ -339,7 +341,7 @@ class Tw02(ARCBaseGame):
             return
 
         frame = self._grid.render_grid()
-        # 绘制所有起点和终点
+        # Draw all start points and end point
         for s in self._starts:
             self._grid.draw_start(frame, s)
         self._grid.draw_end(frame, self._end)
@@ -347,7 +349,7 @@ class Tw02(ARCBaseGame):
         for cell, color in self._squares.items():
             self._grid.draw_cell_symbol(frame, cell, color)
 
-        # 绘制断边
+        # Draw broken edges
         for bp in self._breakpoints:
             self._grid.draw_breakpoint(frame, bp[0], bp[1])
 
@@ -357,7 +359,7 @@ class Tw02(ARCBaseGame):
         if self._path:
             self._grid.draw_dot(frame, self._path[-1], CURSOR_COLOR)
 
-        # 未验证标记
+        # Unvalidated indicator
         if not self.current_level._data.get("validated", True):
             self._grid.draw_unvalidated_indicator(frame)
 

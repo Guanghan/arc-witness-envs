@@ -1,11 +1,11 @@
 """
-tw11_multiregion.py — MultiRegion: 多约束区域组合谜题
+tw11_multiregion.py — MultiRegion: Multi-Constraint Region Combination Puzzle
 
-同时满足 2+ 种区域约束（squares/stars/triangles/tetris 的任意组合）。
-训练 Agent 同时推理多种约束的能力。
+Simultaneously satisfy 2+ types of region constraints (any combination of squares/stars/triangles/tetris).
+Trains the agent's ability to reason about multiple constraints at once.
 
 Core Knowledge: Multi-constraint reasoning
-ARC-AGI 启示: 同时满足多条规则
+ARC-AGI Insight: Satisfying multiple rules simultaneously
 """
 
 import sys
@@ -30,7 +30,7 @@ from typing import List, Tuple, Set, Dict, Optional
 
 
 def _rotations(shape):
-    """生成形状的所有旋转。"""
+    """Generate all rotations of a shape."""
     shapes = [shape]
     current = shape
     for _ in range(3):
@@ -45,7 +45,7 @@ def _rotations(shape):
 
 
 def _exact_cover(shapes, region_cells, placed, idx):
-    """回溯检查形状能否精确覆盖区域。"""
+    """Backtracking check whether shapes can exactly cover the region."""
     remaining = region_cells - placed
     if not remaining:
         return idx >= len(shapes)
@@ -79,10 +79,10 @@ def _exact_cover(shapes, region_cells, placed, idx):
 
 
 class Tw11(ARCBaseGame):
-    """MultiRegion — 多约束区域组合谜题
+    """MultiRegion — Multi-Constraint Region Combination Puzzle
 
-    规则：从起点画线到终点，路径将面板分区。
-    同时满足所有存在的区域约束（squares/stars/triangles/tetris 任意组合，至少 2 种）。
+    Rules: Draw a line from start to end; the path divides the panel into regions.
+    All existing region constraints must be satisfied simultaneously (any combination of squares/stars/triangles/tetris, at least 2 types).
     """
 
     def __init__(self, seed: int = 0):
@@ -171,7 +171,7 @@ class Tw11(ARCBaseGame):
                     ]
                 level_configs.append(config)
         else:
-            # 硬编码回退
+            # Hardcoded fallback
             level_configs = [
                 {
                     "cols": 4, "rows": 4,
@@ -367,7 +367,7 @@ class Tw11(ARCBaseGame):
         path_edges = self._grid.path_to_edges(self._path)
 
         for region in regions:
-            # 方块同色检查
+            # Square same-color check
             if self._squares:
                 sq_colors = set()
                 for cell in region:
@@ -379,7 +379,7 @@ class Tw11(ARCBaseGame):
                     self._update_display()
                     return
 
-            # 星星配对检查
+            # Star pairing check
             if self._stars:
                 star_counts: Dict[int, int] = {}
                 for cell in region:
@@ -393,7 +393,7 @@ class Tw11(ARCBaseGame):
                         self._update_display()
                         return
 
-            # 三角形计数检查
+            # Triangle count check
             if self._triangles:
                 for cell in region:
                     if cell in self._triangles:
@@ -404,7 +404,7 @@ class Tw11(ARCBaseGame):
                             self._update_display()
                             return
 
-            # tetris 铺砖检查
+            # Tetris tiling check
             if self._tetris:
                 shapes_in_region = []
                 total_positive_area = 0

@@ -1,18 +1,19 @@
 """
-tw04_symdraw.py — SymDraw: 对称画线谜题
+tw04_symdraw.py — SymDraw: Symmetric line-drawing puzzles
 
-The Witness 对称岛的核心机制：玩家控制一条线，另一条线自动镜像移动。
-两条线必须同时从各自起点到达各自终点。
+Core mechanic from The Witness's Symmetry Island: the player controls one
+line while a second line moves as its mirror image automatically.
+Both lines must reach their respective endpoints simultaneously.
 
-Core Knowledge: Geometry & Topology — 对称变换
-ARC-AGI 启示: 旋转、翻转、镜像操作；心理模拟
+Core Knowledge: Geometry & Topology — symmetry transformations
+ARC-AGI insight: rotation, reflection, mirroring operations; mental simulation
 
-关卡设计:
-  Level 1: 3×3, 水平镜像，两起点两终点
-  Level 2: 3×3, 水平镜像 + 1个必经点
-  Level 3: 4×4, 垂直镜像
-  Level 4: 4×4, 旋转对称 (180°)
-  Level 5: 5×5, 水平镜像 + 彩色必经点
+Level design:
+  Level 1: 3x3, horizontal mirror, two starts and two ends
+  Level 2: 3x3, horizontal mirror + 1 mandatory waypoint
+  Level 3: 4x4, vertical mirror
+  Level 4: 4x4, rotational symmetry (180 degrees)
+  Level 5: 5x5, horizontal mirror + colored mandatory waypoints
 """
 
 import sys
@@ -37,16 +38,16 @@ from typing import List, Tuple, Set, Optional
 
 
 class Tw04(ARCBaseGame):
-    """SymDraw — 对称画线谜题
+    """SymDraw — Symmetric line-drawing puzzles
 
-    规则：控制蓝线移动，黄线自动对称移动。
-    两条线都必须从各自起点到达各自终点。
+    Rules: Control the blue line; the yellow line moves symmetrically.
+    Both lines must travel from their respective starts to their respective ends.
     """
 
     def __init__(self, seed: int = 0):
         self._seed = seed
 
-        # 游戏状态 — 必须在 super().__init__() 之前初始化
+        # Game state — must be initialised before super().__init__()
         self._blue_path: List[Tuple[int, int]] = []
         self._yellow_path: List[Tuple[int, int]] = []
         self._grid: Optional[WitnessGrid] = None
@@ -71,19 +72,19 @@ class Tw04(ARCBaseGame):
         )
 
     def _mirror(self, node: Tuple[int, int], cols: int, rows: int) -> Tuple[int, int]:
-        """根据对称类型计算镜像节点。"""
+        """Compute the mirrored node based on the symmetry type."""
         c, r = node
         if self._symmetry == "horizontal":
-            return (cols - c, r)  # 水平翻转
+            return (cols - c, r)  # horizontal flip
         elif self._symmetry == "vertical":
-            return (c, rows - r)  # 垂直翻转
+            return (c, rows - r)  # vertical flip
         elif self._symmetry == "rotational":
-            return (cols - c, rows - r)  # 180°旋转
+            return (cols - c, rows - r)  # 180-degree rotation
         return node
 
     @staticmethod
     def _load_json_levels():
-        """尝试从 JSON 文件加载关卡。返回 list[dict]，每个 dict 含 'config' 和 'validated' 字段。"""
+        """Try to load levels from a JSON file. Returns list[dict], each with 'config' and 'validated' fields."""
         try:
             import json
             levels_path = os.path.join(_code_dir, "levels", "tw04_levels.json")
@@ -119,7 +120,7 @@ class Tw04(ARCBaseGame):
                     ]
                 level_configs.append(config)
         else:
-            # 硬编码回退
+            # Hardcoded fallback
             level_configs = [
                 {
                     "cols": 4, "rows": 3,
@@ -164,22 +165,22 @@ class Tw04(ARCBaseGame):
             grid = WitnessGrid(config["cols"], config["rows"])
             frame = grid.render_grid()
 
-            # 蓝色起终点
+            # Blue start and end points
             grid.draw_dot(frame, config["blue_start"], COLOR_BLUE)
             grid.draw_dot(frame, config["blue_end"], COLOR_BLUE)
 
-            # 黄色起终点
+            # Yellow start and end points
             grid.draw_dot(frame, config["yellow_start"], COLOR_YELLOW)
             grid.draw_dot(frame, config["yellow_end"], COLOR_YELLOW)
 
-            # 蓝色必经点
+            # Blue mandatory waypoints
             for dot in config["blue_dots"]:
                 grid.draw_dot(frame, dot, COLOR_BLUE)
-            # 黄色必经点
+            # Yellow mandatory waypoints
             for dot in config["yellow_dots"]:
                 grid.draw_dot(frame, dot, COLOR_YELLOW)
 
-            # 绘制断边
+            # Draw broken edges
             for bp in config.get("breakpoints", []):
                 grid.draw_breakpoint(frame, bp[0], bp[1])
 
@@ -255,17 +256,17 @@ class Tw04(ARCBaseGame):
             elif action == GameAction.ACTION3: dc = -1
             elif action == GameAction.ACTION4: dc = 1
 
-            # 计算蓝线目标
+            # Compute blue line target
             blue_current = self._blue_path[-1]
             blue_target = (blue_current[0] + dc, blue_current[1] + dr)
 
-            # 计算黄线目标（对称）
+            # Compute yellow line target (symmetric)
             yellow_current = self._yellow_path[-1]
             yellow_delta = self._mirror_delta(dc, dr)
             yellow_target = (yellow_current[0] + yellow_delta[0],
                            yellow_current[1] + yellow_delta[1])
 
-            # 两条线都必须合法移动
+            # Both lines must make valid moves
             cols, rows = data["cols"], data["rows"]
             blue_valid = self._is_valid_node(blue_target, cols, rows)
             yellow_valid = self._is_valid_node(yellow_target, cols, rows)
@@ -281,14 +282,14 @@ class Tw04(ARCBaseGame):
                     yellow_valid = False
 
             if blue_valid and yellow_valid:
-                # 检查回退
+                # Check for backtracking
                 if (len(self._blue_path) >= 2 and
                     blue_target == self._blue_path[-2]):
                     self._blue_path.pop()
                     self._yellow_path.pop()
                 elif (blue_target not in self._blue_path and
                       yellow_target not in self._yellow_path):
-                    # 两条线不能交叉到同一节点
+                    # The two lines cannot cross onto the same node
                     if blue_target != yellow_target:
                         self._blue_path.append(blue_target)
                         self._yellow_path.append(yellow_target)
@@ -298,7 +299,7 @@ class Tw04(ARCBaseGame):
         self.complete_action()
 
     def _mirror_delta(self, dc: int, dr: int) -> Tuple[int, int]:
-        """计算对称方向的移动增量。"""
+        """Compute the movement delta for the symmetric direction."""
         if self._symmetry == "horizontal":
             return (-dc, dr)
         elif self._symmetry == "vertical":
@@ -313,21 +314,21 @@ class Tw04(ARCBaseGame):
         return 0 <= c <= cols and 0 <= r <= rows
 
     def _check_solution(self) -> None:
-        # 蓝线到达蓝终点
+        # Blue line reaches blue endpoint
         if self._blue_path[-1] != self._blue_end:
             self._reset_paths()
             return
-        # 黄线到达黄终点
+        # Yellow line reaches yellow endpoint
         if self._yellow_path[-1] != self._yellow_end:
             self._reset_paths()
             return
-        # 蓝色必经点
+        # Blue mandatory waypoints
         blue_set = set(self._blue_path)
         for dot in self._blue_dots:
             if dot not in blue_set:
                 self._reset_paths()
                 return
-        # 黄色必经点
+        # Yellow mandatory waypoints
         yellow_set = set(self._yellow_path)
         for dot in self._yellow_dots:
             if dot not in yellow_set:
@@ -349,39 +350,39 @@ class Tw04(ARCBaseGame):
         data = self.current_level._data
         frame = self._grid.render_grid()
 
-        # 起终点
+        # Start and end points
         self._grid.draw_dot(frame, self._blue_start, COLOR_BLUE)
         self._grid.draw_dot(frame, self._blue_end, COLOR_BLUE)
         self._grid.draw_dot(frame, self._yellow_start, COLOR_YELLOW)
         self._grid.draw_dot(frame, self._yellow_end, COLOR_YELLOW)
 
-        # 必经点
+        # Mandatory waypoints
         for dot in self._blue_dots:
             self._grid.draw_dot(frame, dot, COLOR_BLUE)
         for dot in self._yellow_dots:
             self._grid.draw_dot(frame, dot, COLOR_YELLOW)
 
-        # 绘制断边
+        # Draw broken edges
         for bp in self._breakpoints:
             self._grid.draw_breakpoint(frame, bp[0], bp[1])
 
-        # 蓝色路径
+        # Blue path
         for i in range(len(self._blue_path) - 1):
             self._grid.draw_path_segment(
                 frame, self._blue_path[i], self._blue_path[i + 1], COLOR_BLUE)
 
-        # 黄色路径
+        # Yellow path
         for i in range(len(self._yellow_path) - 1):
             self._grid.draw_path_segment(
                 frame, self._yellow_path[i], self._yellow_path[i + 1], COLOR_YELLOW)
 
-        # 光标
+        # Cursors
         if self._blue_path:
             self._grid.draw_dot(frame, self._blue_path[-1], COLOR_BLUE)
         if self._yellow_path:
             self._grid.draw_dot(frame, self._yellow_path[-1], COLOR_YELLOW)
 
-        # 未验证标记
+        # Unvalidated indicator
         if not self.current_level._data.get("validated", True):
             self._grid.draw_unvalidated_indicator(frame)
 
