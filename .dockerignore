@@ -1,0 +1,9 @@
+.git
+__pycache__
+*.pyc
+converters/
+openenv_adapter/
+examples/
+assets/*.psd
+.DS_Store
+.claude/
