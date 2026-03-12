@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/icon.png" alt="arc-witness-envs" width="256">
+</p>
+
 # arc-witness-envs
 
 Interactive reasoning environments for [ARC-AGI-3](https://arcprize.org/arc-agi/3/), inspired by the puzzle mechanics of [The Witness](https://en.wikipedia.org/wiki/The_Witness_(2016_video_game)).
@@ -191,6 +195,8 @@ TTWS total puzzles:           2,605   (100%)
 
 ```
 arc-witness-envs/
+├── assets/                   # README images
+│   └── icon.png
 ├── witness_grid.py            # Shared grid renderer (64x64, 16-color)
 ├── test_games.py              # Automated test suite (959 validated levels)
 ├── play_human.py              # Local web server for browser play
