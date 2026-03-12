@@ -7,6 +7,7 @@
 [![Games: 13](https://img.shields.io/badge/Games-13-orange.svg)](#games)
 [![Levels: 1,872](https://img.shields.io/badge/Levels-1%2C872-orange.svg)](#dataset-statistics)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Guanghan/arc-witness-envs/blob/main/examples/quickstart.ipynb)
+[![Play Demo](https://img.shields.io/badge/%F0%9F%8E%AE%20Live%20Demo-Play%20Now-ff6b6b.svg)](https://huggingface.co/spaces/Guanghan-Ning/arc-witness-envs-demo)
 
 <p align="center">
   <img src="assets/icon.png" alt="arc-witness-envs" width="480">
@@ -44,6 +45,10 @@ pip install arc-agi
 ```
 
 ### Play in Browser
+
+Try it instantly: **[🎮 Live Demo](https://huggingface.co/spaces/Guanghan-Ning/arc-witness-envs-demo)** — no installation needed.
+
+Or run locally:
 
 ```bash
 cd arc-witness-envs
