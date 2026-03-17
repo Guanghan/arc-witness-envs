@@ -284,6 +284,9 @@ class Tw09(ARCBaseGame):
         if self._path:
             self._grid.draw_dot(frame, self._path[-1], CURSOR_COLOR)
 
+        # Redraw start so it always appears green above the cursor
+        self._grid.draw_start(frame, self._start)
+
         # Unvalidated indicator
         if not self.current_level._data.get("validated", True):
             self._grid.draw_unvalidated_indicator(frame)
