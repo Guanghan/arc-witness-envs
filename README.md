@@ -1,21 +1,27 @@
-# arc-witness-envs
+<div align="center">
+  <h1>🧩 ARC-Witness-Envs</h1>
+  <p><b>Witness-inspired puzzle environments for <a href="https://arcprize.org/arc-agi/3/">ARC-AGI-3</a> — 13 games, 1,872 levels of interactive reasoning challenges</b></p>
+</div>
 
-[![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
-[![ARC-AGI-3 Compatible](https://img.shields.io/badge/ARC--AGI--3-Compatible-green.svg)](https://arcprize.org/arc-agi/3/)
-[![OpenEnv Compatible](https://img.shields.io/badge/OpenEnv-Compatible-green.svg)](https://github.com/meta-pytorch/OpenEnv)
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Guanghan/arc-witness-envs/blob/main/examples/quickstart.ipynb)
-[![Play Demo](https://img.shields.io/badge/%F0%9F%8E%AE%20Live%20Demo-Play%20Now-ff6b6b.svg)](https://huggingface.co/spaces/Guanghan-Ning/arc-witness-envs-demo)
+<p align="center">
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License"></a>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.8%2B-blue.svg" alt="Python 3.8+"></a>
+  <a href="https://arcprize.org/arc-agi/3/"><img src="https://img.shields.io/badge/ARC--AGI--3-Compatible-green.svg" alt="ARC-AGI-3 Compatible"></a>
+  <a href="https://github.com/meta-pytorch/OpenEnv"><img src="https://img.shields.io/badge/OpenEnv-Compatible-green.svg" alt="OpenEnv Compatible"></a>
+  <a href="https://colab.research.google.com/github/Guanghan/arc-witness-envs/blob/main/examples/quickstart.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a>
+  <a href="https://huggingface.co/spaces/Guanghan-Ning/arc-witness-envs-demo"><img src="https://img.shields.io/badge/%F0%9F%8E%AE%20Live%20Demo-Play%20Now-ff6b6b.svg" alt="Play Demo"></a>
+</p>
 
 <p align="center">
   <img src="assets/demo.gif" alt="arc-witness-envs demo" width="540">
 </p>
 
-**Witness-inspired puzzle environments for [ARC-AGI-3](https://arcprize.org/arc-agi/3/)** — 13 games, 1,872 levels of interactive reasoning challenges built on the official [ARC-AGI SDK](https://docs.arcprize.org).
+<p align="center">
+  Built on the official <a href="https://docs.arcprize.org">ARC-AGI SDK</a> &bull;
+  <a href="https://blog.guanghan.ai/post/260312_arc_witness_env/"><b>Blog Post</b></a>
+</p>
 
-> **[Blog: From The Witness to ARC-AGI-3: "Teaching" Fluid Intelligence via 1,872 Puzzles](https://blog.guanghan.ai/post/260312_arc_witness_env/)** — design decisions, puzzle mechanics, and how these environments connect to ARC-AGI-3
-
-## News
+## 📰 News
 
 - **[2026/3/17]** We release **v0.2.0** — teaching data collection mode! Play games in the browser while annotating your reasoning at each step. Collected episodes are saved as structured JSON for fine-tuning agents. ([details](#teaching-data-collection))
 - **[2026/3/12]** We release **v0.1.0** — initial release with **13 games** and **1,872 levels** (959 solver-verified). Drop-in compatible with the [ARC-AGI-3 SDK](https://docs.arcprize.org) and [OpenEnv](https://github.com/meta-pytorch/OpenEnv) for RL training.
@@ -30,23 +36,21 @@
 - **Progressive difficulty** — each game teaches abstract rules through increasingly harder puzzles, no text instructions
 - **Teaching mode** — annotate reasoning while playing to build training data for agents
 
-## Table of Contents
+## 📝 Contents
 
-- [Quick Start](#quick-start)
-- [Games](#games)
-- [Dataset Statistics](#dataset-statistics)
-- [OpenEnv Adapter (RL Training)](#openenv-adapter-rl-training)
-- [ARC-AGI-3 Integration](#arc-agi-3-integration)
-- [Teaching Data Collection](#teaching-data-collection)
-- [Architecture](#architecture)
-- [Project Structure](#project-structure)
-- [Why The Witness?](#why-the-witness)
-- [Citation](#citation)
-- [Acknowledgements](#acknowledgements)
-- [Contributing](#contributing)
-- [License](#license)
+- **Usage**
+  - [Quick Start](#quick-start)
+  - [OpenEnv Adapter (RL Training)](#openenv-adapter)
+  - [ARC-AGI-3 Integration](#arc-agi-3-integration)
+  - [Teaching Data Collection](#teaching-data-collection)
+- **Reference**
+  - [Games](#games)
+  - [Architecture & Project Structure](#architecture)
+  - [Why The Witness?](#why-the-witness)
 
-## Quick Start
+<a id="quick-start"></a>
+
+## 🚀 Quick Start
 
 ### Install
 
@@ -106,7 +110,178 @@ python run_pipeline.py --keep-all
   <img src="assets/extraction_pipeline.png" alt="Extraction Pipeline" width="780">
 </p>
 
-## Games
+<a id="openenv-adapter"></a>
+
+## 🔧 OpenEnv Adapter (RL Training)
+
+The `openenv_adapter/` module wraps all 13 games as [OpenEnv](https://github.com/meta-pytorch/OpenEnv) environments for RL training, while the game implementations remain fully ARC-AGI-3 SDK compatible.
+
+<p align="center">
+  <img src="assets/dual_interface.png" alt="Dual Interface Architecture" width="780">
+</p>
+
+### Design
+
+- **Episode = one level**: `reset()` starts (or restarts) the current level; the episode ends when the level is solved or truncated
+- **Observation**: 64x64 int grid (color indices 0-15) + level metadata
+- **Action**: discrete 1-5 (UP / DOWN / LEFT / RIGHT / CONFIRM)
+- **Truncation**: `max_steps = baseline x 3`
+
+#### Compatible RL Training Frameworks
+
+Because arc-witness-envs implements the [OpenEnv](https://github.com/meta-pytorch/OpenEnv) protocol (HTTP/FastAPI + Gymnasium-style `reset()`/`step()` API), it integrates with the growing ecosystem of RL frameworks that support OpenEnv:
+
+| Framework | OpenEnv Support | RL Algorithms | Notes |
+|-----------|----------------|---------------|-------|
+| [**TRL**](https://huggingface.co/docs/trl/main/en/openenv) (HuggingFace) | Official | GRPO | `GRPOTrainer` with custom `rollout_func`; vLLM inference |
+| [**TorchForge**](https://github.com/meta-pytorch/torchforge) (Meta) | Native | GRPO, PPO | Direct plug-in, no adapter needed; scales to 512 GPUs |
+| [**SkyRL**](https://docs.skyrl.ai/docs) | Official | GRPO, PPO, DAPO | SkyRL-Gym `BaseTextEnv` interface; Megatron 5D parallelism |
+| [**ART**](https://art.openpipe.ai/integrations/openenv-integration) (OpenPipe) | Official | GRPO | Automatic — any OpenEnv environment works out of the box |
+| [**VeRL**](https://github.com/volcengine/verl) (ByteDance) | Planned | PPO, GRPO | Gym-style agent loop is architecturally compatible; explicit integration underway |
+| [**Oumi**](https://github.com/oumi-ai/oumi) | Via TRL | GRPO | Uses TRL's `GRPOTrainer` under the hood |
+
+> **Note on observation space**: These frameworks are primarily designed for LLM-based agents (text in, text out). For arc-witness-envs' **64x64 int grid** observations, you'll likely need a vision encoder (simple CNN) or a multimodal model. The OpenEnv adapter handles the environment side — the model architecture is up to you.
+
+<details>
+<summary><strong>Reward Modes</strong> (<code>reward_mode</code> / <code>WITNESS_REWARD</code>)</summary>
+
+| Mode | Solve | Step | Wrong CONFIRM | Best for |
+|------|-------|------|---------------|----------|
+| `sparse` | +1.0 | 0 | 0 | Exploration-heavy algorithms (RND, ICM) |
+| `shaped` (default) | +1.0 | -0.01 | -0.1 | PPO, SAC — solve always net positive |
+| `arc_score` | min(baseline/steps, 1) | 0 | -0.1 | Directly mirrors ARC-AGI-3 scoring |
+
+Key property: **solving a level is always a positive reward signal**, regardless of how many steps it took.
+
+</details>
+
+<details>
+<summary><strong>Algorithm-Reward Pairing Guide</strong></summary>
+
+| Algorithm | Recommended Reward Mode | Why |
+|-----------|------------------------|-----|
+| PPO / APPO | `shaped` | Step penalty encourages efficiency; solve is always net positive |
+| DQN | `shaped` | Natural fit for discrete 5-action space |
+| GRPO | `arc_score` | Directly mirrors ARC-AGI-3 scoring for outcome-based RL |
+| RND / ICM | `sparse` | Pure exploration signal; intrinsic motivation handles the rest |
+| SAC | `shaped` | With discretized action space |
+
+</details>
+
+### Install
+
+```bash
+pip install arc-agi openenv
+```
+
+### Start Server
+
+```bash
+cd arc-witness-envs
+
+# Serve tw01 (default)
+uvicorn openenv_adapter.server.app:app --host 0.0.0.0 --port 8000
+
+# Serve a specific game with specific reward mode
+WITNESS_GAME=tw03 WITNESS_REWARD=arc_score uvicorn openenv_adapter.server.app:app --port 8000
+```
+
+### Use Client
+
+```python
+import asyncio
+from openenv_adapter.client import WitnessEnvClient
+from openenv_adapter.models import WitnessAction, WitnessGameAction
+
+async def main():
+    client = WitnessEnvClient(base_url="ws://localhost:8000")
+    async with client:
+        result = await client.reset()
+        print(f"Level: {result.observation.level_index}")
+
+        for action in [WitnessGameAction.RIGHT, WitnessGameAction.UP, WitnessGameAction.CONFIRM]:
+            result = await client.step(WitnessAction(action=action))
+            print(f"Reward: {result.reward}, Done: {result.done}")
+
+asyncio.run(main())
+```
+
+### Use Directly (No Server)
+
+```python
+from openenv_adapter.server.witness_environment import WitnessEnvironment
+from openenv_adapter.models import WitnessAction, WitnessGameAction
+
+env = WitnessEnvironment(game_id="tw01", seed=0)
+obs = env.reset()
+
+obs = env.step(WitnessAction(action=WitnessGameAction.RIGHT))
+print(f"Reward: {obs.reward}, Done: {obs.done}")
+print(f"Frame shape: {len(obs.frame)}x{len(obs.frame[0])}")  # 64x64
+```
+
+<a id="arc-agi-3-integration"></a>
+
+## 🎯 ARC-AGI-3 Integration
+
+This repository provides **training environments** for the [ARC-AGI-3 competition](https://arcprize.org/arc-agi/3/) — the first Interactive Reasoning Benchmark (IRB). Agents must:
+
+1. **Explore** — discover game rules through interaction (no instructions provided)
+2. **Learn** — infer abstract constraints from visual feedback
+3. **Plan** — solve increasingly difficult levels within an action budget
+
+Scoring: `score = max(0, 1 - actions_taken / baseline_actions)` per level, averaged across all levels.
+
+### Use with Your ARC-AGI-3 Agent
+
+Point your agent at this repo's `environment_files/` directory — no code changes needed:
+
+```python
+from arc_agi import Arcade, OperationMode
+
+arcade = Arcade(
+    operation_mode=OperationMode.OFFLINE,
+    environments_dir="path/to/arc-witness-envs/environment_files",
+)
+
+# Your agent sees tw01-tw13 exactly like official ARC-AGI-3 games
+for env_info in arcade.get_environments():
+    print(env_info.game_id, env_info.title)
+
+scorecard_id = arcade.create_scorecard(tags=["witness"])
+env = arcade.make(game_id="tw03", scorecard_id=scorecard_id)
+obs = env.reset()
+
+# ... run your agent as usual ...
+```
+
+Or serve them via the SDK's REST API for remote agents:
+
+```python
+arcade = Arcade(
+    operation_mode=OperationMode.OFFLINE,
+    environments_dir="path/to/arc-witness-envs/environment_files",
+)
+arcade.listen_and_serve(port=8001)
+# Your agent connects to http://localhost:8001/api/cmd/ACTION1 etc.
+```
+
+<a id="teaching-data-collection"></a>
+
+## 📋 Teaching Data Collection
+
+Toggle **Teaching Mode** in the browser UI (`play_human.py`) to annotate your reasoning while solving puzzles. Each action can be paired with a free-text explanation of *why* you chose it.
+
+On level completion, a dialog prompts for:
+- **Key insights** discovered during the level
+- **Rules discovered** about the game mechanics
+- **Difficulty rating** (1-5)
+
+Episodes are saved as structured JSON in `teaching_data/`, ready for fine-tuning agents via SFT or building reward models.
+
+<a id="games"></a>
+
+## 🎮 Games
 
 | Game | Mechanic | Levels | Core Knowledge |
 |------|----------|--------|----------------|
@@ -209,16 +384,14 @@ Generalization of tw07 EraserLogic — erasers absorb constraint violations from
 
 </details>
 
-## Dataset Statistics
+<details>
+<summary><strong>Dataset Statistics</strong> (click to expand)</summary>
 
 **1,872 levels** across 13 games — 959 solver-verified with baseline scores, 913 additional unvalidated levels playable with auto-validation on solve.
 
 <p align="center">
   <img src="assets/pipeline_funnel.png" alt="Pipeline Funnel" width="780">
 </p>
-
-<details>
-<summary><strong>Per-game breakdown</strong> (click to expand)</summary>
 
 | Game | Mechanism | TTWS Classified | Validated | Unvalidated | **Total** | Coverage |
 |------|-----------|----------------|-----------|-------------|-----------|----------|
@@ -242,169 +415,9 @@ Generalization of tw07 EraserLogic — erasers absorb constraint violations from
 
 </details>
 
-## OpenEnv Adapter (RL Training)
+<a id="architecture"></a>
 
-The `openenv_adapter/` module wraps all 13 games as [OpenEnv](https://github.com/meta-pytorch/OpenEnv) environments for RL training, while the game implementations remain fully ARC-AGI-3 SDK compatible.
-
-<p align="center">
-  <img src="assets/dual_interface.png" alt="Dual Interface Architecture" width="780">
-</p>
-
-### Design
-
-- **Episode = one level**: `reset()` starts (or restarts) the current level; the episode ends when the level is solved or truncated
-- **Observation**: 64x64 int grid (color indices 0-15) + level metadata
-- **Action**: discrete 1-5 (UP / DOWN / LEFT / RIGHT / CONFIRM)
-- **Truncation**: `max_steps = baseline x 3`
-
-#### Reward Modes (`reward_mode` / `WITNESS_REWARD`)
-
-| Mode | Solve | Step | Wrong CONFIRM | Best for |
-|------|-------|------|---------------|----------|
-| `sparse` | +1.0 | 0 | 0 | Exploration-heavy algorithms (RND, ICM) |
-| `shaped` (default) | +1.0 | -0.01 | -0.1 | PPO, SAC — solve always net positive |
-| `arc_score` | min(baseline/steps, 1) | 0 | -0.1 | Directly mirrors ARC-AGI-3 scoring |
-
-Key property: **solving a level is always a positive reward signal**, regardless of how many steps it took.
-
-<details>
-<summary><strong>Compatible RL frameworks & algorithm-reward pairing</strong> (click to expand)</summary>
-
-#### Compatible RL Training Frameworks
-
-Because arc-witness-envs implements the [OpenEnv](https://github.com/meta-pytorch/OpenEnv) protocol (HTTP/FastAPI + Gymnasium-style `reset()`/`step()` API), it integrates with the growing ecosystem of RL frameworks that support OpenEnv:
-
-| Framework | OpenEnv Support | RL Algorithms | Notes |
-|-----------|----------------|---------------|-------|
-| [**TRL**](https://huggingface.co/docs/trl/main/en/openenv) (HuggingFace) | Official | GRPO | `GRPOTrainer` with custom `rollout_func`; vLLM inference |
-| [**TorchForge**](https://github.com/meta-pytorch/torchforge) (Meta) | Native | GRPO, PPO | Direct plug-in, no adapter needed; scales to 512 GPUs |
-| [**SkyRL**](https://docs.skyrl.ai/docs) | Official | GRPO, PPO, DAPO | SkyRL-Gym `BaseTextEnv` interface; Megatron 5D parallelism |
-| [**ART**](https://art.openpipe.ai/integrations/openenv-integration) (OpenPipe) | Official | GRPO | Automatic — any OpenEnv environment works out of the box |
-| [**VeRL**](https://github.com/volcengine/verl) (ByteDance) | Planned | PPO, GRPO | Gym-style agent loop is architecturally compatible; explicit integration underway |
-| [**Oumi**](https://github.com/oumi-ai/oumi) | Via TRL | GRPO | Uses TRL's `GRPOTrainer` under the hood |
-
-> **Note on observation space**: These frameworks are primarily designed for LLM-based agents (text in, text out). For arc-witness-envs' **64x64 int grid** observations, you'll likely need a vision encoder (simple CNN) or a multimodal model. The OpenEnv adapter handles the environment side — the model architecture is up to you.
-
-#### Algorithm-Reward Pairing Guide
-
-| Algorithm | Recommended Reward Mode | Why |
-|-----------|------------------------|-----|
-| PPO / APPO | `shaped` | Step penalty encourages efficiency; solve is always net positive |
-| DQN | `shaped` | Natural fit for discrete 5-action space |
-| GRPO | `arc_score` | Directly mirrors ARC-AGI-3 scoring for outcome-based RL |
-| RND / ICM | `sparse` | Pure exploration signal; intrinsic motivation handles the rest |
-| SAC | `shaped` | With discretized action space |
-
-</details>
-
-### Install
-
-```bash
-pip install arc-agi openenv
-```
-
-### Start Server
-
-```bash
-cd arc-witness-envs
-
-# Serve tw01 (default)
-uvicorn openenv_adapter.server.app:app --host 0.0.0.0 --port 8000
-
-# Serve a specific game with specific reward mode
-WITNESS_GAME=tw03 WITNESS_REWARD=arc_score uvicorn openenv_adapter.server.app:app --port 8000
-```
-
-### Use Client
-
-```python
-import asyncio
-from openenv_adapter.client import WitnessEnvClient
-from openenv_adapter.models import WitnessAction, WitnessGameAction
-
-async def main():
-    client = WitnessEnvClient(base_url="ws://localhost:8000")
-    async with client:
-        result = await client.reset()
-        print(f"Level: {result.observation.level_index}")
-
-        for action in [WitnessGameAction.RIGHT, WitnessGameAction.UP, WitnessGameAction.CONFIRM]:
-            result = await client.step(WitnessAction(action=action))
-            print(f"Reward: {result.reward}, Done: {result.done}")
-
-asyncio.run(main())
-```
-
-### Use Directly (No Server)
-
-```python
-from openenv_adapter.server.witness_environment import WitnessEnvironment
-from openenv_adapter.models import WitnessAction, WitnessGameAction
-
-env = WitnessEnvironment(game_id="tw01", seed=0)
-obs = env.reset()
-
-obs = env.step(WitnessAction(action=WitnessGameAction.RIGHT))
-print(f"Reward: {obs.reward}, Done: {obs.done}")
-print(f"Frame shape: {len(obs.frame)}x{len(obs.frame[0])}")  # 64x64
-```
-
-## ARC-AGI-3 Integration
-
-This repository provides **training environments** for the [ARC-AGI-3 competition](https://arcprize.org/arc-agi/3/) — the first Interactive Reasoning Benchmark (IRB). Agents must:
-
-1. **Explore** — discover game rules through interaction (no instructions provided)
-2. **Learn** — infer abstract constraints from visual feedback
-3. **Plan** — solve increasingly difficult levels within an action budget
-
-Scoring: `score = max(0, 1 - actions_taken / baseline_actions)` per level, averaged across all levels.
-
-### Use with Your ARC-AGI-3 Agent
-
-Point your agent at this repo's `environment_files/` directory — no code changes needed:
-
-```python
-from arc_agi import Arcade, OperationMode
-
-arcade = Arcade(
-    operation_mode=OperationMode.OFFLINE,
-    environments_dir="path/to/arc-witness-envs/environment_files",
-)
-
-# Your agent sees tw01-tw13 exactly like official ARC-AGI-3 games
-for env_info in arcade.get_environments():
-    print(env_info.game_id, env_info.title)
-
-scorecard_id = arcade.create_scorecard(tags=["witness"])
-env = arcade.make(game_id="tw03", scorecard_id=scorecard_id)
-obs = env.reset()
-
-# ... run your agent as usual ...
-```
-
-Or serve them via the SDK's REST API for remote agents:
-
-```python
-arcade = Arcade(
-    operation_mode=OperationMode.OFFLINE,
-    environments_dir="path/to/arc-witness-envs/environment_files",
-)
-arcade.listen_and_serve(port=8001)
-# Your agent connects to http://localhost:8001/api/cmd/ACTION1 etc.
-```
-
-## Teaching Data Collection
-
-Toggle **Teaching Mode** in the browser UI (`play_human.py`) to annotate your reasoning while solving puzzles. Each action can be paired with a free-text explanation of *why* you chose it.
-
-On level completion, a dialog prompts for:
-- **Key insights** discovered during the level
-- **Rules discovered** about the game mechanics
-- **Difficulty rating** (1-5)
-
-Episodes are saved as structured JSON in `teaching_data/`, ready for fine-tuning agents via SFT or building reward models.
-
-## Architecture
+## 🏗️ Architecture & Project Structure
 
 <p align="center">
   <img src="assets/system_architecture.png" alt="System Architecture" width="680">
@@ -461,8 +474,6 @@ WitnessGrid(cols, rows)
 
 </details>
 
-## Project Structure
-
 <details>
 <summary><strong>Directory layout</strong> (click to expand)</summary>
 
@@ -504,7 +515,9 @@ arc-witness-envs/
 
 </details>
 
-## Why The Witness?
+<a id="why-the-witness"></a>
+
+## 💡 Why The Witness?
 
 [The Witness](https://en.wikipedia.org/wiki/The_Witness_(2016_video_game)) contains 523+ hand-crafted line-drawing puzzles that teach abstract rules through progressive difficulty — no text, no tutorials. Each puzzle type maps cleanly to ARC-AGI [Core Knowledge](https://arxiv.org/abs/1911.01547) priors:
 
@@ -533,7 +546,7 @@ arc-witness-envs/
 
 </details>
 
-## Citation
+## 📖 Citation
 
 ```bibtex
 @software{ning2026arcwitness,
@@ -544,16 +557,16 @@ arc-witness-envs/
 }
 ```
 
-## Acknowledgements
+## 🙏 Acknowledgements
 
 - [**The Witness**](https://en.wikipedia.org/wiki/The_Witness_(2016_video_game)) by Jonathan Blow / Thekla, Inc. — the brilliant puzzle design that inspired every game mechanic in this project.
 - [**barrycohen/ttws**](https://github.com/barrycohen/ttws) — community-built open-source reimplementation of The Witness puzzles, whose protobuf puzzle data made large-scale level extraction possible.
 - The Witness fan community — for collectively creating and curating thousands of puzzles that form the raw dataset behind these environments.
 
-## Contributing
+## 🤝 Contributing
 
 Contributions welcome — new games, level packs, bug fixes, documentation improvements. Please open an issue before submitting large PRs so we can discuss the approach.
 
-## License
+## ⚖️ License
 
 [MIT](https://opensource.org/licenses/MIT). The vendored puzzle data in `converters/vendor_ttws/` is from [barrycohen/ttws](https://github.com/barrycohen/ttws) under the same MIT license.
