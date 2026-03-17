@@ -294,12 +294,18 @@ class WitnessGrid:
 
     def draw_star(self, frame: List[List[int]],
                   cell: Tuple[int, int], color: int = STAR_COLOR):
-        """Draw a star symbol (diamond shape) at the cell center. Visually distinct from squares."""
+        """Draw a star symbol (diamond shape) at the cell center, scaled to fit cell_size."""
         cx, cy = self.cell_center_pixel(*cell)
-        # Diamond shape
-        for dx, dy in [(-2, 0), (-1, -1), (-1, 0), (-1, 1),
+        half = (self.cell_size - 1) // 2
+        if half >= 2:
+            # Full 5x5 diamond
+            offsets = [(-2, 0), (-1, -1), (-1, 0), (-1, 1),
                        (0, -2), (0, -1), (0, 0), (0, 1), (0, 2),
-                       (1, -1), (1, 0), (1, 1), (2, 0)]:
+                       (1, -1), (1, 0), (1, 1), (2, 0)]
+        else:
+            # Small 3x3 cross for tiny cells
+            offsets = [(-1, 0), (0, -1), (0, 0), (0, 1), (1, 0)]
+        for dx, dy in offsets:
             px, py = cx + dx, cy + dy
             if 0 <= px < 64 and 0 <= py < 64:
                 frame[py][px] = color
@@ -307,36 +313,84 @@ class WitnessGrid:
     def draw_triangle(self, frame: List[List[int]],
                       cell: Tuple[int, int], count: int,
                       color: int = TRI_COLOR):
-        """Draw 1-3 small triangle markers in a cell."""
+        """Draw 1-3 small triangle markers in a cell, scaled to fit cell_size."""
         cx, cy = self.cell_center_pixel(*cell)
-        offsets = [0] if count == 1 else [-2, 2] if count == 2 else [-3, 0, 3]
+        half = (self.cell_size - 1) // 2
+
+        if count == 1:
+            offsets = [0]
+        elif count == 2:
+            # Leave room for triangle body (±1) on each side
+            step = max(1, min(2, half - 1))
+            offsets = [-step, step]
+        else:  # count == 3
+            step = max(1, min(3, half - 1))
+            offsets = [-step, 0, step]
+
         for ox in offsets[:count]:
             px_base = cx + ox
-            # Small upward triangle: 3 pixels
-            for dy, dx in [(-1, 0), (0, -1), (0, 0), (0, 1)]:
-                ppx, ppy = px_base + dx, cy + dy
+            # Per-triangle half-width: clamp so it stays within cell
+            tri_hw = min(1, half - abs(ox))
+            tri_hw = max(0, tri_hw)
+            # Tip pixel (top of triangle)
+            if 0 <= px_base < 64 and 0 <= cy - 1 < 64:
+                frame[cy - 1][px_base] = color
+            # Base row
+            for dx in range(-tri_hw, tri_hw + 1):
+                ppx, ppy = px_base + dx, cy
                 if 0 <= ppx < 64 and 0 <= ppy < 64:
                     frame[ppy][ppx] = color
 
     def draw_polyomino(self, frame: List[List[int]],
                        cell: Tuple[int, int], shape: list,
                        color: int = POLY_COLOR):
-        """Draw a polyomino shape preview in a cell."""
+        """Draw a polyomino shape preview in a cell, centered and scaled to fit cell_size."""
         cx, cy = self.cell_center_pixel(*cell)
+        half = (self.cell_size - 1) // 2
+
+        # Shape extent (handle non-zero-based shapes)
+        xs = [s[0] for s in shape]
+        ys = [s[1] for s in shape]
+        min_sx, max_sx = min(xs), max(xs)
+        min_sy, max_sy = min(ys), max(ys)
+        extent_x = max_sx - min_sx + 1
+        extent_y = max_sy - min_sy + 1
+        extent = max(extent_x, extent_y)
+
+        # Block size: each polyomino cell rendered as block×block pixels
+        # Must fit: extent * block <= 2 * half + 1
+        block = min(2, (2 * half + 1) // extent) if extent > 0 else 2
+        block = max(1, block)
+
+        # Center the shape within the cell
+        total_w = extent_x * block
+        total_h = extent_y * block
+        start_x = cx - total_w // 2
+        start_y = cy - total_h // 2
+
         for sx, sy in shape:
-            for dx in range(2):
-                for dy in range(2):
-                    px = cx - 2 + sx * 2 + dx
-                    py = cy - 2 + sy * 2 + dy
+            for dx in range(block):
+                for dy in range(block):
+                    px = start_x + (sx - min_sx) * block + dx
+                    py = start_y + (sy - min_sy) * block + dy
                     if 0 <= px < 64 and 0 <= py < 64:
                         frame[py][px] = color
 
     def draw_eraser(self, frame: List[List[int]],
                     cell: Tuple[int, int], color: int = ERASER_COLOR):
-        """Draw an elimination symbol (Y shape) at the cell center."""
+        """Draw an elimination symbol (Y shape) at the cell center, scaled to fit cell_size."""
         cx, cy = self.cell_center_pixel(*cell)
-        # Y shape: stem + two branches
-        for dx, dy in [(0, 0), (0, 1), (0, 2), (-1, -1), (1, -1), (-2, -2), (2, -2)]:
+        half = (self.cell_size - 1) // 2
+        if half >= 2:
+            # Full Y shape: stem + two branches
+            offsets = [(0, 0), (0, 1), (0, 2), (-1, -1), (1, -1), (-2, -2), (2, -2)]
+        elif half >= 1:
+            # Small Y: 3x3
+            offsets = [(0, 0), (0, 1), (-1, -1), (1, -1)]
+        else:
+            # Minimal: single pixel
+            offsets = [(0, 0)]
+        for dx, dy in offsets:
             px, py = cx + dx, cy + dy
             if 0 <= px < 64 and 0 <= py < 64:
                 frame[py][px] = color
