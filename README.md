@@ -72,6 +72,8 @@ python play_human.py
 
 ### Use Programmatically
 
+Try it directly in **[Google Colab](https://colab.research.google.com/github/Guanghan/arc-witness-envs/blob/main/examples/quickstart.ipynb)**, or run locally:
+
 ```python
 from arcengine import GameAction, ActionInput
 from environment_files.tw01.tw01 import Tw01
