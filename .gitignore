@@ -23,3 +23,11 @@ venv/
 converters/vendor_ttws/.git/
 converters/vendor_ttws/__pycache__/
 converters/vendor_ttws/images/
+
+# temp files
+temp/
+generate_demo_video.py
+render_screenshots.py
+
+# data related
+teaching_data/
