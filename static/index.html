@@ -24,6 +24,27 @@
   #log .ok { color: #4fcc30; }
   #log .err { color: #f93c31; }
   #log .info { color: #88d8f1; }
+  /* Teaching mode styles */
+  #teaching-bar { width: 520px; margin: 10px 0; display: flex; gap: 8px; align-items: center; }
+  #teaching-bar label { color: #e94560; font-size: 0.9em; cursor: pointer; }
+  #teaching-bar .toggle { position: relative; width: 40px; height: 20px; }
+  #teaching-bar .toggle input { opacity: 0; width: 0; height: 0; }
+  #teaching-bar .toggle .slider { position: absolute; inset: 0; background: #333; border-radius: 10px; cursor: pointer; transition: 0.3s; }
+  #teaching-bar .toggle .slider::before { content: ''; position: absolute; width: 16px; height: 16px; left: 2px; bottom: 2px; background: #eee; border-radius: 50%; transition: 0.3s; }
+  #teaching-bar .toggle input:checked + .slider { background: #e94560; }
+  #teaching-bar .toggle input:checked + .slider::before { transform: translateX(20px); }
+  #reasoning-input { flex: 1; background: #16213e; color: #eee; border: 1px solid #555; padding: 6px 10px; font-family: inherit; font-size: 0.85em; border-radius: 4px; display: none; }
+  #reasoning-input:focus { border-color: #e94560; outline: none; }
+  #teaching-status { color: #888; font-size: 0.8em; }
+  /* Outcome dialog */
+  #outcome-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; justify-content: center; align-items: center; }
+  #outcome-dialog { background: #1a1a2e; border: 2px solid #e94560; border-radius: 8px; padding: 20px; width: 400px; max-height: 80vh; overflow-y: auto; }
+  #outcome-dialog h3 { color: #e94560; margin-bottom: 12px; }
+  #outcome-dialog label { color: #aaa; font-size: 0.85em; display: block; margin: 8px 0 4px; }
+  #outcome-dialog textarea, #outcome-dialog select { width: 100%; background: #16213e; color: #eee; border: 1px solid #555; padding: 6px; font-family: inherit; border-radius: 4px; }
+  #outcome-dialog textarea { min-height: 60px; resize: vertical; }
+  #outcome-dialog button { background: #e94560; color: #fff; border: none; padding: 8px 20px; margin-top: 12px; cursor: pointer; border-radius: 4px; font-family: inherit; }
+  #outcome-dialog button:hover { background: #c73a52; }
 </style>
 </head>
 <body>
@@ -47,7 +68,33 @@
     <span class="key" id="k-r">R (reset)</span>
   </div>
 </div>
+<div id="teaching-bar">
+  <label class="toggle"><input type="checkbox" id="teaching-toggle"><span class="slider"></span></label>
+  <label for="teaching-toggle">Teaching Mode</label>
+  <input type="text" id="reasoning-input" placeholder="Why this action? (Enter to confirm, then press action key)">
+  <span id="teaching-status"></span>
+</div>
 <div id="log"></div>
+
+<!-- Outcome annotation dialog -->
+<div id="outcome-overlay">
+  <div id="outcome-dialog">
+    <h3>Level Complete — Annotate</h3>
+    <label>Key Insights (one per line)</label>
+    <textarea id="outcome-insights" placeholder="What did you learn about this level?"></textarea>
+    <label>Rules Discovered (one per line)</label>
+    <textarea id="outcome-rules" placeholder="Any rules you figured out?"></textarea>
+    <label>Difficulty (1=trivial, 5=very hard)</label>
+    <select id="outcome-difficulty">
+      <option value="1">1 — Trivial</option>
+      <option value="2">2 — Easy</option>
+      <option value="3" selected>3 — Medium</option>
+      <option value="4">4 — Hard</option>
+      <option value="5">5 — Very Hard</option>
+    </select>
+    <button onclick="submitOutcome()">Save &amp; Continue</button>
+  </div>
+</div>
 
 <script>
 const COLORS = {
@@ -75,6 +122,13 @@ let levelStatuses = {};       // {level_index: {validated, ...}}
 let currentLevelActions = []; // action IDs for current level
 let lastLevelsCompleted = 0;  // track level completion
 let totalWinLevels = 0;       // total levels in current game
+
+// Teaching mode state
+let teachingMode = false;
+let pendingReasoning = '';
+let teachingEpisodeId = null;
+let teachingStepIndex = 0;
+let pendingOutcomeData = null;  // stores data while outcome dialog is open
 
 // ACTION name → action ID mapping
 const ACTION_ID = { ACTION1: 1, ACTION2: 2, ACTION3: 3, ACTION4: 4, ACTION5: 5 };
@@ -139,6 +193,13 @@ async function sendAction(action) {
     // Track action for validation
     if (action !== 'RESET' && ACTION_ID[action]) {
       currentLevelActions.push(ACTION_ID[action]);
+      // Teaching mode: record step with reasoning
+      if (teachingMode && teachingEpisodeId) {
+        recordTeachingStep(ACTION_ID[action], pendingReasoning);
+        pendingReasoning = '';
+        const inp = document.getElementById('reasoning-input');
+        if (inp) inp.value = '';
+      }
     }
 
     // Status
@@ -162,6 +223,16 @@ async function sendAction(action) {
       const completedStatus = levelStatuses[completedIdx];
       if (completedStatus && !completedStatus.validated) {
         autoValidateLevel(completedIdx, currentLevelActions.slice());
+      }
+      // Teaching mode: show outcome dialog before advancing
+      if (teachingMode && teachingEpisodeId) {
+        pendingOutcomeData = {
+          game_id: currentGameId,
+          level_index: completedIdx,
+          completed: true,
+          total_steps: currentLevelActions.length,
+        };
+        showOutcomeDialog();
       }
       currentLevelActions = [];
       lastLevelsCompleted = lc;
@@ -345,6 +416,137 @@ function showCover() {
 showCover();
 
 loadGames();
+
+// ── Teaching Mode ──────────────────────────────────────
+
+document.getElementById('teaching-toggle').addEventListener('change', function() {
+  teachingMode = this.checked;
+  const inp = document.getElementById('reasoning-input');
+  const statusEl2 = document.getElementById('teaching-status');
+  if (teachingMode) {
+    inp.style.display = 'block';
+    statusEl2.textContent = 'Teaching ON';
+    statusEl2.style.color = '#4fcc30';
+    log('Teaching mode enabled — type reasoning before each action', 'info');
+    // Auto-start episode if game is active
+    if (currentGameId) {
+      startTeachingEpisode(currentGameId, lastLevelsCompleted);
+    }
+  } else {
+    inp.style.display = 'none';
+    statusEl2.textContent = '';
+    log('Teaching mode disabled', 'info');
+    // Finish active episode
+    if (teachingEpisodeId) {
+      finishTeachingEpisode(null);
+    }
+  }
+});
+
+// Capture reasoning from input (Enter key stores it, action key sends it)
+document.getElementById('reasoning-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    pendingReasoning = this.value;
+    const statusEl2 = document.getElementById('teaching-status');
+    statusEl2.textContent = pendingReasoning ? 'Reasoning set ✓' : '';
+    statusEl2.style.color = '#4fcc30';
+  }
+  // Don't propagate arrow keys from the input to the game
+  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+    e.stopPropagation();
+  }
+});
+
+async function startTeachingEpisode(gameId, levelIndex) {
+  try {
+    const res = await fetch('/api/teaching/start_episode', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ game_id: gameId, level_index: levelIndex }),
+    });
+    const data = await res.json();
+    teachingEpisodeId = data.episode_id;
+    teachingStepIndex = 0;
+    log(`Teaching episode started: ${data.episode_id}`, 'info');
+  } catch(e) {
+    log(`Failed to start teaching episode: ${e.message}`, 'err');
+  }
+}
+
+async function recordTeachingStep(actionId, reasoning) {
+  if (!teachingEpisodeId) return;
+  try {
+    await fetch('/api/teaching/step', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        step_index: teachingStepIndex++,
+        frame_hash: '',  // server-side hashing would be ideal
+        action: actionId,
+        reasoning: reasoning || '',
+        confidence: 0.7,
+      }),
+    });
+  } catch(e) {
+    log(`Failed to record teaching step: ${e.message}`, 'err');
+  }
+}
+
+async function finishTeachingEpisode(outcome) {
+  if (!teachingEpisodeId) return;
+  try {
+    const body = outcome || {
+      game_id: currentGameId || '',
+      level_index: 0,
+      completed: false,
+      total_steps: teachingStepIndex,
+    };
+    const res = await fetch('/api/teaching/outcome', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    log(`Teaching episode finished: ${data.episode_id} (${data.steps} steps)`, 'ok');
+    teachingEpisodeId = null;
+    teachingStepIndex = 0;
+  } catch(e) {
+    log(`Failed to finish teaching episode: ${e.message}`, 'err');
+  }
+}
+
+function showOutcomeDialog() {
+  document.getElementById('outcome-overlay').style.display = 'flex';
+  document.getElementById('outcome-insights').value = '';
+  document.getElementById('outcome-rules').value = '';
+  document.getElementById('outcome-difficulty').value = '3';
+}
+
+async function submitOutcome() {
+  const insights = document.getElementById('outcome-insights').value
+    .split('\n').map(s => s.trim()).filter(s => s);
+  const rules = document.getElementById('outcome-rules').value
+    .split('\n').map(s => s.trim()).filter(s => s);
+  const difficulty = parseInt(document.getElementById('outcome-difficulty').value) || 3;
+
+  document.getElementById('outcome-overlay').style.display = 'none';
+
+  if (pendingOutcomeData && teachingEpisodeId) {
+    const outcome = {
+      ...pendingOutcomeData,
+      key_insights: insights,
+      rules_discovered: rules,
+      difficulty_rating: difficulty,
+    };
+    await finishTeachingEpisode(outcome);
+    // Start new episode for next level
+    if (currentGameId) {
+      startTeachingEpisode(currentGameId, pendingOutcomeData.level_index + 1);
+    }
+  }
+  pendingOutcomeData = null;
+}
 </script>
 </body>
 </html>

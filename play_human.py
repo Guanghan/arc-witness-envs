@@ -20,9 +20,16 @@ import json
 from arc_agi import Arcade, OperationMode
 from flask import send_from_directory, jsonify, request
 
+from teaching.collector import TeachingCollector
+from teaching.models import TeachingStep, EpisodeOutcome
+
 
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 LEVELS_DIR = os.path.join(os.path.dirname(__file__), "levels")
+TEACHING_DIR = os.path.join(os.path.dirname(__file__), "teaching_data")
+
+# Global teaching collector (initialized once)
+_teaching_collector = TeachingCollector(data_dir=TEACHING_DIR)
 
 
 def _load_levels_json(game_id):
@@ -120,6 +127,74 @@ def add_frontend_routes(arcade, app):
             "moves": moves,
             "baseline": target["baseline"],
         })
+
+    # ── Teaching Data Collection API ──────────────────────
+
+    @app.route("/api/teaching/start_episode", methods=["POST"])
+    def teaching_start_episode():
+        """Start a new teaching episode for a game/level."""
+        body = request.get_json(force=True)
+        game_id = body.get("game_id")
+        level_index = body.get("level_index", 0)
+        seed = body.get("seed", 0)
+        if not game_id:
+            return jsonify({"error": "Missing game_id"}), 400
+        episode_id = _teaching_collector.start_episode(game_id, level_index, seed)
+        return jsonify({"episode_id": episode_id, "status": "started"})
+
+    @app.route("/api/teaching/step", methods=["POST"])
+    def teaching_step():
+        """Record one step with reasoning annotation."""
+        body = request.get_json(force=True)
+        step = TeachingStep(
+            step_index=body.get("step_index", _teaching_collector.step_count),
+            frame_hash=body.get("frame_hash", ""),
+            action=body.get("action", 0),
+            reasoning=body.get("reasoning", ""),
+            confidence=body.get("confidence", 0.7),
+            tags=body.get("tags", []),
+        )
+        ok = _teaching_collector.record_step(step)
+        if not ok:
+            return jsonify({"error": "No active episode"}), 400
+        return jsonify({"status": "recorded", "step_index": step.step_index})
+
+    @app.route("/api/teaching/outcome", methods=["POST"])
+    def teaching_outcome():
+        """Finish the active episode with an outcome annotation."""
+        body = request.get_json(force=True)
+        outcome = EpisodeOutcome(
+            game_id=body.get("game_id", ""),
+            level_index=body.get("level_index", 0),
+            completed=body.get("completed", False),
+            total_steps=body.get("total_steps", 0),
+            baseline_steps=body.get("baseline_steps"),
+            key_insights=body.get("key_insights", []),
+            rules_discovered=body.get("rules_discovered", []),
+            difficulty_rating=body.get("difficulty_rating", 3),
+        )
+        episode = _teaching_collector.finish_episode(outcome)
+        if not episode:
+            return jsonify({"error": "No active episode"}), 400
+        return jsonify({
+            "status": "finished",
+            "episode_id": episode.episode_id,
+            "steps": len(episode.steps),
+        })
+
+    @app.route("/api/teaching/episodes")
+    def teaching_list_episodes():
+        """List all teaching episodes across all games."""
+        summaries = _teaching_collector.list_episodes_summary()
+        return jsonify({"episodes": summaries, "total": len(summaries)})
+
+    @app.route("/api/teaching/episode/<episode_id>")
+    def teaching_get_episode(episode_id):
+        """Get a specific teaching episode by ID."""
+        ep = _teaching_collector.get_episode(episode_id)
+        if not ep:
+            return jsonify({"error": "Episode not found"}), 404
+        return jsonify(ep.model_dump())
 
 
 def main():
