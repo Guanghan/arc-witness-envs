@@ -28,6 +28,7 @@ converters/vendor_ttws/images/
 temp/
 generate_demo_video.py
 render_screenshots.py
+assets/demo.mp4
 
 # data related
 teaching_data/
