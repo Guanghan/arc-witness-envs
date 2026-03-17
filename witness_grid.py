@@ -55,7 +55,7 @@ SQUARE_C = COLOR_ORANGE        # Colored square C
 STAR_COLOR = COLOR_YELLOW      # Star
 POLY_COLOR = COLOR_PURPLE      # Polyomino
 TRI_COLOR = COLOR_ORANGE       # Triangle
-ERASER_COLOR = COLOR_WHITE     # Elimination symbol
+ERASER_COLOR = COLOR_NEAR_BLACK  # Elimination symbol (Y-shape, must contrast with white cell bg)
 
 
 class WitnessGrid:
