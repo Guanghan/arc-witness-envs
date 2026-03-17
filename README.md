@@ -10,7 +10,7 @@
 [![Play Demo](https://img.shields.io/badge/%F0%9F%8E%AE%20Live%20Demo-Play%20Now-ff6b6b.svg)](https://huggingface.co/spaces/Guanghan-Ning/arc-witness-envs-demo)
 
 <p align="center">
-  <img src="assets/icon.png" alt="arc-witness-envs" width="480">
+  <img src="assets/demo.gif" alt="arc-witness-envs demo" width="540">
 </p>
 
 **Witness-inspired puzzle environments for [ARC-AGI-3](https://arcprize.org/arc-agi/3/)** — 13 games, 1,872 levels of interactive reasoning challenges built on the official [ARC-AGI SDK](https://docs.arcprize.org).
