@@ -1,6 +1,7 @@
 <div align="center">
   <h1>🧩 ARC-Witness-Envs</h1>
-  <p><b>Witness-inspired puzzle environments for <a href="https://arcprize.org/arc-agi/3/">ARC-AGI-3</a> — 13 games, 1,872 levels of interactive reasoning challenges</b></p>
+  <p><b>Witness-inspired puzzle environments for <a href="https://arcprize.org/arc-agi/3/">ARC-AGI-3</a></b><br>
+  <b>13 games, 1,872 levels of interactive reasoning challenges</b></p>
 </div>
 
 <p align="center">
@@ -94,14 +95,17 @@ print(f"Levels completed: {frame.levels_completed}")
 print(f"State: {frame.state}")  # GameState.PLAYING or GameState.WIN
 ```
 
-### Run Tests
+<details>
+<summary><strong>Run Tests & Re-extract Levels</strong></summary>
+
+#### Run Tests
 
 ```bash
 python test_games.py
 # 13/13 games, 959 validated levels verified (913 unvalidated skipped)
 ```
 
-### Re-extract Levels
+#### Re-extract Levels
 
 ```bash
 cd converters
@@ -111,6 +115,8 @@ python run_pipeline.py --keep-all
 <p align="center">
   <img src="assets/extraction_pipeline.png" alt="Extraction Pipeline" width="780">
 </p>
+
+</details>
 
 <a id="openenv-adapter"></a>
 
@@ -572,3 +578,4 @@ Contributions welcome — new games, level packs, bug fixes, documentation impro
 ## ⚖️ License
 
 [MIT](https://opensource.org/licenses/MIT). The vendored puzzle data in `converters/vendor_ttws/` is from [barrycohen/ttws](https://github.com/barrycohen/ttws) under the same MIT license.
+
