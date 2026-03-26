@@ -11,6 +11,9 @@
   <a href="https://github.com/meta-pytorch/OpenEnv"><img src="https://img.shields.io/badge/OpenEnv-Compatible-green.svg" alt="OpenEnv Compatible"></a>
   <a href="https://colab.research.google.com/github/Guanghan/arc-witness-envs/blob/main/examples/quickstart.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a>
   <a href="https://huggingface.co/spaces/Guanghan-Ning/arc-witness-envs-demo"><img src="https://img.shields.io/badge/%F0%9F%8E%AE%20Live%20Demo-Play%20Now-ff6b6b.svg" alt="Play Demo"></a>
+  <br>
+  <a href="https://www.kaggle.com/datasets/guanghanning/arc-witness-envs"><img src="https://img.shields.io/badge/Kaggle-Dataset-20BEFF.svg?logo=kaggle" alt="Kaggle Dataset"></a>
+  <a href="https://www.kaggle.com/code/guanghanning/arc-witness-envs-warm-up-gym-for-arc-agi-3"><img src="https://img.shields.io/badge/Kaggle-Notebook-20BEFF.svg?logo=kaggle" alt="Kaggle Notebook"></a>
 </p>
 
 <p align="center">
