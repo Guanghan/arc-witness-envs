@@ -392,6 +392,9 @@ const KEY_MAP = {
 };
 
 document.addEventListener('keydown', (e) => {
+  // Don't intercept keys when typing in text fields (e.g. teaching mode)
+  const tag = e.target.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA') return;
   const m = KEY_MAP[e.key];
   if (!m) return;
   e.preventDefault();
@@ -399,6 +402,8 @@ document.addEventListener('keydown', (e) => {
   sendAction(m[0]);
 });
 document.addEventListener('keyup', (e) => {
+  const tag = e.target.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA') return;
   const m = KEY_MAP[e.key];
   if (!m) return;
   document.getElementById(m[1])?.classList.remove('active');
