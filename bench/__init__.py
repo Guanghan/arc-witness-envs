@@ -23,15 +23,17 @@ from .types import (
     BenchmarkSummary,
     GameReportEntry,
     LevelOutcome,
+    TagScore,
     WitnessGameInfo,
     WitnessGameState,
     WitnessScore,
 )
 from .scoring import (
     WitnessScoreCalculator,
-    score_one_game,
-    first_n_hit_counts,
     aggregate_runs,
+    compute_tag_scores,
+    first_n_hit_counts,
+    score_one_game,
 )
 from .catalog import GAME_CLASSES, list_games, load_game, load_game_info
 from .protocols import AgentProtocol
@@ -46,11 +48,13 @@ __all__ = [
     "GAME_CLASSES",
     "GameReportEntry",
     "LevelOutcome",
+    "TagScore",
     "WitnessGameInfo",
     "WitnessGameState",
     "WitnessScore",
     "WitnessScoreCalculator",
     "aggregate_runs",
+    "compute_tag_scores",
     "first_n_hit_counts",
     "list_games",
     "load_game",

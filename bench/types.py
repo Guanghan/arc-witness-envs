@@ -128,6 +128,24 @@ class GameReportEntry(BaseModel):
     legacy: Optional[Dict[str, Any]] = None
 
 
+class TagScore(BaseModel):
+    """Aggregate score over the subset of games carrying a given tag.
+
+    Aggregation method is **mean of per-game scores** (no per-level
+    re-weighting — each game already carries its own intra-game weighted
+    score). This makes interpretation simple: "average witness-score on
+    games tagged X".
+    """
+
+    tag: str
+    mean_score: float
+    total_games: int
+    total_levels_completed: int
+    total_levels: int  # sum of scoreable_levels across tagged games
+    total_actions: int
+    game_ids: List[str] = Field(default_factory=list)
+
+
 class BenchmarkSummary(BaseModel):
     """Aggregate summary across all games in a run."""
 
@@ -136,10 +154,13 @@ class BenchmarkSummary(BaseModel):
     total_levels_completed: int = 0
     total_levels: int = 0  # sum of scoreable_levels across games
     total_actions: int = 0
+    total_resets: int = 0  # sum of per-game resets
     total_elapsed_s: float = 0.0
     overall_score: float = 0.0  # mean of per-game scores
     first_n_completed: Dict[int, int] = Field(default_factory=dict)
     # e.g., {1: 10, 3: 7, 5: 5, 10: 2} = "for K in cutoffs, how many games had levels_completed >= K"
+    tag_scores: Dict[str, TagScore] = Field(default_factory=dict)
+    # Per-tag aggregate views; keys are tag names from WitnessGameInfo.tags.
 
 
 class BenchmarkReport(BaseModel):

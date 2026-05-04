@@ -17,9 +17,6 @@ as pluggable consumers**. This makes:
   keep in sync).
 - The benchmark publishable / open-sourceable on its own.
 
-Before this refactor, evaluation lived in `arc-witness-agent/evaluate.py`
-(638 LOC), which conflated agent code with scoring rules. That's now gone.
-
 ## Module layout
 
 ```
@@ -194,12 +191,27 @@ PYTHONPATH=. pytest bench/tests/ -v
 41 tests should pass. The `test_parity_with_arc_agi_calculator` test
 requires `arc_agi` to be installed (it is in the agent venv).
 
+## Implemented features
+
+- ✅ **Resets tracking** (2026-05-04) — `_ResetCountingGame` in `runner.py`
+  transparently counts `RESET` actions at the env boundary. Per-game counts
+  in `WitnessScore.resets`; aggregate in `BenchmarkSummary.total_resets`.
+  No agent-side changes needed.
+- ✅ **Tag aggregation** (2026-05-04) — `compute_tag_scores()` in
+  `scoring.py` produces per-tag mean-of-game-scores. Exposed as
+  `BenchmarkSummary.tag_scores: Dict[str, TagScore]`. CLI: `--tag-breakdown`
+  prints a sorted per-tag table.
+
 ## Open / deferred items
 
-- Multi-run support in CLI (`--n-runs N`, max-aggregate via
-  `aggregate_runs()`). Function is shipped, just not yet wired to CLI.
-- Resets tracking — agent doesn't currently emit per-level reset counts.
-- `level_tags` / `private_tags` aggregation. Fields present in
+- **Multi-run support in CLI** (`--n-runs N`, max-aggregate via
+  `aggregate_runs()`). Function is shipped + tested, just not yet wired
+  to CLI. Defer until variance estimate is needed for a paper / leaderboard
+  submission.
+- **Per-level resets**. Currently per-game only. Add when agent-internal
+  reset accounting is needed (e.g., to detect tw09/tw10-style reset loops
+  per level).
+- **`level_tags` / `private_tags`** aggregation. Fields present in
   `WitnessGameInfo` but not yet populated in metadata.json.
-- ARC-AGI-3 SDK games (`ls20`, `ft09`, `vc33`) are out of scope for this
-  CLI — see `arc-witness-agent/evaluate_arc_agi_agent.py`.
+- **ARC-AGI-3 SDK games** (`ls20`, `ft09`, `vc33`) are out of scope for
+  this CLI — see `arc-witness-agent/evaluate_arc_agi_agent.py`.

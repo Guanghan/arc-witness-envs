@@ -16,12 +16,15 @@ from bench.scoring import (
     SCORE_CAP,
     WitnessScoreCalculator,
     aggregate_runs,
+    compute_tag_scores,
     first_n_hit_counts,
     score_one_game,
 )
 from bench.types import (
     AgentRunResult,
+    GameReportEntry,
     LevelOutcome,
+    TagScore,
     WitnessGameInfo,
     WitnessGameState,
     WitnessScore,
@@ -205,6 +208,103 @@ def test_aggregate_runs_empty_raises() -> None:
 
 
 # ── Parity vs official arc_agi SDK ───────────────────────────────────────
+
+
+# ── Tag aggregation ──────────────────────────────────────────────────────
+
+
+def _entry(game_id: str, score: float, levels_completed: int, levels_total: int, actions: int = 0) -> GameReportEntry:
+    return GameReportEntry(
+        game_id=game_id,
+        score=WitnessScore(
+            game_id=game_id, score=score,
+            levels_completed=levels_completed, levels_total=levels_total,
+            actions=actions,
+        ),
+    )
+
+
+def _info(game_id: str, baselines: int, tags: list) -> WitnessGameInfo:
+    return WitnessGameInfo(
+        game_id=game_id,
+        baseline_actions=[10] * baselines,
+        real_total_levels=baselines,
+        tags=tags,
+    )
+
+
+def test_compute_tag_scores_groups_by_tag() -> None:
+    """Each game's tags create one bucket entry per tag."""
+    entries = [
+        _entry("a", 50.0, 5, 10),
+        _entry("b", 30.0, 3, 10),
+        _entry("c", 10.0, 1, 10),
+    ]
+    infos = {
+        "a": _info("a", 10, ["spatial", "easy"]),
+        "b": _info("b", 10, ["spatial", "hard"]),
+        "c": _info("c", 10, ["temporal"]),
+    }
+    tag_scores = compute_tag_scores(entries, infos)
+
+    assert set(tag_scores.keys()) == {"spatial", "easy", "hard", "temporal"}
+    assert tag_scores["spatial"].game_ids == ["a", "b"]
+    assert tag_scores["temporal"].game_ids == ["c"]
+
+
+def test_tag_score_mean_matches_arithmetic_mean() -> None:
+    entries = [_entry("a", 60.0, 5, 10), _entry("b", 40.0, 5, 10)]
+    infos = {"a": _info("a", 10, ["x"]), "b": _info("b", 10, ["x"])}
+    ts = compute_tag_scores(entries, infos)["x"]
+    assert math.isclose(ts.mean_score, 50.0)
+    assert ts.total_games == 2
+    assert ts.total_levels == 20  # 10 + 10
+    assert ts.total_levels_completed == 10  # 5 + 5
+
+
+def test_compute_tag_scores_skips_games_with_no_tags() -> None:
+    entries = [_entry("a", 50.0, 5, 10), _entry("b", 30.0, 3, 10)]
+    infos = {
+        "a": _info("a", 10, ["spatial"]),
+        "b": _info("b", 10, []),  # no tags
+    }
+    tag_scores = compute_tag_scores(entries, infos)
+    assert "spatial" in tag_scores
+    assert tag_scores["spatial"].game_ids == ["a"]
+    # No empty-string tag, no tags from "b"
+    assert all(t != "" for t in tag_scores)
+
+
+def test_compute_tag_scores_empty_input() -> None:
+    assert compute_tag_scores([], {}) == {}
+
+
+def test_compute_tag_scores_real_witness_metadata() -> None:
+    """Run against the actual witness metadata.json files."""
+    from bench.catalog import list_games, load_game_info
+
+    # Build trivial dummy entries (score=0) — we only test grouping.
+    infos = {gid: load_game_info(gid) for gid in list_games()}
+    entries = [
+        _entry(gid, 0.0, 0, infos[gid].scoreable_levels)
+        for gid in list_games()
+    ]
+
+    tag_scores = compute_tag_scores(entries, infos)
+
+    # 'witness' tag should cover all 13 games.
+    assert "witness" in tag_scores
+    assert tag_scores["witness"].total_games == 13
+
+    # Confirmed groups from `metadata.json` recon:
+    assert "path-constraint" in tag_scores
+    assert sorted(tag_scores["path-constraint"].game_ids) == ["tw01", "tw12"]
+
+    assert "meta-reasoning" in tag_scores
+    assert sorted(tag_scores["meta-reasoning"].game_ids) == ["tw07", "tw13"]
+
+    # Singleton tags exist:
+    assert tag_scores["tiling"].total_games == 1
 
 
 @pytest.mark.skipif(not HAS_ARC_AGI, reason="arc_agi not installed in this env")

@@ -58,6 +58,8 @@ def main(argv: Optional[list] = None) -> int:
     p.add_argument("--max-levels", type=int, default=None)
     p.add_argument("--verbose", "-v", action="store_true")
     p.add_argument("--output", "-o", default=None, help="Output JSON path")
+    p.add_argument("--tag-breakdown", action="store_true",
+                   help="Print per-tag aggregate score table")
     args = p.parse_args(argv)
 
     if args.list_games:
@@ -110,7 +112,29 @@ def main(argv: Optional[list] = None) -> int:
         f"  Overall score:   {s.overall_score:.2f}\n"
         f"  First-N hits:    {dict(s.first_n_completed)}\n"
         f"  Total actions:   {s.total_actions}\n"
+        f"  Total resets:    {s.total_resets}\n"
         f"  Wall time:       {s.total_elapsed_s:.1f}s\n"
         f"  Saved:           {out}"
     )
+
+    if args.tag_breakdown and s.tag_scores:
+        print_tag_breakdown(s.tag_scores)
+
     return 0
+
+
+def print_tag_breakdown(tag_scores) -> None:  # type: ignore[no-untyped-def]
+    """Print a per-tag table sorted by mean_score (descending)."""
+    if not tag_scores:
+        return
+    print("\n=== TAG BREAKDOWN ===")
+    print(f"{'Tag':<28}{'Games':>6}  {'Score':>7}  {'Solved':>8}  {'Games in tag'}")
+    print("-" * 80)
+    items = sorted(tag_scores.values(), key=lambda t: t.mean_score, reverse=True)
+    for ts in items:
+        solved = f"{ts.total_levels_completed}/{ts.total_levels}"
+        gids = ",".join(ts.game_ids) if len(ts.game_ids) <= 6 else f"{ts.game_ids[0]}…+{len(ts.game_ids)-1}"
+        print(
+            f"{ts.tag:<28}{ts.total_games:>6}  {ts.mean_score:>7.2f}  "
+            f"{solved:>8}  {gids}"
+        )

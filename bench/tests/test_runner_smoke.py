@@ -174,3 +174,77 @@ def test_run_batch_calls_on_game_done_callback() -> None:
         on_game_done=cb,
     )
     assert seen == ["tw09", "tw10"]
+
+
+# ── Resets tracking ──────────────────────────────────────────────────────
+
+
+class ResettingAgent:
+    """Agent that performs N RESET actions (and nothing else) on each game."""
+
+    def __init__(self, n_resets_per_game: int) -> None:
+        self.n_resets = n_resets_per_game
+
+    def run_on_game(
+        self,
+        game: Any,
+        game_id: str,
+        seed: int = 0,
+        verbose: bool = False,
+        max_levels: Optional[int] = None,
+    ) -> AgentRunResult:
+        from arcengine import ActionInput
+        from arcengine.enums import GameAction
+
+        for _ in range(self.n_resets):
+            game.perform_action(ActionInput(id=GameAction.RESET))
+
+        return AgentRunResult(
+            game_id=game_id,
+            seed=seed,
+            levels=[],
+            total_actions=self.n_resets,
+            resets=999,  # agent's claim — should be overridden by runner
+            state=WitnessGameState.NOT_FINISHED,
+        )
+
+
+def test_resets_counted_by_runner() -> None:
+    """The benchmark counts RESETs at the perform_action boundary, NOT
+    relying on the agent to self-report (which can be wrong or 0)."""
+    from bench.runner import run_single_game
+
+    agent = ResettingAgent(n_resets_per_game=3)
+    score, _, _, err = run_single_game(agent, "tw09")
+    assert err is None
+    # Authoritative: 3 RESETs were observed at the perform_action boundary.
+    assert score.resets == 3, (
+        f"expected runner to count 3 resets, got {score.resets} "
+        "(agent claimed 999 — runner should ignore that)"
+    )
+
+
+def test_resets_counted_per_game_independently() -> None:
+    """Reset count is per-game, not cumulative across the batch."""
+    from bench.runner import run_batch
+
+    agent = ResettingAgent(n_resets_per_game=2)
+    report = run_batch(
+        agent, game_ids=["tw01", "tw02", "tw09"], agent_info=AgentInfo(name="reset-2x")
+    )
+    for entry in report.games:
+        assert entry.score.resets == 2, (
+            f"{entry.game_id}: expected 2 resets, got {entry.score.resets}"
+        )
+
+
+def test_resets_zero_when_agent_does_nothing() -> None:
+    """Non-resetting StubAgent → resets remains 0 (or None coerced to 0)."""
+    from bench.runner import run_single_game
+
+    canned = {"tw09": [(0, True, 5)]}
+    agent = StubAgent(canned)
+    score, _, _, err = run_single_game(agent, "tw09")
+    assert err is None
+    # StubAgent emits no actions → resets stays at 0.
+    assert (score.resets or 0) == 0

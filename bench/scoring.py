@@ -21,9 +21,17 @@ Multi-run (`aggregate_runs`):
 
 from __future__ import annotations
 
-from typing import Iterable, List, Mapping, Optional, Sequence
+from collections import defaultdict
+from typing import Dict, Iterable, List, Mapping, Optional, Sequence
 
-from .types import AgentRunResult, WitnessGameInfo, WitnessGameState, WitnessScore
+from .types import (
+    AgentRunResult,
+    GameReportEntry,
+    TagScore,
+    WitnessGameInfo,
+    WitnessGameState,
+    WitnessScore,
+)
 
 
 SCORE_CAP: float = 115.0
@@ -168,6 +176,51 @@ def first_n_hit_counts(
     "first-N hit rate" reporting.
     """
     return {k: sum(1 for s in scores if s.levels_completed >= k) for k in cutoffs}
+
+
+def compute_tag_scores(
+    games: Sequence[GameReportEntry],
+    infos: Mapping[str, WitnessGameInfo],
+) -> Dict[str, TagScore]:
+    """Aggregate per-game scores into per-tag summaries.
+
+    Each `WitnessGameInfo.tags` entry generates a tag bucket; the bucket's
+    `mean_score` is the arithmetic mean of constituent per-game scores.
+
+    Why mean (vs weighted by levels_total, or max-aggregate):
+      Per-game scores are already weighted by 1-based level_index *within
+      each game*. Averaging across games equally-weights games — consistent
+      with how `BenchmarkSummary.overall_score` is computed. This makes a
+      tag score interpretable as "average score on games tagged X".
+
+    Note: this differs from `arc_agi.scorecard.EnvironmentScorecard.tags_scores`,
+    which feeds tag's per-level outcomes into a single
+    `EnvironmentScoreCalculator`. We use the simpler mean here because:
+    (a) tag groups in witness are small (1-3 games each), and
+    (b) the per-level data needed for level-index weighting across games
+        would require a separate calc per tag — fine for v2 if needed.
+    """
+    by_tag: Dict[str, List[GameReportEntry]] = defaultdict(list)
+    for entry in games:
+        info = infos.get(entry.game_id)
+        if info is None or not info.tags:
+            continue
+        for tag in info.tags:
+            by_tag[tag].append(entry)
+
+    out: Dict[str, TagScore] = {}
+    for tag, entries in by_tag.items():
+        total_lvls = sum(infos[e.game_id].scoreable_levels for e in entries)
+        out[tag] = TagScore(
+            tag=tag,
+            mean_score=sum(e.score.score for e in entries) / len(entries),
+            total_games=len(entries),
+            total_levels_completed=sum(e.score.levels_completed for e in entries),
+            total_levels=total_lvls,
+            total_actions=sum(e.score.actions for e in entries),
+            game_ids=sorted(e.game_id for e in entries),
+        )
+    return out
 
 
 def aggregate_runs(scores_by_run: Sequence[WitnessScore]) -> WitnessScore:
