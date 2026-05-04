@@ -1,9 +1,9 @@
 """Agent protocol the benchmark expects.
 
 Any object implementing `AgentProtocol.run_on_game()` can be evaluated by
-`bench.runner.run_batch()`. The arc-witness-agent repo provides
-`agent.adapters.eval_adapter.AgentCoreRunner` as a reference adapter that
-wraps the existing `AgentCore` to satisfy this protocol.
+`bench.runner.run_batch()`. Agents typically live outside this repo and
+provide their own adapter that wraps their internal run-on-game logic
+into an `AgentRunResult`.
 """
 
 from __future__ import annotations

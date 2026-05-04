@@ -10,11 +10,16 @@ from __future__ import annotations
 import logging
 import time
 import traceback
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from .catalog import list_games, load_game, load_game_info
 from .protocols import AgentProtocol
-from .scoring import compute_tag_scores, first_n_hit_counts, score_one_game
+from .scoring import (
+    aggregate_runs,
+    compute_tag_scores,
+    first_n_hit_counts,
+    score_one_game,
+)
 from .types import (
     AgentInfo,
     AgentRunResult,
@@ -212,4 +217,168 @@ def run_batch(
         games=entries,
         summary=summary,
         run_metadata=run_metadata or {},
+    )
+
+
+def run_batch_multi_seed(
+    agent: AgentProtocol,
+    game_ids: Optional[List[str]] = None,
+    seeds: Sequence[int] = (0,),
+    max_levels: Optional[int] = None,
+    verbose: bool = False,
+    agent_info: Optional[AgentInfo] = None,
+    run_metadata: Optional[Dict[str, Any]] = None,
+    on_game_done: Optional[Any] = None,
+) -> BenchmarkReport:
+    """Multi-seed evaluation: run the agent on each game with each seed,
+    then aggregate per-game results via MAX (per official ARC-AGI-3 SDK
+    behavior, `arc_agi.scorecard.EnvironmentScoreList.score = max(...)`).
+
+    Args:
+        agent: any AgentProtocol-conforming object.
+        game_ids: subset of games (None = all 13 witness games).
+        seeds: seeds to run. Single-seed shortcut: pass a one-element seq.
+        max_levels: per-game level cap.
+        verbose, agent_info, run_metadata: forwarded.
+        on_game_done: called per (seed, game) finish — useful for live logs.
+
+    Output BenchmarkReport.games[i].score is the MAX-aggregate over runs;
+    per-run details are preserved in `games[i].legacy["per_run_scores"]`,
+    `["per_run_elapsed"]`, `["per_run_errors"]`, with `["best_run_idx"]` and
+    `["per_run_seeds"]` for traceability. `run_metadata` gains `"seeds"`
+    and `"n_runs"`.
+
+    Single-seed shortcut: `len(seeds) == 1` delegates to `run_batch` so the
+    output shape is identical to the single-run path.
+    """
+    if not seeds:
+        raise ValueError("seeds must be non-empty")
+    if game_ids is None:
+        game_ids = list_games()
+
+    seeds = list(seeds)
+    n_runs = len(seeds)
+
+    # Single-seed shortcut: identical behavior to run_batch.
+    if n_runs == 1:
+        return run_batch(
+            agent=agent,
+            game_ids=game_ids,
+            seed=seeds[0],
+            max_levels=max_levels,
+            verbose=verbose,
+            agent_info=agent_info,
+            run_metadata={
+                **(run_metadata or {}),
+                "seeds": seeds,
+                "n_runs": 1,
+            },
+            on_game_done=on_game_done,
+        )
+
+    # Multi-seed: collect results in (game, run) buckets.
+    per_game_scores: Dict[str, List[WitnessScore]] = {gid: [] for gid in game_ids}
+    per_game_extras: Dict[str, List[Dict[str, Any]]] = {gid: [] for gid in game_ids}
+    per_game_elapsed: Dict[str, List[float]] = {gid: [] for gid in game_ids}
+    per_game_errors: Dict[str, List[Optional[str]]] = {gid: [] for gid in game_ids}
+
+    total_t0 = time.perf_counter()
+
+    for seed_idx, seed in enumerate(seeds, 1):
+        log.info("=== Run %d/%d (seed=%d) ===", seed_idx, n_runs, seed)
+        for game_idx, gid in enumerate(game_ids, 1):
+            log.info("  [%d/%d] seed=%d %s", game_idx, len(game_ids), seed, gid)
+            score, extras, elapsed, err = run_single_game(
+                agent,
+                gid,
+                seed=seed,
+                max_levels=max_levels,
+                verbose=verbose,
+            )
+            per_game_scores[gid].append(score)
+            per_game_extras[gid].append(extras)
+            per_game_elapsed[gid].append(elapsed)
+            per_game_errors[gid].append(err)
+
+            if on_game_done is not None:
+                try:
+                    on_game_done(gid, score, elapsed, err)
+                except Exception:
+                    log.warning(
+                        "on_game_done callback raised:\n%s", traceback.format_exc()
+                    )
+
+    total_elapsed = time.perf_counter() - total_t0
+
+    # Aggregate per game (MAX over runs).
+    infos = {gid: load_game_info(gid) for gid in game_ids}
+    entries: List[GameReportEntry] = []
+    aggregated_scores: List[WitnessScore] = []
+
+    for gid in game_ids:
+        scores = per_game_scores[gid]
+        agg = aggregate_runs(scores)
+
+        # Best-run index = argmax over per-run score (ties → earliest)
+        best_run_idx = max(range(len(scores)), key=lambda i: scores[i].score)
+        best_run_extras = per_game_extras[gid][best_run_idx]
+        best_run_elapsed = per_game_elapsed[gid][best_run_idx]
+
+        # Error reporting: only flag the game as errored if EVERY run errored.
+        # Otherwise the agent succeeded at least once → success.
+        errors_seen = per_game_errors[gid]
+        all_errored = all(e is not None for e in errors_seen)
+        err_msg: Optional[str]
+        if all_errored:
+            err_msg = "; ".join(set(e for e in errors_seen if e))
+        else:
+            err_msg = None
+
+        entries.append(
+            GameReportEntry(
+                game_id=gid,
+                score=agg,
+                elapsed_s=best_run_elapsed,
+                error=err_msg,
+                legacy={
+                    "agent_extras": best_run_extras,
+                    "per_run_seeds": list(seeds),
+                    "per_run_scores": [
+                        s.model_dump(exclude_none=True) for s in scores
+                    ],
+                    "per_run_elapsed": list(per_game_elapsed[gid]),
+                    "per_run_errors": list(per_game_errors[gid]),
+                    "best_run_idx": best_run_idx,
+                },
+            )
+        )
+        aggregated_scores.append(agg)
+
+    summary = BenchmarkSummary(
+        total_games=len(entries),
+        successful_games=sum(1 for e in entries if e.error is None),
+        total_levels_completed=sum(s.levels_completed for s in aggregated_scores),
+        total_levels=sum(s.levels_total for s in aggregated_scores),
+        total_actions=sum(s.actions for s in aggregated_scores),
+        total_resets=sum((s.resets or 0) for s in aggregated_scores),
+        total_elapsed_s=total_elapsed,
+        overall_score=(
+            sum(s.score for s in aggregated_scores) / len(aggregated_scores)
+            if aggregated_scores
+            else 0.0
+        ),
+        first_n_completed=first_n_hit_counts(aggregated_scores),
+        tag_scores=compute_tag_scores(entries, infos),
+    )
+
+    return BenchmarkReport(
+        agent=agent_info or AgentInfo(name="unknown"),
+        seed=seeds[0],  # primary seed; full list in run_metadata
+        games=entries,
+        summary=summary,
+        run_metadata={
+            **(run_metadata or {}),
+            "seeds": list(seeds),
+            "n_runs": n_runs,
+        },
     )

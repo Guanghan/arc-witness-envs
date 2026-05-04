@@ -92,8 +92,9 @@ class WitnessScore(BaseModel):
 class AgentRunResult(BaseModel):
     """What an agent must return after running a single game.
 
-    Designed so the existing arc-witness-agent `GameMetrics` is trivially
-    convertible (see `agent/adapters/eval_adapter.py` in the agent repo).
+    Agent-side wrappers convert their internal per-game metrics into this
+    shape: a `levels` list of `LevelOutcome`s, total action / reset counts,
+    terminal state, and free-form `extra` for telemetry the scorer ignores.
     """
 
     game_id: str

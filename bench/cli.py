@@ -5,9 +5,10 @@ Examples:
     python -m bench --agent some.module:AgentClass --games tw01 tw02 -o out.json
     python -m bench --agent module:Factory --agent-args '{"config":...}' --max-levels 2
 
-For real evaluation runs of arc-witness-agent's AgentCore (which expects a
-config dict), prefer `arc-witness-agent/evaluate.py` — it loads the YAML
-config and constructs the agent for you.
+If your agent has a complex config mechanism (YAML files, env vars, etc.),
+write a thin agent-side wrapper that loads config and calls
+`bench.runner.run_batch` programmatically — this CLI is best for stateless
+or config-light agents.
 """
 
 from __future__ import annotations
@@ -21,7 +22,7 @@ import time
 from typing import Any, Optional
 
 from .catalog import list_games
-from .runner import run_batch
+from .runner import run_batch, run_batch_multi_seed
 from .types import AgentInfo
 
 
@@ -54,7 +55,12 @@ def main(argv: Optional[list] = None) -> int:
     p.add_argument("--agent", help="Agent factory: 'module.path:ClassOrFunc'")
     p.add_argument("--agent-args", default="{}", help="JSON kwargs passed to agent factory")
     p.add_argument("--games", nargs="+", default=None, help="Subset of games to run")
-    p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--seed", type=int, default=0,
+                   help="Single-run seed (ignored if --n-runs/--seeds given)")
+    p.add_argument("--n-runs", type=int, default=1,
+                   help="Number of seeds to run; aggregates per-game via MAX")
+    p.add_argument("--seeds", nargs="+", type=int, default=None,
+                   help="Explicit seed list (overrides --n-runs)")
     p.add_argument("--max-levels", type=int, default=None)
     p.add_argument("--verbose", "-v", action="store_true")
     p.add_argument("--output", "-o", default=None, help="Output JSON path")
@@ -84,13 +90,21 @@ def main(argv: Optional[list] = None) -> int:
 
     agent = _load_agent(args.agent, agent_args)
 
-    print(f"\nAgent: {args.agent}")
-    print(f"Games: {args.games or 'ALL ' + str(len(list_games()))}\n")
+    # Resolve seed strategy: --seeds wins; else --n-runs N → range(N); else single --seed.
+    if args.seeds is not None:
+        seeds = list(args.seeds)
+    elif args.n_runs > 1:
+        seeds = list(range(args.n_runs))
+    else:
+        seeds = [args.seed]
 
-    report = run_batch(
+    print(f"\nAgent: {args.agent}")
+    print(f"Games: {args.games or 'ALL ' + str(len(list_games()))}")
+    print(f"Seeds: {seeds} ({len(seeds)} run{'s' if len(seeds) > 1 else ''})\n")
+
+    common_kwargs = dict(
         agent=agent,
         game_ids=args.games,
-        seed=args.seed,
         max_levels=args.max_levels,
         verbose=args.verbose,
         agent_info=AgentInfo(name=args.agent, extras={"agent_args": agent_args}),
@@ -99,6 +113,11 @@ def main(argv: Optional[list] = None) -> int:
             _format_progress(gid, score, elapsed, err), flush=True
         ),
     )
+
+    if len(seeds) == 1:
+        report = run_batch(seed=seeds[0], **common_kwargs)
+    else:
+        report = run_batch_multi_seed(seeds=seeds, **common_kwargs)
 
     out = args.output or f"bench_eval_{time.strftime('%Y%m%d_%H%M%S')}.json"
     with open(out, "w") as f:

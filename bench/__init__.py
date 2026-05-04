@@ -37,7 +37,7 @@ from .scoring import (
 )
 from .catalog import GAME_CLASSES, list_games, load_game, load_game_info
 from .protocols import AgentProtocol
-from .runner import run_batch, run_single_game
+from .runner import run_batch, run_batch_multi_seed, run_single_game
 
 __all__ = [
     "AgentInfo",
@@ -60,6 +60,7 @@ __all__ = [
     "load_game",
     "load_game_info",
     "run_batch",
+    "run_batch_multi_seed",
     "run_single_game",
     "score_one_game",
 ]

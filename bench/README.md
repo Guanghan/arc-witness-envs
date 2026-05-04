@@ -13,9 +13,9 @@ as pluggable consumers**. This makes:
 
 - Multi-agent comparison apples-to-apples (same scoring formula for every
   agent).
-- Scoring updates a single-source change (you don't have N agent repos to
-  keep in sync).
-- The benchmark publishable / open-sourceable on its own.
+- Scoring updates a single-source change.
+- The benchmark publishable / shareable on its own — agents do not need to
+  be in this repo (or visible to it) to be evaluated.
 
 ## Module layout
 
@@ -100,8 +100,10 @@ actions_taken, ...)` (0-based). The runner overrides `baseline_actions`
 from `WitnessGameInfo.baseline_actions[i]` before scoring, so agents
 **never** need to know the benchmark's baselines.
 
-See `arc-witness-agent/agent/adapters/eval_adapter.py` for a reference
-adapter that wraps the existing `AgentCore` to satisfy this protocol.
+A reference implementation pattern: instantiate a fresh agent per game
+inside `run_on_game`, run it on the supplied `game` object, then convert
+your agent's internal metrics to `AgentRunResult` (mapping per-level
+completion + action counts; the runner fills in baselines).
 
 ## CLI usage
 
@@ -115,7 +117,7 @@ python -m bench --list-games
 ### Run a custom agent against the benchmark
 
 ```bash
-PYTHONPATH=arc-witness-envs python -m bench \
+PYTHONPATH=path/to/arc-witness-envs python -m bench \
     --agent some.module:AgentClass \
     --agent-args '{"config": {...}}' \
     --games tw01 tw02 \
@@ -123,8 +125,11 @@ PYTHONPATH=arc-witness-envs python -m bench \
     -o eval_results/myagent.json
 ```
 
-For ARC-Agent v2 specifically, prefer `arc-witness-agent/evaluate.py` —
-it loads the YAML config and constructs `AgentCoreRunner` for you.
+If your agent has its own configuration mechanism (YAML files, env vars,
+etc.), it's usually cleaner to write a thin agent-side wrapper script that
+loads your config, constructs your agent, and calls
+`bench.runner.run_batch` programmatically — see "Programmatic usage"
+below. The CLI here is best for stateless / config-light agents.
 
 ## Programmatic usage
 
@@ -175,11 +180,11 @@ with open("eval_results/myagent.json", "w") as f:
 }
 ```
 
-For backward compatibility with arc-witness-agent's existing analysis
-scripts, `arc-witness-agent/evaluate.py` writes a **dual-shape** JSON:
-new bench fields PLUS legacy keys (`summary.total_levels` reverts to the
-pre-refactor denominator, per-game `metrics` field is preserved). See
-`arc-witness-agent/docs/evaluation-custom-vs-official.md`.
+Agent-side wrappers may augment this JSON with their own legacy fields
+(e.g., to preserve backward compatibility with pre-existing analysis
+scripts). The bench output above is the authoritative shape; consumers
+that only read bench fields can ignore any additional keys an agent
+chooses to write.
 
 ## Running the tests
 
@@ -201,17 +206,44 @@ requires `arc_agi` to be installed (it is in the agent venv).
   `scoring.py` produces per-tag mean-of-game-scores. Exposed as
   `BenchmarkSummary.tag_scores: Dict[str, TagScore]`. CLI: `--tag-breakdown`
   prints a sorted per-tag table.
+- ✅ **Multi-run / multi-seed evaluation** (2026-05-04) —
+  `run_batch_multi_seed()` runs the agent across multiple seeds and
+  aggregates per-game results via MAX (matching
+  `arc_agi.scorecard.EnvironmentScoreList.score = max(...)`). Per-run
+  details (scores, elapsed, errors, best_run_idx) preserved in
+  `GameReportEntry.legacy`. CLI flags: `--n-runs N` for sequential seeds
+  `0..N-1`, or `--seeds 0 7 42` for explicit list. Single-seed shortcut
+  (`len(seeds) == 1`) delegates to `run_batch` for identical output shape.
+
+### Multi-run usage
+
+```bash
+# 5 sequential seeds (0..4), best-of-5 per game
+python -m bench --agent your.module:Agent --n-runs 5
+
+# Explicit seed list
+python -m bench --agent your.module:Agent --seeds 0 7 42 100
+
+# In your output JSON:
+# games[i].score          → MAX-aggregated WitnessScore
+# games[i].legacy.per_run_scores  → list of per-run WitnessScore dumps
+# games[i].legacy.best_run_idx    → index into seeds[] of best run
+# run_metadata.seeds              → [0, 7, 42, 100]
+# run_metadata.n_runs             → 4
+```
 
 ## Open / deferred items
 
-- **Multi-run support in CLI** (`--n-runs N`, max-aggregate via
-  `aggregate_runs()`). Function is shipped + tested, just not yet wired
-  to CLI. Defer until variance estimate is needed for a paper / leaderboard
-  submission.
 - **Per-level resets**. Currently per-game only. Add when agent-internal
-  reset accounting is needed (e.g., to detect tw09/tw10-style reset loops
-  per level).
+  reset accounting is needed (e.g., to detect reset-loop bugs per level).
 - **`level_tags` / `private_tags`** aggregation. Fields present in
   `WitnessGameInfo` but not yet populated in metadata.json.
 - **ARC-AGI-3 SDK games** (`ls20`, `ft09`, `vc33`) are out of scope for
-  this CLI — see `arc-witness-agent/evaluate_arc_agi_agent.py`.
+  this CLI. Those use the official `arc_agi.Arcade` env wrapper directly;
+  evaluating against them is an agent-side concern. A future enhancement
+  could add an `--include-arc-sdk-games` knob and route to
+  `arc_agi.scorecard.EnvironmentScoreCalculator`.
+- **Parallel multi-run execution.** Current `run_batch_multi_seed` is
+  sequential (seed-major). For independent stateless agents it could
+  parallelize, but agents that share state (e.g., persistent caches)
+  would break. Out of scope for v1.
