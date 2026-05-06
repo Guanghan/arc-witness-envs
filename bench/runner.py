@@ -78,6 +78,7 @@ def run_single_game(
     seed: int = 0,
     max_levels: Optional[int] = None,
     verbose: bool = False,
+    score_cap: Optional[int] = None,
 ) -> Tuple[WitnessScore, Dict[str, Any], float, Optional[str]]:
     """Run an agent on a single game and score the result.
 
@@ -96,7 +97,7 @@ def run_single_game(
     except Exception as e:
         log.exception("[%s] failed to load game", game_id)
         return (
-            _zero_score(game_id, info.scoreable_levels),
+            _zero_score(game_id, min(info.scoreable_levels, score_cap) if score_cap and score_cap > 0 else info.scoreable_levels),
             {},
             time.perf_counter() - t0,
             f"load_game: {type(e).__name__}: {e}",
@@ -117,7 +118,7 @@ def run_single_game(
     except Exception as e:
         log.exception("[%s] agent runtime error", game_id)
         return (
-            _zero_score(game_id, info.scoreable_levels),
+            _zero_score(game_id, min(info.scoreable_levels, score_cap) if score_cap and score_cap > 0 else info.scoreable_levels),
             {},
             time.perf_counter() - t0,
             f"{type(e).__name__}: {e}",
@@ -131,7 +132,7 @@ def run_single_game(
             lo.baseline_actions = info.baseline_actions[lo.level_index]
     result.resets = counting_game.reset_count
 
-    score = score_one_game(info, result)
+    score = score_one_game(info, result, score_cap=score_cap)
     return score, dict(result.extra), time.perf_counter() - t0, None
 
 
@@ -144,6 +145,7 @@ def run_batch(
     agent_info: Optional[AgentInfo] = None,
     run_metadata: Optional[Dict[str, Any]] = None,
     on_game_done: Optional[Any] = None,
+    score_cap: Optional[int] = None,
 ) -> BenchmarkReport:
     """Evaluate an agent across multiple games and produce a BenchmarkReport.
 
@@ -158,6 +160,12 @@ def run_batch(
         run_metadata: Free-form dict (CLI args, config snapshot, git sha).
         on_game_done: Optional callable(game_id, score, elapsed_s, error)
             called after each game finishes. Useful for live progress prints.
+        score_cap: Optional per-game level cap applied during scoring. When
+            set, only the first ``score_cap`` levels of each game are scored;
+            level-index weights for levels beyond the cap are excluded from
+            both numerator and denominator. Pair with a matching ``max_levels``
+            so the agent doesn't waste action budget on unscored levels.
+            Default ``None`` preserves SDK-equivalent full-game scoring.
     """
     if game_ids is None:
         game_ids = list_games()
@@ -177,6 +185,7 @@ def run_batch(
             seed=seed,
             max_levels=max_levels,
             verbose=verbose,
+            score_cap=score_cap,
         )
 
         entries.append(
@@ -208,7 +217,7 @@ def run_batch(
         total_elapsed_s=total_elapsed,
         overall_score=(sum(s.score for s in scores) / len(scores)) if scores else 0.0,
         first_n_completed=first_n_hit_counts(scores),
-        tag_scores=compute_tag_scores(entries, infos),
+        tag_scores=compute_tag_scores(entries, infos, score_cap=score_cap),
     )
 
     return BenchmarkReport(
@@ -229,6 +238,7 @@ def run_batch_multi_seed(
     agent_info: Optional[AgentInfo] = None,
     run_metadata: Optional[Dict[str, Any]] = None,
     on_game_done: Optional[Any] = None,
+    score_cap: Optional[int] = None,
 ) -> BenchmarkReport:
     """Multi-seed evaluation: run the agent on each game with each seed,
     then aggregate per-game results via MAX (per official ARC-AGI-3 SDK
@@ -274,6 +284,7 @@ def run_batch_multi_seed(
                 "n_runs": 1,
             },
             on_game_done=on_game_done,
+            score_cap=score_cap,
         )
 
     # Multi-seed: collect results in (game, run) buckets.
@@ -294,6 +305,7 @@ def run_batch_multi_seed(
                 seed=seed,
                 max_levels=max_levels,
                 verbose=verbose,
+                score_cap=score_cap,
             )
             per_game_scores[gid].append(score)
             per_game_extras[gid].append(extras)
@@ -368,7 +380,7 @@ def run_batch_multi_seed(
             else 0.0
         ),
         first_n_completed=first_n_hit_counts(aggregated_scores),
-        tag_scores=compute_tag_scores(entries, infos),
+        tag_scores=compute_tag_scores(entries, infos, score_cap=score_cap),
     )
 
     return BenchmarkReport(

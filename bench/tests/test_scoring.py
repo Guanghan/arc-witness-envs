@@ -176,6 +176,66 @@ def test_score_one_game_state_win_marks_completed() -> None:
     assert s.completed is True
 
 
+def test_score_one_game_score_cap_truncates_long_game() -> None:
+    """A 50-level game where the agent solves the first 3, scored with cap=10:
+    only the first 10 levels enter both numerator and denominator. The 47
+    unsolved levels beyond the cap don't dilute the score."""
+    info = WitnessGameInfo(
+        game_id="long",
+        baseline_actions=[10] * 50,
+        real_total_levels=50,
+    )
+    run = AgentRunResult(
+        game_id="long",
+        levels=[
+            LevelOutcome(level_index=0, completed=True, actions_taken=10),
+            LevelOutcome(level_index=1, completed=True, actions_taken=10),
+            LevelOutcome(level_index=2, completed=True, actions_taken=10),
+        ],
+        total_actions=30,
+        state=WitnessGameState.NOT_FINISHED,
+    )
+    # Without cap: weights 1..50 sum to 1275, max_score = 6/1275*100 ≈ 0.47
+    s_uncapped = score_one_game(info, run)
+    assert s_uncapped.levels_total == 50
+    assert math.isclose(s_uncapped.score, 6.0 / 1275 * 100, rel_tol=1e-9)
+
+    # With cap=10: weights 1..10 sum to 55, max_score = 6/55*100 ≈ 10.9
+    s_capped = score_one_game(info, run, score_cap=10)
+    assert s_capped.levels_total == 10
+    assert s_capped.levels_completed == 3
+    assert math.isclose(s_capped.score, 6.0 / 55 * 100, rel_tol=1e-9)
+
+
+def test_score_one_game_score_cap_zero_or_none_disables() -> None:
+    """score_cap=None and score_cap=0 are both no-ops (full game scored)."""
+    info = WitnessGameInfo(game_id="t", baseline_actions=[10, 10, 10])
+    run = AgentRunResult(
+        game_id="t",
+        levels=[LevelOutcome(level_index=0, completed=True, actions_taken=10)],
+        state=WitnessGameState.NOT_FINISHED,
+    )
+    s_none = score_one_game(info, run, score_cap=None)
+    s_zero = score_one_game(info, run, score_cap=0)
+    s_default = score_one_game(info, run)
+    assert s_none.levels_total == 3
+    assert s_zero.levels_total == 3
+    assert s_default.levels_total == 3
+    assert math.isclose(s_none.score, s_default.score)
+
+
+def test_score_one_game_score_cap_larger_than_game_is_noop() -> None:
+    """If cap exceeds game length, no truncation happens."""
+    info = WitnessGameInfo(game_id="t", baseline_actions=[10, 10])
+    run = AgentRunResult(
+        game_id="t",
+        levels=[LevelOutcome(level_index=0, completed=True, actions_taken=10)],
+        state=WitnessGameState.NOT_FINISHED,
+    )
+    s = score_one_game(info, run, score_cap=100)
+    assert s.levels_total == 2  # not 100
+
+
 # ── Helpers ──────────────────────────────────────────────────────────────
 
 

@@ -128,6 +128,7 @@ class WitnessScoreCalculator:
 def score_one_game(
     game_info: WitnessGameInfo,
     run: AgentRunResult,
+    score_cap: Optional[int] = None,
 ) -> WitnessScore:
     """Drive a `WitnessScoreCalculator` from an `AgentRunResult`.
 
@@ -135,6 +136,13 @@ def score_one_game(
     so missing levels score 0 (matching SDK behavior). The agent's
     `LevelOutcome.level_index` is treated as 0-based; the scorer adds +1
     to get SDK-style 1-based weights.
+
+    Args:
+        score_cap: If set (and > 0), only score the first ``score_cap`` levels
+            of the game. Levels beyond the cap are excluded from both the
+            numerator and the level-index-weighted denominator. Default
+            (``None``) preserves SDK-equivalent behavior of scoring every
+            level the game declares.
     """
     by_idx: Mapping[int, "AgentRunResult"] = {lo.level_index: lo for lo in run.levels}  # type: ignore[assignment]
 
@@ -144,7 +152,11 @@ def score_one_game(
         state=run.state,
     )
 
-    for level_idx in range(game_info.scoreable_levels):
+    n_levels = game_info.scoreable_levels
+    if score_cap is not None and score_cap > 0:
+        n_levels = min(n_levels, score_cap)
+
+    for level_idx in range(n_levels):
         baseline = game_info.baseline_actions[level_idx]
         outcome = by_idx.get(level_idx)
         if outcome is None:
@@ -181,6 +193,7 @@ def first_n_hit_counts(
 def compute_tag_scores(
     games: Sequence[GameReportEntry],
     infos: Mapping[str, WitnessGameInfo],
+    score_cap: Optional[int] = None,
 ) -> Dict[str, TagScore]:
     """Aggregate per-game scores into per-tag summaries.
 
@@ -209,8 +222,14 @@ def compute_tag_scores(
             by_tag[tag].append(entry)
 
     out: Dict[str, TagScore] = {}
+
+    def _capped_levels(info: WitnessGameInfo) -> int:
+        if score_cap is not None and score_cap > 0:
+            return min(info.scoreable_levels, score_cap)
+        return info.scoreable_levels
+
     for tag, entries in by_tag.items():
-        total_lvls = sum(infos[e.game_id].scoreable_levels for e in entries)
+        total_lvls = sum(_capped_levels(infos[e.game_id]) for e in entries)
         out[tag] = TagScore(
             tag=tag,
             mean_score=sum(e.score.score for e in entries) / len(entries),
