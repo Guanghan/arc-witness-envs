@@ -1,0 +1,29 @@
+# SkyPilot file_mounts exclusion patterns (rsync-style).
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Git internals (we use file_mounts not git on cluster)
+.git/
+
+# Local artifacts
+__pycache__/
+*.zip
+*.tar.gz
