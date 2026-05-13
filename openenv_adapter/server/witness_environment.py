@@ -89,9 +89,10 @@ class WitnessEnvironment(Environment):
       wrong CONFIRM → -0.1. Solving is always net positive even at
       3× baseline steps. Encourages efficiency without drowning the
       solve signal.
-    - "arc_score": solve → min(baseline/steps, 1.0) ∈ (0, 1].
-      Directly mirrors ARC-AGI-3 scoring. No step penalty.
-      Solve is always positive; efficiency gives higher reward.
+    - "arc_score": solve → min((baseline/steps)², 1.15) ∈ (0, 1.15].
+      Directly mirrors ARC-AGI-3 scoring (squared efficiency penalty,
+      capped at 1.15 for super-baseline solves). No step penalty.
+      Solve is always positive; efficiency gives quadratically higher reward.
     """
 
     def __init__(
@@ -234,9 +235,9 @@ class WitnessEnvironment(Environment):
             else:
                 reward = -0.01  # small constant, not scaled by baseline
         elif self._reward_mode == "arc_score":
-            # Mirrors ARC-AGI-3 scoring: min(baseline/steps, 1.0)
+            # Mirrors ARC-AGI-3 scoring: min((baseline/steps)^2, 1.15)
             if solved:
-                reward = min(baseline / self._step_count, 1.0)
+                reward = min((baseline / self._step_count) ** 2, 1.15)
             elif wrong_confirm:
                 reward = -0.1
             else:

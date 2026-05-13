@@ -160,7 +160,7 @@ Because arc-witness-envs implements the [OpenEnv](https://github.com/meta-pytorc
 |------|-------|------|---------------|----------|
 | `sparse` | +1.0 | 0 | 0 | Exploration-heavy algorithms (RND, ICM) |
 | `shaped` (default) | +1.0 | -0.01 | -0.1 | PPO, SAC — solve always net positive |
-| `arc_score` | min(baseline/steps, 1) | 0 | -0.1 | Directly mirrors ARC-AGI-3 scoring |
+| `arc_score` | min((baseline/steps)², 1.15) | 0 | -0.1 | Directly mirrors ARC-AGI-3 scoring |
 
 Key property: **solving a level is always a positive reward signal**, regardless of how many steps it took.
 
@@ -241,7 +241,7 @@ This repository provides **training environments** for the [ARC-AGI-3 competitio
 2. **Learn** — infer abstract constraints from visual feedback
 3. **Plan** — solve increasingly difficult levels within an action budget
 
-Scoring: `score = max(0, 1 - actions_taken / baseline_actions)` per level, averaged across all levels.
+Scoring (per level, ARC-AGI-3 official): `score_ℓ = min((baseline_actions / actions_taken)², 1.15) · 𝟙[level ℓ solved]`. The squared penalty makes efficiency matter quadratically — 2× the baseline gets 25% credit; 5× gets 4%. Solving with super-baseline efficiency earns up to a 15% bonus (cap 1.15). See `bench/README.md` for per-game weighted aggregation.
 
 ### Use with Your ARC-AGI-3 Agent
 
