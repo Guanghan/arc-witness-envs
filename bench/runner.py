@@ -34,6 +34,19 @@ from .types import (
 log = logging.getLogger(__name__)
 
 
+# Optional oversight toolbox (snapshot/fork/oracle). Import-guarded: when the
+# `oversight/` package is absent this falls back to identity, so bench scoring
+# is byte-identical with or without it (removability tripwire: GATE-R1).
+# OversightEnv is a transparent passthrough; it composes UNDER the reset
+# counter as _ResetCountingGame(OversightEnv(bare)) so snapshots only ever see
+# the bare game and the reset counter / scorecard stay structurally excluded.
+try:
+    from oversight import OversightEnv as _OversightEnv
+except ImportError:  # package removed -> no-op wrapper
+    def _OversightEnv(game):
+        return game
+
+
 class _ResetCountingGame:
     """Transparent proxy that counts RESET actions performed via the env.
 
@@ -104,8 +117,11 @@ def run_single_game(
         )
 
     # Wrap the game so we can authoritatively count RESETs at the bench
-    # boundary, regardless of whether the agent tracks them itself.
-    counting_game = _ResetCountingGame(raw_game)
+    # boundary, regardless of whether the agent tracks them itself. The
+    # inner _OversightEnv is a transparent passthrough (identity when the
+    # oversight package is absent), so this is byte-identical to wrapping
+    # raw_game directly.
+    counting_game = _ResetCountingGame(_OversightEnv(raw_game))
 
     try:
         result: AgentRunResult = agent.run_on_game(
