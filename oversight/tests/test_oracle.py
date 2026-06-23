@@ -106,6 +106,46 @@ def test_state_value_structure_and_honesty():
     assert snapshot(g).frame_hash == snap.frame_hash
 
 
+def test_batch_resolve_dryrun_reproduces():
+    """Re-solving validated levels reproduces solutions (mechanism check, dry-run)."""
+    rep = ORACLE.batch_resolve("tw01", levels=[0, 1], only_unsolved=False, timeout=10.0)
+    assert rep["game_id"] == "tw01" and rep["attempted"] == 2
+    statuses = {r["level"]: r["status"] for r in rep["results"]}
+    assert statuses[0] == "solved" and statuses[1] == "solved"
+    assert rep["solved"] == 2
+
+
+def test_batch_resolve_skips_already_solved():
+    """only_unsolved=True marks validated levels 'already' without re-solving."""
+    rep = ORACLE.batch_resolve("tw01", levels=[0], only_unsolved=True)
+    assert rep["attempted"] == 0
+    assert rep["results"][0]["status"] == "already"
+
+
+def test_batch_resolve_persist(tmp_path):
+    """persist=True writes solutions back to a (temp-copied) levels JSON."""
+    import json
+    import os
+    import shutil
+
+    os.makedirs(tmp_path / "levels")
+    os.makedirs(tmp_path / "environment_files" / "tw01")
+    shutil.copy(os.path.join(ORACLE._root, "levels", "tw01_levels.json"),
+                tmp_path / "levels" / "tw01_levels.json")
+    shutil.copy(os.path.join(ORACLE._root, "environment_files", "tw01", "metadata.json"),
+                tmp_path / "environment_files" / "tw01" / "metadata.json")
+
+    orc = WitnessOracle(repo_root=str(tmp_path))
+    rep = orc.batch_resolve("tw01", levels=[0], only_unsolved=False, timeout=10.0, persist=True)
+    assert rep["solved"] == 1
+
+    with open(tmp_path / "levels" / "tw01_levels.json") as f:
+        doc = json.load(f)
+    assert doc["levels"][0]["solution_actions"], "persisted solution missing"
+    assert doc["levels"][0]["validated"] is True
+    assert doc["levels"][0]["solution_actions"][-1] == 5  # CONFIRM-terminated
+
+
 def test_solve_now_roundtrip():
     """solve_now re-derives a CONFIRM-terminated winning sequence for a solver
     game, and returns None for a no-solver game (tw09/tw10)."""

@@ -19,6 +19,7 @@ Coverage is lumpy — be explicit, never hide it behind an aggregate:
 from __future__ import annotations
 
 import json
+import math
 import os
 import random
 from dataclasses import dataclass
@@ -151,6 +152,65 @@ class WitnessOracle:
         if not res.get("valid") or res.get("solution") is None:
             return None
         return solution_to_actions(res["solution"])
+
+    def batch_resolve(
+        self,
+        game_id: str,
+        levels: Optional[List[int]] = None,
+        timeout: float = 10.0,
+        only_unsolved: bool = True,
+        persist: bool = False,
+    ) -> dict:
+        """Re-solve levels with the IDDFS solver (typically a longer timeout
+        than extraction used) to lift oracle coverage on the weak games.
+
+        Returns a report {game_id, attempted, solved, results:[{level, status,
+        n_actions}]}. ``only_unsolved`` skips levels that already carry a
+        solution. ``persist=True`` writes solution_actions/moves/baseline/
+        validated back to ``levels/<game>_levels.json`` (default: dry-run).
+        """
+        entries = self._levels(game_id)
+        idxs = list(levels) if levels is not None else list(range(len(entries)))
+        results: List[dict] = []
+        solved = 0
+        attempted = 0
+        for i in idxs:
+            if not 0 <= i < len(entries):
+                continue
+            e = entries[i]
+            if only_unsolved and e.get("solution_actions"):
+                results.append({"level": i, "status": "already",
+                                "n_actions": len(e["solution_actions"])})
+                continue
+            attempted += 1
+            acts = self.solve_now(game_id, i, timeout=timeout)
+            if acts:
+                solved += 1
+                results.append({"level": i, "status": "solved", "n_actions": len(acts)})
+                if persist:
+                    e["solution_actions"] = acts
+                    e["moves"] = len(acts) - 1  # path steps (CONFIRM excluded)
+                    e["baseline"] = math.ceil(len(acts) * 1.2)
+                    e["validated"] = True
+            else:
+                results.append({"level": i, "status": "unsolved", "n_actions": 0})
+        if persist and solved:
+            self._persist(game_id)
+        return {"game_id": game_id, "attempted": attempted, "solved": solved,
+                "results": results}
+
+    def _persist(self, game_id: str) -> None:
+        """Write the (possibly mutated) cached levels back to disk, refreshing
+        the validated/unvalidated counts in the outer doc."""
+        path = os.path.join(self._root, "levels", f"{game_id}_levels.json")
+        with open(path) as f:
+            doc = json.load(f)
+        levels = self._levels(game_id)
+        doc["levels"] = levels
+        doc["total_validated"] = sum(1 for L in levels if L.get("validated"))
+        doc["total_unvalidated"] = sum(1 for L in levels if not L.get("validated"))
+        with open(path, "w") as f:
+            json.dump(doc, f, indent=2)
 
     def state_value(
         self,
