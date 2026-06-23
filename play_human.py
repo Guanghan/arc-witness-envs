@@ -196,6 +196,18 @@ def add_frontend_routes(arcade, app):
             return jsonify({"error": "Episode not found"}), 404
         return jsonify(ep.model_dump())
 
+    # Optional interactive oversight routes (snapshot / fork / restore / step on
+    # a server-side oversight game, independent of the SDK play env). OFF by
+    # default; opt in with WITNESS_OVERSIGHT_ROUTES=1 (Decision #4 — don't widen
+    # the public HTTP surface near the Kaggle boundary unless explicitly wanted).
+    if os.getenv("WITNESS_OVERSIGHT_ROUTES") == "1":
+        try:
+            from oversight.web_routes import register_oversight_routes
+            register_oversight_routes(app)
+            print("[oversight] interactive routes registered at /api/oversight/*")
+        except Exception as e:
+            print(f"[oversight] routes NOT registered: {e}")
+
 
 def main():
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8001
