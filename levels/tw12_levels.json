@@ -41,7 +41,7 @@
           "0,2": 6
         }
       },
-      "baseline": 11,
+      "baseline": 27,
       "moves": 8,
       "solution_actions": [
         1,
@@ -187,7 +187,7 @@
           "0,3": 6
         }
       },
-      "baseline": 18,
+      "baseline": 45,
       "moves": 14,
       "solution_actions": [
         1,
@@ -328,7 +328,7 @@
           "1,2": 2
         }
       },
-      "baseline": 18,
+      "baseline": 45,
       "moves": 14,
       "solution_actions": [
         1,
@@ -685,7 +685,7 @@
           "4,4": 6
         }
       },
-      "baseline": 29,
+      "baseline": 72,
       "moves": 23,
       "solution_actions": [
         4,
@@ -756,7 +756,7 @@
           "1,1": 3
         }
       },
-      "baseline": 8,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:570",
@@ -820,7 +820,7 @@
           }
         }
       },
-      "baseline": 8,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1022",
@@ -866,7 +866,7 @@
           "2,2": 6
         }
       },
-      "baseline": 11,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "witness:108",
@@ -907,7 +907,7 @@
           "1,1": 1
         }
       },
-      "baseline": 11,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:398",
@@ -966,7 +966,7 @@
           "1,2": 2
         }
       },
-      "baseline": 11,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1026",
@@ -1009,7 +1009,7 @@
           "1,1": 3
         }
       },
-      "baseline": 11,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1201",
@@ -1044,7 +1044,7 @@
           "2,1": 2
         }
       },
-      "baseline": 11,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1282",
@@ -1100,7 +1100,7 @@
           "2,2": 10
         }
       },
-      "baseline": 11,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1513",
@@ -1204,7 +1204,7 @@
           }
         }
       },
-      "baseline": 11,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1778",
@@ -1291,7 +1291,7 @@
           "2,2": 6
         }
       },
-      "baseline": 11,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2360",
@@ -1337,7 +1337,7 @@
           }
         }
       },
-      "baseline": 12,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:272",
@@ -1453,7 +1453,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:989",
@@ -1633,7 +1633,7 @@
           }
         }
       },
-      "baseline": 12,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1520",
@@ -1722,7 +1722,7 @@
           "5,1": 2
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1579",
@@ -1774,7 +1774,7 @@
           "2,1": 3
         }
       },
-      "baseline": 12,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1581",
@@ -1876,7 +1876,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:160",
@@ -1919,7 +1919,7 @@
           "2,4": 3
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1122",
@@ -2011,7 +2011,7 @@
           "0,4": 10
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2183",
@@ -2053,7 +2053,7 @@
           "0,3": 6
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "witness:109",
@@ -2097,7 +2097,7 @@
           "3,3": 6
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "witness:110",
@@ -2137,7 +2137,7 @@
           "3,3": 2
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:0",
@@ -2259,7 +2259,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:21",
@@ -2457,7 +2457,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:83",
@@ -2589,7 +2589,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:446",
@@ -2781,7 +2781,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:494",
@@ -2903,7 +2903,7 @@
           "3,3": 10
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:564",
@@ -3057,7 +3057,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:675",
@@ -3209,7 +3209,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:799",
@@ -3256,7 +3256,7 @@
           "0,2": 1
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1020",
@@ -3416,7 +3416,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1088",
@@ -3514,7 +3514,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1163",
@@ -3682,7 +3682,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1164",
@@ -3838,7 +3838,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1167",
@@ -3886,7 +3886,7 @@
           "3,3": 2
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1179",
@@ -3976,7 +3976,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1245",
@@ -4114,7 +4114,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1262",
@@ -4212,7 +4212,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1266",
@@ -4248,7 +4248,7 @@
           "3,3": 6
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1269",
@@ -4320,7 +4320,7 @@
           "1,2": 2
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1290",
@@ -4392,7 +4392,7 @@
           "1,2": 2
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1292",
@@ -4492,7 +4492,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1311",
@@ -4560,7 +4560,7 @@
           "3,3": 2
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1357",
@@ -4622,7 +4622,7 @@
           "3,3": 1
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1578",
@@ -4746,7 +4746,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1605",
@@ -5034,7 +5034,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1672",
@@ -5198,7 +5198,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1673",
@@ -5354,7 +5354,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1900",
@@ -5488,7 +5488,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1947",
@@ -5590,7 +5590,7 @@
           "2,2": 2
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1952",
@@ -5776,7 +5776,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1971",
@@ -5886,7 +5886,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2106",
@@ -5972,7 +5972,7 @@
           }
         }
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2399",
@@ -6072,7 +6072,7 @@
           "5,1": 2
         }
       },
-      "baseline": 15,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:655",
@@ -6116,7 +6116,7 @@
           "4,3": 3
         }
       },
-      "baseline": 15,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:424",
@@ -6284,7 +6284,7 @@
           }
         }
       },
-      "baseline": 15,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:957",
@@ -6430,7 +6430,7 @@
           "1,3": 6
         }
       },
-      "baseline": 15,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1014",
@@ -6512,7 +6512,7 @@
           }
         }
       },
-      "baseline": 15,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1296",
@@ -6652,7 +6652,7 @@
           "0,4": 10
         }
       },
-      "baseline": 15,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1636",
@@ -6793,7 +6793,7 @@
           }
         }
       },
-      "baseline": 15,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1836",
@@ -6835,7 +6835,7 @@
           "2,4": 6
         }
       },
-      "baseline": 15,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2171",
@@ -7025,7 +7025,7 @@
           }
         }
       },
-      "baseline": 15,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2395",
@@ -7067,7 +7067,7 @@
           "6,2": 2
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:324",
@@ -7153,7 +7153,7 @@
           "4,3": 2
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:644",
@@ -7239,7 +7239,7 @@
           "4,3": 2
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:645",
@@ -7355,7 +7355,7 @@
           "3,5": 2
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:716",
@@ -7453,7 +7453,7 @@
           "2,5": 6
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:825",
@@ -7521,7 +7521,7 @@
           "3,5": 2
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:924",
@@ -7595,7 +7595,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1181",
@@ -7699,7 +7699,7 @@
           "2,4": 2
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1399",
@@ -7737,7 +7737,7 @@
           "1,4": 3
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1853",
@@ -7831,7 +7831,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2124",
@@ -7891,7 +7891,7 @@
           "4,4": 6
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "witness:111",
@@ -8179,7 +8179,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:19",
@@ -8443,7 +8443,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:44",
@@ -8543,7 +8543,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:68",
@@ -8639,7 +8639,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:70",
@@ -8779,7 +8779,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:76",
@@ -8860,7 +8860,7 @@
           "3,2": 6
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:122",
@@ -9030,7 +9030,7 @@
           "3,3": 6
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:136",
@@ -9200,7 +9200,7 @@
           "4,4": 6
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:161",
@@ -9430,7 +9430,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:164",
@@ -9600,7 +9600,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:226",
@@ -9652,7 +9652,7 @@
           "3,2": 10
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:298",
@@ -9817,7 +9817,7 @@
           "4,4": 6
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:333",
@@ -10160,7 +10160,7 @@
           "2,0": 6
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:338",
@@ -10398,7 +10398,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:389",
@@ -10595,7 +10595,7 @@
           "2,3": 10
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:396",
@@ -10765,7 +10765,7 @@
           "1,4": 2
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:497",
@@ -11043,7 +11043,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:507",
@@ -11309,7 +11309,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:509",
@@ -11519,7 +11519,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:519",
@@ -11585,7 +11585,7 @@
           "3,4": 2
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:553",
@@ -11721,7 +11721,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:558",
@@ -11857,7 +11857,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:559",
@@ -12085,7 +12085,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:659",
@@ -12256,7 +12256,7 @@
           "0,4": 10
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:753",
@@ -12415,7 +12415,7 @@
           "0,4": 10
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:755",
@@ -12496,7 +12496,7 @@
           "4,4": 10
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:756",
@@ -12750,7 +12750,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:793",
@@ -12842,7 +12842,7 @@
           "4,1": 2
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:811",
@@ -12909,7 +12909,7 @@
           "3,4": 3
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:874",
@@ -12976,7 +12976,7 @@
           "3,4": 3
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:875",
@@ -13080,7 +13080,7 @@
           "2,4": 10
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:933",
@@ -13318,7 +13318,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1124",
@@ -13548,7 +13548,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1187",
@@ -13683,7 +13683,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1242",
@@ -13774,7 +13774,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1243",
@@ -13913,7 +13913,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1302",
@@ -14049,7 +14049,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1425",
@@ -14417,7 +14417,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1428",
@@ -14623,7 +14623,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1439",
@@ -14843,7 +14843,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1447",
@@ -15021,7 +15021,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1463",
@@ -15167,7 +15167,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1694",
@@ -15259,7 +15259,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1750",
@@ -15349,7 +15349,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1841",
@@ -15469,7 +15469,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1845",
@@ -15801,7 +15801,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1978",
@@ -15903,7 +15903,7 @@
           "4,4": 6
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2019",
@@ -16005,7 +16005,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2086",
@@ -16078,7 +16078,7 @@
           "4,3": 6
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2104",
@@ -16269,7 +16269,7 @@
           "2,2": 2
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2193",
@@ -16409,7 +16409,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2197",
@@ -16484,7 +16484,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2252",
@@ -16796,7 +16796,7 @@
           }
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2289",
@@ -16984,7 +16984,7 @@
           "1,4": 6
         }
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2291",
@@ -17164,7 +17164,7 @@
           "5,2": 3
         }
       },
-      "baseline": 18,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1953",
@@ -17430,7 +17430,7 @@
           "5,2": 3
         }
       },
-      "baseline": 18,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1956",
@@ -17672,7 +17672,7 @@
           "5,2": 3
         }
       },
-      "baseline": 18,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1958",
@@ -17824,7 +17824,7 @@
           }
         }
       },
-      "baseline": 18,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:328",
@@ -18002,7 +18002,7 @@
           }
         }
       },
-      "baseline": 18,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:539",
@@ -18140,7 +18140,7 @@
           }
         }
       },
-      "baseline": 18,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1739",
@@ -18331,7 +18331,7 @@
           "2,4": 2
         }
       },
-      "baseline": 18,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2362",
@@ -18420,7 +18420,7 @@
           "2,6": 3
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1166",
@@ -18640,7 +18640,7 @@
           "2,4": 3
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:67",
@@ -18804,7 +18804,7 @@
           "5,5": 6
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:130",
@@ -19166,7 +19166,7 @@
           }
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:218",
@@ -19424,7 +19424,7 @@
           "4,4": 6
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:274",
@@ -19528,7 +19528,7 @@
           "2,5": 6
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:309",
@@ -19672,7 +19672,7 @@
           }
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:590",
@@ -19816,7 +19816,7 @@
           }
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:591",
@@ -20046,7 +20046,7 @@
           "5,5": 6
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:598",
@@ -20263,7 +20263,7 @@
           "2,4": 1
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:667",
@@ -20361,7 +20361,7 @@
           "5,5": 1
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:774",
@@ -20585,7 +20585,7 @@
           "3,5": 10
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:780",
@@ -20871,7 +20871,7 @@
           }
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:925",
@@ -21073,7 +21073,7 @@
           "3,4": 2
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1146",
@@ -21259,7 +21259,7 @@
           "5,5": 6
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1301",
@@ -21445,7 +21445,7 @@
           "5,5": 6
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1303",
@@ -21771,7 +21771,7 @@
           }
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1409",
@@ -21873,7 +21873,7 @@
           "5,5": 6
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1451",
@@ -21945,7 +21945,7 @@
           "4,5": 2
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1741",
@@ -22041,7 +22041,7 @@
           }
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2042",
@@ -22403,7 +22403,7 @@
           "5,4": 10
         }
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2313",
@@ -22681,7 +22681,7 @@
           "6,6": 6
         }
       },
-      "baseline": 23,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:984",
@@ -22806,7 +22806,7 @@
           "5,5": 2
         }
       },
-      "baseline": 23,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1329",

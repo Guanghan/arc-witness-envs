@@ -30,7 +30,7 @@
         "blue_dots": [],
         "yellow_dots": []
       },
-      "baseline": 6,
+      "baseline": 15,
       "moves": 4,
       "solution_actions": [
         4,
@@ -109,7 +109,7 @@
           ]
         ]
       },
-      "baseline": 6,
+      "baseline": 15,
       "moves": 4,
       "solution_actions": [
         1,
@@ -188,7 +188,7 @@
           ]
         ]
       },
-      "baseline": 8,
+      "baseline": 18,
       "moves": 5,
       "solution_actions": [
         2,
@@ -278,7 +278,7 @@
           ]
         ]
       },
-      "baseline": 8,
+      "baseline": 18,
       "moves": 5,
       "solution_actions": [
         3,
@@ -316,7 +316,7 @@
         "blue_dots": [],
         "yellow_dots": []
       },
-      "baseline": 9,
+      "baseline": 21,
       "moves": 6,
       "solution_actions": [
         3,
@@ -365,7 +365,7 @@
           ]
         ]
       },
-      "baseline": 9,
+      "baseline": 21,
       "moves": 6,
       "solution_actions": [
         3,
@@ -446,7 +446,7 @@
           ]
         ]
       },
-      "baseline": 10,
+      "baseline": 24,
       "moves": 7,
       "solution_actions": [
         4,
@@ -486,7 +486,7 @@
         "blue_dots": [],
         "yellow_dots": []
       },
-      "baseline": 10,
+      "baseline": 24,
       "moves": 7,
       "solution_actions": [
         3,
@@ -638,7 +638,7 @@
           ]
         ]
       },
-      "baseline": 12,
+      "baseline": 30,
       "moves": 9,
       "solution_actions": [
         4,
@@ -762,7 +762,7 @@
           ]
         ]
       },
-      "baseline": 12,
+      "baseline": 30,
       "moves": 9,
       "solution_actions": [
         4,
@@ -838,7 +838,7 @@
           ]
         ]
       },
-      "baseline": 15,
+      "baseline": 36,
       "moves": 11,
       "solution_actions": [
         2,
@@ -1024,7 +1024,7 @@
           ]
         ]
       },
-      "baseline": 15,
+      "baseline": 36,
       "moves": 11,
       "solution_actions": [
         4,
@@ -1170,7 +1170,7 @@
           ]
         ]
       },
-      "baseline": 16,
+      "baseline": 39,
       "moves": 12,
       "solution_actions": [
         2,
@@ -1249,7 +1249,7 @@
           ]
         ]
       },
-      "baseline": 16,
+      "baseline": 39,
       "moves": 12,
       "solution_actions": [
         2,
@@ -1328,7 +1328,7 @@
           ]
         ]
       },
-      "baseline": 17,
+      "baseline": 42,
       "moves": 13,
       "solution_actions": [
         2,
@@ -1408,7 +1408,7 @@
           ]
         ]
       },
-      "baseline": 17,
+      "baseline": 42,
       "moves": 13,
       "solution_actions": [
         4,
@@ -1522,7 +1522,7 @@
           ]
         ]
       },
-      "baseline": 18,
+      "baseline": 45,
       "moves": 14,
       "solution_actions": [
         2,
@@ -1711,7 +1711,7 @@
           ]
         ]
       },
-      "baseline": 20,
+      "baseline": 48,
       "moves": 15,
       "solution_actions": [
         4,
@@ -1905,7 +1905,7 @@
           ]
         ]
       },
-      "baseline": 28,
+      "baseline": 69,
       "moves": 22,
       "solution_actions": [
         4,
@@ -2172,7 +2172,7 @@
           ]
         ]
       },
-      "baseline": 39,
+      "baseline": 96,
       "moves": 31,
       "solution_actions": [
         2,
@@ -2278,7 +2278,7 @@
           ]
         ]
       },
-      "baseline": 11,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "witness:33",
@@ -2381,7 +2381,7 @@
           ]
         ]
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "witness:34",
@@ -2438,7 +2438,7 @@
           ]
         ]
       },
-      "baseline": 17,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:700",
@@ -2621,7 +2621,7 @@
           ]
         ]
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "witness:35",
@@ -2804,7 +2804,7 @@
           ]
         ]
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "witness:36",
@@ -3133,7 +3133,7 @@
           ]
         ]
       },
-      "baseline": 23,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:56",

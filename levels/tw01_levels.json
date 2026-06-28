@@ -29,7 +29,7 @@
           ]
         ]
       },
-      "baseline": 11,
+      "baseline": 27,
       "moves": 8,
       "solution_actions": [
         4,
@@ -87,7 +87,7 @@
           ]
         ]
       },
-      "baseline": 15,
+      "baseline": 36,
       "moves": 11,
       "solution_actions": [
         1,
@@ -156,7 +156,7 @@
           ]
         ]
       },
-      "baseline": 15,
+      "baseline": 36,
       "moves": 11,
       "solution_actions": [
         3,
@@ -263,7 +263,7 @@
           ]
         ]
       },
-      "baseline": 17,
+      "baseline": 42,
       "moves": 13,
       "solution_actions": [
         1,
@@ -320,7 +320,7 @@
           ]
         ]
       },
-      "baseline": 18,
+      "baseline": 45,
       "moves": 14,
       "solution_actions": [
         4,
@@ -390,7 +390,7 @@
           ]
         ]
       },
-      "baseline": 18,
+      "baseline": 45,
       "moves": 14,
       "solution_actions": [
         4,
@@ -496,7 +496,7 @@
           ]
         ]
       },
-      "baseline": 20,
+      "baseline": 48,
       "moves": 15,
       "solution_actions": [
         2,
@@ -603,7 +603,7 @@
           ]
         ]
       },
-      "baseline": 20,
+      "baseline": 48,
       "moves": 15,
       "solution_actions": [
         2,
@@ -762,7 +762,7 @@
           ]
         ]
       },
-      "baseline": 28,
+      "baseline": 69,
       "moves": 22,
       "solution_actions": [
         4,
@@ -942,7 +942,7 @@
           ]
         ]
       },
-      "baseline": 30,
+      "baseline": 75,
       "moves": 24,
       "solution_actions": [
         4,
@@ -1062,7 +1062,7 @@
           ]
         ]
       },
-      "baseline": 11,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:707",
@@ -1214,7 +1214,7 @@
           ]
         ]
       },
-      "baseline": 14,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:288",
@@ -1478,7 +1478,7 @@
           ]
         ]
       },
-      "baseline": 18,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:661",
@@ -1734,7 +1734,7 @@
           ]
         ]
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1051",
@@ -1956,7 +1956,7 @@
           ]
         ]
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:1631",
@@ -2294,7 +2294,7 @@
           ]
         ]
       },
-      "baseline": 20,
+      "baseline": 3,
       "moves": 0,
       "solution_actions": [],
       "source": "windmill:2240",

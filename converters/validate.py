@@ -1151,12 +1151,18 @@ def solve_tw13(config: dict, timeout: float = 10.0) -> Optional[List[Tuple[int, 
 def calibrate_baseline(solution_path: List[Tuple[int, int]]) -> int:
     """Compute baseline_actions.
 
-    baseline = ceil((moves + 1) * 1.2)
+    baseline = ceil((moves + 1) * 3)
     where moves = len(path) - 1 (path steps), +1 for CONFIRM
+
+    The 3x factor (was 1.2x) widens the reference toward a first-time human's
+    exploration overhead — a real player must probe the controls (~recon) and
+    backtrack, so ~1.2x optimal was far too tight. This is an INTERIM synthetic
+    value pending real human-play calibration (upper-median first-time actions,
+    the official ARC-AGI-3 method) via play_human.py. Changed 2026-06-28.
     """
     moves = len(solution_path) - 1
     total_actions = moves + 1  # +1 for CONFIRM
-    baseline = math.ceil(total_actions * 1.2)
+    baseline = math.ceil(total_actions * 3)
     return baseline
 
 
