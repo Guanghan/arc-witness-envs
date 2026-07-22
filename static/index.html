@@ -116,6 +116,7 @@ let cardId = null;
 let currentGameId = null;
 let guid = null;
 let busy = false;
+let lastActionWasReset = false;  // guard: consecutive RESET = engine FULL-game reset
 let actionCount = 0;
 let levelPaused = false;      // true during 3s completion pause
 
@@ -174,14 +175,25 @@ function renderFrame(frames) {
 
 async function sendAction(action) {
   if (busy || levelPaused || !currentGameId) return;
+  // Guard: a SECOND consecutive RESET full-resets the whole game in the engine
+  // (levels_completed → 0 — same semantics the agent faces). For humans that's
+  // almost always an accidental double-tap of R, so block it; one reset already
+  // put the level back to its start.
+  if (action === 'RESET' && lastActionWasReset && guid) {
+    log('Level already reset — a second RESET would wipe the WHOLE game. Ignored.', 'err');
+    return;
+  }
+  lastActionWasReset = (action === 'RESET');
   busy = true;
 
   const body = { game_id: currentGameId };
   if (cardId) body.card_id = cardId;
   if (guid) body.guid = guid;
   if (action === 'RESET') {
-    // RESET generates a new guid
-    delete body.guid;
+    // Mid-game RESET keeps the guid → the env performs a LEVEL reset (current
+    // level restarts, levels_completed preserved) — the same semantics the
+    // agent's action 0 gets during RL/eval (v4+ convention). A FULL game reset
+    // happens only when no guid exists yet (startGame nulls it first).
     currentLevelActions = [];
   }
 
@@ -212,6 +224,13 @@ async function sendAction(action) {
         const inp = document.getElementById('reasoning-input');
         if (inp) inp.value = '';
       }
+    } else if (action === 'RESET' && (teachingMode || hiscoreMode) && teachingEpisodeId) {
+      // Record mid-level RESET as action 0: without it the trace REPLAYS
+      // divergently (the engine never resets → wrong board for every later
+      // move), and the step accounting would under-count vs the agent's
+      // official convention (resets cost a step, no refunds).
+      recordTeachingStep(0, pendingReasoning);
+      pendingReasoning = '';
     }
 
     // Status
