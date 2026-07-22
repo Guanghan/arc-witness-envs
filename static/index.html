@@ -129,6 +129,14 @@ let totalWinLevels = 0;       // total levels in current game
 let teachingMode = false;
 let hiscoreMode = false;        // frictionless leaderboard recording (auto-outcomes)
 let hiscorePlayer = '';         // teacher_id for HiScore episodes
+// HiScore challenge (opened from the runs page with ?challenge=1&player=NAME):
+// two warm-up games to learn the controls (primitive rules, not published),
+// then the four held-out composites the leaderboard is scored on.
+const CHALLENGE_SEQ = ['tw01', 'tw03', 'tw08', 'tw11', 'tw12', 'tw13'];
+const CHALLENGE_WARMUPS = 2;    // first N of the sequence are warm-ups
+let challengeMode = false;
+let challengeIdx = 0;
+let challengeDone = new Set();
 let pendingReasoning = '';
 let teachingEpisodeId = null;
 let teachingStepIndex = 0;
@@ -262,6 +270,17 @@ async function sendAction(action) {
         statusEl.textContent = `${currentGameId} | Level ${completedLevelNum}/${totalWinLevels} | COMPLETE — ALL LEVELS FINISHED!`;
         statusEl.style.color = '#4fcc30';
         log('ALL LEVELS COMPLETE!', 'ok');
+        if (challengeMode) {
+          challengeDone.add(currentGameId);
+          const next = CHALLENGE_SEQ[++challengeIdx];
+          renderChallenge();
+          if (next) {
+            log(`Challenge: next game ${next} starts in 3s…`, 'info');
+            setTimeout(() => startGameById(next), 3000);
+          } else {
+            log('CHALLENGE COMPLETE! Go back to the runs page and click "Publish my score".', 'ok');
+          }
+        }
       } else {
         // Freeze on completed level with countdown
         const pendingFrame = data.frame;
@@ -442,7 +461,60 @@ function showCover() {
 }
 showCover();
 
-loadGames();
+loadGames().then(initChallenge);
+
+// ── HiScore challenge (launched from the runs page PLAY button) ─────────
+function startGameById(gameId) {
+  const btn = [...document.querySelectorAll('#game-select button')]
+    .find(b => b.textContent === gameId);
+  if (btn) btn.click();
+  else log(`Challenge: game ${gameId} not found on this server`, 'err');
+}
+
+function renderChallenge() {
+  let bar = document.getElementById('challenge-bar');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'challenge-bar';
+    bar.style.cssText = 'margin:8px 0;padding:8px 12px;background:#16213e;border-left:4px solid #e94560;border-radius:6px;font-size:13px;line-height:1.7';
+    const anchor = document.getElementById('log');
+    anchor.parentNode.insertBefore(bar, anchor);
+  }
+  const chips = CHALLENGE_SEQ.map((g, i) => {
+    const done = challengeDone.has(g);
+    const cur = i === challengeIdx && !done;
+    const tag = i < CHALLENGE_WARMUPS ? 'warm-up' : 'scored';
+    const style = done ? 'color:#4fcc30' : cur ? 'color:#e94560;font-weight:700' : 'color:#8a8aa3';
+    return `<span style="${style}" title="${tag}">${done ? '✓' : cur ? '▶' : '·'} ${g}</span>`;
+  }).join(' <span style="color:#444">→</span> ');
+  const doneAll = challengeIdx >= CHALLENGE_SEQ.length;
+  bar.innerHTML = `<b style="color:#e94560">HiScore challenge</b> — playing as <b>${hiscorePlayer}</b><br>` +
+    chips +
+    `<br><span style="color:#8a8aa3">${doneAll
+      ? '🏁 All done! Go back to the runs page and click “Publish my score”.'
+      : `first ${CHALLENGE_WARMUPS} are warm-ups (not scored); the last 4 are the leaderboard games. Arrows move · Space confirms.`}</span>`;
+}
+
+function initChallenge() {
+  const params = new URLSearchParams(location.search);
+  if (params.get('challenge') !== '1') return;
+  let name = (params.get('player') || localStorage.getItem('hiscorePlayer') || '').trim();
+  if (!name) name = (prompt('Player name for the HiScore leaderboard:') || '').trim();
+  if (!name) { log('Challenge needs a player name — reload with ?player=<you>', 'err'); return; }
+  localStorage.setItem('hiscorePlayer', name);
+  hiscorePlayer = name;
+  hiscoreMode = true;
+  challengeMode = true;
+  challengeIdx = 0;
+  const cb = document.getElementById('hiscore-toggle');
+  if (cb) cb.checked = true;
+  const statusEl2 = document.getElementById('teaching-status');
+  statusEl2.textContent = `HiScore ON — recording as "${name}"`;
+  statusEl2.style.color = '#e94560';
+  renderChallenge();
+  log(`HiScore challenge started for "${name}" — good luck!`, 'ok');
+  startGameById(CHALLENGE_SEQ[0]);
+}
 
 // ── HiScore Mode (frictionless leaderboard recording) ──
 // Like teaching mode but zero friction: name asked once (kept in localStorage),
