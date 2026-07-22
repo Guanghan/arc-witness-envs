@@ -71,6 +71,8 @@
 <div id="teaching-bar">
   <label class="toggle"><input type="checkbox" id="teaching-toggle"><span class="slider"></span></label>
   <label for="teaching-toggle">Teaching Mode</label>
+  <label class="toggle"><input type="checkbox" id="hiscore-toggle"><span class="slider"></span></label>
+  <label for="hiscore-toggle" title="Frictionless recording for the HiScore leaderboard: every action is recorded under your name, level outcomes auto-submit (no dialogs). Publish with: python -m arc_visualizer.hiscore_build --player <you>">HiScore Mode</label>
   <input type="text" id="reasoning-input" placeholder="Why this action? (Enter to confirm, then press action key)">
   <span id="teaching-status"></span>
 </div>
@@ -125,6 +127,8 @@ let totalWinLevels = 0;       // total levels in current game
 
 // Teaching mode state
 let teachingMode = false;
+let hiscoreMode = false;        // frictionless leaderboard recording (auto-outcomes)
+let hiscorePlayer = '';         // teacher_id for HiScore episodes
 let pendingReasoning = '';
 let teachingEpisodeId = null;
 let teachingStepIndex = 0;
@@ -193,8 +197,8 @@ async function sendAction(action) {
     // Track action for validation
     if (action !== 'RESET' && ACTION_ID[action]) {
       currentLevelActions.push(ACTION_ID[action]);
-      // Teaching mode: record step with reasoning
-      if (teachingMode && teachingEpisodeId) {
+      // Teaching/HiScore mode: record step (reasoning optional in HiScore)
+      if ((teachingMode || hiscoreMode) && teachingEpisodeId) {
         recordTeachingStep(ACTION_ID[action], pendingReasoning);
         pendingReasoning = '';
         const inp = document.getElementById('reasoning-input');
@@ -224,8 +228,22 @@ async function sendAction(action) {
       if (completedStatus && !completedStatus.validated) {
         autoValidateLevel(completedIdx, currentLevelActions.slice());
       }
-      // Teaching mode: show outcome dialog before advancing
-      if (teachingMode && teachingEpisodeId) {
+      // HiScore mode: auto-submit the outcome (no dialog) and roll to the next level
+      if (hiscoreMode && teachingEpisodeId) {
+        const done = {
+          game_id: currentGameId,
+          level_index: completedIdx,
+          completed: true,
+          total_steps: currentLevelActions.length,
+        };
+        const nextIdx = completedIdx + 1;
+        finishTeachingEpisode(done).then(() => {
+          if (state !== 'WIN' && currentGameId) {
+            startTeachingEpisode(currentGameId, nextIdx);
+          }
+        });
+      } else if (teachingMode && teachingEpisodeId) {
+        // Teaching mode: show outcome dialog before advancing
         pendingOutcomeData = {
           game_id: currentGameId,
           level_index: completedIdx,
@@ -379,6 +397,10 @@ async function startGame(gameId, btn) {
   statusEl.textContent = `Loading ${gameId}...`;
   await fetchLevelStatus(gameId);
   await sendAction('RESET');
+  // Recording modes: open the level-0 episode for the fresh game
+  if (teachingMode || hiscoreMode) {
+    startTeachingEpisode(gameId, 0);
+  }
 }
 
 const KEY_MAP = {
@@ -421,6 +443,41 @@ function showCover() {
 showCover();
 
 loadGames();
+
+// ── HiScore Mode (frictionless leaderboard recording) ──
+// Like teaching mode but zero friction: name asked once (kept in localStorage),
+// every action recorded under it, level outcomes auto-submitted — no dialogs.
+// Publish afterwards with: python -m arc_visualizer.hiscore_build --player <you>
+
+document.getElementById('hiscore-toggle').addEventListener('change', function() {
+  const statusEl2 = document.getElementById('teaching-status');
+  if (this.checked) {
+    let name = localStorage.getItem('hiscorePlayer') || '';
+    name = (prompt('Player name for the HiScore leaderboard:', name) || '').trim();
+    if (!name) {
+      this.checked = false;
+      log('HiScore mode needs a player name', 'err');
+      return;
+    }
+    localStorage.setItem('hiscorePlayer', name);
+    hiscorePlayer = name;
+    hiscoreMode = true;
+    statusEl2.textContent = `HiScore ON — recording as "${name}"`;
+    statusEl2.style.color = '#e94560';
+    log(`HiScore mode enabled — playing as "${name}". Every action is recorded; finish levels to enter the leaderboard.`, 'ok');
+    if (currentGameId) {
+      startTeachingEpisode(currentGameId, lastLevelsCompleted);
+    }
+  } else {
+    hiscoreMode = false;
+    hiscorePlayer = '';
+    statusEl2.textContent = '';
+    log('HiScore mode disabled', 'info');
+    if (teachingEpisodeId && !teachingMode) {
+      finishTeachingEpisode(null);
+    }
+  }
+});
 
 // ── Teaching Mode ──────────────────────────────────────
 
@@ -468,7 +525,8 @@ async function startTeachingEpisode(gameId, levelIndex) {
     const res = await fetch('/api/teaching/start_episode', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ game_id: gameId, level_index: levelIndex }),
+      body: JSON.stringify({ game_id: gameId, level_index: levelIndex,
+                             teacher_id: hiscorePlayer || 'default' }),
     });
     const data = await res.json();
     teachingEpisodeId = data.episode_id;

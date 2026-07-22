@@ -35,7 +35,8 @@ class TeachingCollector:
     # ── Episode Lifecycle ──────────────────────────────────
 
     def start_episode(
-        self, game_id: str, level_index: int, seed: int = 0
+        self, game_id: str, level_index: int, seed: int = 0,
+        teacher_id: str = "default",
     ) -> str:
         """Start a new teaching episode. Returns episode_id."""
         # Auto-finish previous episode if still active
@@ -49,6 +50,7 @@ class TeachingCollector:
             level_index=level_index,
             seed=seed,
             created_at=datetime.now(timezone.utc).isoformat(),
+            teacher_id=teacher_id or "default",
         )
         logger.info(
             f"Teaching episode started: {game_id} L{level_index} "

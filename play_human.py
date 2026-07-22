@@ -137,9 +137,11 @@ def add_frontend_routes(arcade, app):
         game_id = body.get("game_id")
         level_index = body.get("level_index", 0)
         seed = body.get("seed", 0)
+        teacher_id = body.get("teacher_id", "default")   # player name (HiScore mode)
         if not game_id:
             return jsonify({"error": "Missing game_id"}), 400
-        episode_id = _teaching_collector.start_episode(game_id, level_index, seed)
+        episode_id = _teaching_collector.start_episode(
+            game_id, level_index, seed, teacher_id=teacher_id)
         return jsonify({"episode_id": episode_id, "status": "started"})
 
     @app.route("/api/teaching/step", methods=["POST"])
