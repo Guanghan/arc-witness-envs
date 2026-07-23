@@ -116,7 +116,6 @@ let cardId = null;
 let currentGameId = null;
 let guid = null;
 let busy = false;
-let lastActionWasReset = false;  // guard: consecutive RESET = engine FULL-game reset
 let actionCount = 0;
 let levelPaused = false;      // true during 3s completion pause
 
@@ -175,15 +174,23 @@ function renderFrame(frames) {
 
 async function sendAction(action) {
   if (busy || levelPaused || !currentGameId) return;
-  // Guard: a SECOND consecutive RESET full-resets the whole game in the engine
-  // (levels_completed → 0 — same semantics the agent faces). For humans that's
-  // almost always an accidental double-tap of R, so block it; one reset already
-  // put the level back to its start.
-  if (action === 'RESET' && lastActionWasReset && guid) {
-    log('Level already reset — a second RESET would wipe the WHOLE game. Ignored.', 'err');
+  // Competition reset parity (v6.2, human side): the engine FULL-WIPES the
+  // game on any RESET with zero actions since the last reset / level entry
+  // (set_level zeroes _action_count — so R as the FIRST move of a new level
+  // wiped back to L1 until 2026-07-23). Mirror what the agent harness and the
+  // official grader do: DON'T execute the reset, but the step still counts —
+  // it's recorded as a noop action 0. currentLevelActions is the client-side
+  // twin of the engine's _action_count (cleared on reset + level advance), so
+  // this one guard covers all wipe triggers incl. the old double-tap case.
+  if (action === 'RESET' && guid && currentLevelActions.length === 0) {
+    log('Level is already at its start — reset not executed (official rule). '
+        + 'The step still counts toward your score.', 'err');
+    if ((teachingMode || hiscoreMode) && teachingEpisodeId) {
+      recordTeachingStep(0, pendingReasoning, ['noop_reset']);
+      pendingReasoning = '';
+    }
     return;
   }
-  lastActionWasReset = (action === 'RESET');
   busy = true;
 
   const body = { game_id: currentGameId };
@@ -628,7 +635,7 @@ async function startTeachingEpisode(gameId, levelIndex) {
   }
 }
 
-async function recordTeachingStep(actionId, reasoning) {
+async function recordTeachingStep(actionId, reasoning, tags) {
   if (!teachingEpisodeId) return;
   try {
     await fetch('/api/teaching/step', {
@@ -640,6 +647,7 @@ async function recordTeachingStep(actionId, reasoning) {
         action: actionId,
         reasoning: reasoning || '',
         confidence: 0.7,
+        tags: tags || [],
       }),
     });
   } catch(e) {
