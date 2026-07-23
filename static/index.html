@@ -112,7 +112,7 @@ const statusEl = document.getElementById('status');
 const logEl = document.getElementById('log');
 const selectEl = document.getElementById('game-select');
 
-const FRONTEND_BUILD = '2026-07-23 reset-parity-2';  // bump on behavior changes
+const FRONTEND_BUILD = '2026-07-23 tw12-cap4';  // bump on behavior changes
 let cardId = null;
 let currentGameId = null;
 let guid = null;
@@ -138,6 +138,11 @@ const CHALLENGE_WARMUPS = 2;    // first N of the sequence are warm-ups
 const CHALLENGE_LEVEL_CAP = 5;  // levels per game — matches the models' eval horizon
                                 // (the leaderboard scores exactly 5; playing past them
                                 // would be unscored effort)
+// Per-game overrides: tw12's level 5 is unsolvable (to be replaced before any
+// public release) — humans stop at 4. Scoring stays /5 with L5=0, exactly the
+// convention every model was scored under, so human-vs-model stays comparable.
+const CHALLENGE_GAME_CAPS = { tw12: 4 };
+function challengeCap(g) { return CHALLENGE_GAME_CAPS[g] ?? CHALLENGE_LEVEL_CAP; }
 let challengeMode = false;
 let challengeIdx = 0;
 let challengeDone = new Set();
@@ -268,7 +273,7 @@ async function sendAction(action) {
       }
       // Challenge horizon: the leaderboard (and every model) is scored on the
       // first CHALLENGE_LEVEL_CAP levels only — after the cap, this game is done.
-      const challengeGameDone = challengeMode && lc >= CHALLENGE_LEVEL_CAP;
+      const challengeGameDone = challengeMode && lc >= challengeCap(currentGameId);
       // HiScore mode: auto-submit the outcome (no dialog) and roll to the next level
       if (hiscoreMode && teachingEpisodeId) {
         const done = {
@@ -300,9 +305,9 @@ async function sendAction(action) {
       // (the engine already advanced, so data.frame is the next level)
 
       if (challengeGameDone && state !== 'WIN') {
-        statusEl.textContent = `${currentGameId} | ${CHALLENGE_LEVEL_CAP}/${CHALLENGE_LEVEL_CAP} scored levels DONE`;
+        statusEl.textContent = `${currentGameId} | ${challengeCap(currentGameId)}/${challengeCap(currentGameId)} scored levels DONE — game beaten!`;
         statusEl.style.color = '#4fcc30';
-        log(`All ${CHALLENGE_LEVEL_CAP} scored levels of ${currentGameId} complete — further levels are not scored.`, 'ok');
+        log(`All ${challengeCap(currentGameId)} scored levels of ${currentGameId} complete — game beaten!`, 'ok');
         challengeDone.add(currentGameId);
         const next = CHALLENGE_SEQ[++challengeIdx];
         renderChallenge();
