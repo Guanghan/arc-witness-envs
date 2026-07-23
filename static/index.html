@@ -112,6 +112,7 @@ const statusEl = document.getElementById('status');
 const logEl = document.getElementById('log');
 const selectEl = document.getElementById('game-select');
 
+const FRONTEND_BUILD = '2026-07-23 reset-parity-2';  // bump on behavior changes
 let cardId = null;
 let currentGameId = null;
 let guid = null;
@@ -134,6 +135,9 @@ let hiscorePlayer = '';         // teacher_id for HiScore episodes
 // then the four held-out composites the leaderboard is scored on.
 const CHALLENGE_SEQ = ['tw01', 'tw03', 'tw08', 'tw11', 'tw12', 'tw13'];
 const CHALLENGE_WARMUPS = 2;    // first N of the sequence are warm-ups
+const CHALLENGE_LEVEL_CAP = 5;  // levels per game — matches the models' eval horizon
+                                // (the leaderboard scores exactly 5; playing past them
+                                // would be unscored effort)
 let challengeMode = false;
 let challengeIdx = 0;
 let challengeDone = new Set();
@@ -262,6 +266,9 @@ async function sendAction(action) {
       if (completedStatus && !completedStatus.validated) {
         autoValidateLevel(completedIdx, currentLevelActions.slice());
       }
+      // Challenge horizon: the leaderboard (and every model) is scored on the
+      // first CHALLENGE_LEVEL_CAP levels only — after the cap, this game is done.
+      const challengeGameDone = challengeMode && lc >= CHALLENGE_LEVEL_CAP;
       // HiScore mode: auto-submit the outcome (no dialog) and roll to the next level
       if (hiscoreMode && teachingEpisodeId) {
         const done = {
@@ -272,7 +279,7 @@ async function sendAction(action) {
         };
         const nextIdx = completedIdx + 1;
         finishTeachingEpisode(done).then(() => {
-          if (state !== 'WIN' && currentGameId) {
+          if (state !== 'WIN' && !challengeGameDone && currentGameId) {
             startTeachingEpisode(currentGameId, nextIdx);
           }
         });
@@ -292,7 +299,20 @@ async function sendAction(action) {
       // DON'T render the new frame yet — keep canvas showing the completed level
       // (the engine already advanced, so data.frame is the next level)
 
-      if (state === 'WIN') {
+      if (challengeGameDone && state !== 'WIN') {
+        statusEl.textContent = `${currentGameId} | ${CHALLENGE_LEVEL_CAP}/${CHALLENGE_LEVEL_CAP} scored levels DONE`;
+        statusEl.style.color = '#4fcc30';
+        log(`All ${CHALLENGE_LEVEL_CAP} scored levels of ${currentGameId} complete — further levels are not scored.`, 'ok');
+        challengeDone.add(currentGameId);
+        const next = CHALLENGE_SEQ[++challengeIdx];
+        renderChallenge();
+        if (next) {
+          log(`Challenge: next game ${next} starts in 3s…`, 'info');
+          setTimeout(() => startGameById(next), 3000);
+        } else {
+          log('CHALLENGE COMPLETE! Go back to the runs page and click "Publish my score".', 'ok');
+        }
+      } else if (state === 'WIN') {
         statusEl.textContent = `${currentGameId} | Level ${completedLevelNum}/${totalWinLevels} | COMPLETE — ALL LEVELS FINISHED!`;
         statusEl.style.color = '#4fcc30';
         log('ALL LEVELS COMPLETE!', 'ok');
@@ -389,6 +409,7 @@ async function autoValidateLevel(levelIdx, actions) {
   }
 }
 
+log(`frontend build: ${FRONTEND_BUILD} — if you changed the code, REFRESH this tab to load it`, 'info');
 async function loadGames() {
   try {
     const res = await fetch('/api/games');
