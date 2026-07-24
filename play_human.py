@@ -86,6 +86,10 @@ def add_frontend_routes(arcade, app):
     @app.route("/api/custom/validate_level", methods=["POST"])
     def validate_level():
         """After a user manually completes a level, mark it as validated and record the action sequence."""
+        # --shared hardening: this endpoint WRITES levels.json (game definitions).
+        # On a multi-user deployment nobody should be able to mutate the games.
+        if os.environ.get("WITNESS_PLAY_SHARED") == "1":
+            return jsonify({"error": "disabled on shared deployments"}), 403
         body = request.get_json(force=True)
         game_id = body.get("game_id")
         level_index = body.get("level_index")
@@ -190,6 +194,10 @@ def add_frontend_routes(arcade, app):
     @app.route("/api/teaching/episodes")
     def teaching_list_episodes():
         """List all teaching episodes across all games."""
+        # --shared hardening: full episode dumps (incl. everyone's reasoning
+        # text) are a debugging endpoint, not for a multi-user deployment.
+        if os.environ.get("WITNESS_PLAY_SHARED") == "1":
+            return jsonify({"error": "disabled on shared deployments"}), 403
         summaries = _teaching_collector.list_episodes_summary()
         return jsonify({"episodes": summaries, "total": len(summaries)})
 
@@ -237,6 +245,9 @@ def main():
     for env in envs:
         print(f"  - {env.game_id}: {env.title}")
 
+    if os.environ.get("WITNESS_PLAY_SHARED") == "1":
+        print("\nSHARED MODE: level-mutating/dev endpoints disabled "
+              "(validate_level, episode dumps)")
     print(f"\nStarting server on http://localhost:{port}")
     print("Open this URL in your browser to play!")
     print("Press Ctrl+C to stop.\n")
