@@ -147,7 +147,7 @@ const statusEl = document.getElementById('status');
 const logEl = document.getElementById('log');
 const selectEl = document.getElementById('game-select');
 
-const FRONTEND_BUILD = '2026-07-23 crt-1';  // bump on behavior changes
+const FRONTEND_BUILD = '2026-07-24 rec-2';  // bump on behavior changes
 let cardId = null;
 let currentGameId = null;
 let guid = null;
@@ -229,7 +229,7 @@ async function sendAction(action) {
   if (action === 'RESET' && guid && currentLevelActions.length === 0) {
     log('Level is already at its start — reset not executed (official rule). '
         + 'The step still counts toward your score.', 'err');
-    if ((teachingMode || hiscoreMode) && teachingEpisodeId) {
+    if (teachingMode || hiscoreMode) {
       recordTeachingStep(0, pendingReasoning, ['noop_reset']);
       pendingReasoning = '';
     }
@@ -269,13 +269,13 @@ async function sendAction(action) {
     if (action !== 'RESET' && ACTION_ID[action]) {
       currentLevelActions.push(ACTION_ID[action]);
       // Teaching/HiScore mode: record step (reasoning optional in HiScore)
-      if ((teachingMode || hiscoreMode) && teachingEpisodeId) {
+      if (teachingMode || hiscoreMode) {
         recordTeachingStep(ACTION_ID[action], pendingReasoning);
         pendingReasoning = '';
         const inp = document.getElementById('reasoning-input');
         if (inp) inp.value = '';
       }
-    } else if (action === 'RESET' && (teachingMode || hiscoreMode) && teachingEpisodeId) {
+    } else if (action === 'RESET' && (teachingMode || hiscoreMode)) {
       // Record mid-level RESET as action 0: without it the trace REPLAYS
       // divergently (the engine never resets → wrong board for every later
       // move), and the step accounting would under-count vs the agent's
@@ -693,6 +693,66 @@ document.getElementById('reasoning-input').addEventListener('keydown', function(
   }
 });
 
+// ── Recording pipeline (2026-07-24): queued + retried + epoch-tagged.
+// The old fire-and-forget recorder silently LOST steps over a real network
+// (auth-proxy latency): actions pressed during the finish→start episode
+// rotation were dropped (recordTeachingStep bailed while episode id was
+// null), and a single failed POST left a hole — the score replay then
+// diverged and under-counted. Every step now goes through a FIFO queue:
+// epoch-tagged at keypress, flushed serially with retries, and episode
+// boundaries drain the closing epoch before the outcome is posted.
+let stepQueue = [];        // {epoch, action, reasoning, tags}
+let recEpoch = 0;          // bumped when an episode closes; later presses → next episode
+let episodeEpoch = -1;     // epoch the CURRENT teachingEpisodeId belongs to
+let flushPromise = null;
+
+function recordTeachingStep(actionId, reasoning, tags) {
+  stepQueue.push({ epoch: recEpoch, action: actionId,
+                   reasoning: reasoning || '', tags: tags || [] });
+  flushSteps();
+}
+
+function flushSteps() {
+  if (!flushPromise) flushPromise = _flushSteps().finally(() => { flushPromise = null; });
+  return flushPromise;
+}
+
+async function _flushSteps() {
+  while (stepQueue.length) {
+    const head = stepQueue[0];
+    // steps of a future epoch wait for their episode to start
+    if (!teachingEpisodeId || head.epoch !== episodeEpoch) return;
+    let ok = false;
+    for (let attempt = 0; attempt < 4 && !ok; attempt++) {
+      if (attempt) await new Promise(r => setTimeout(r, 300 * attempt));
+      try {
+        const r = await fetch('/api/teaching/step', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            episode_id: teachingEpisodeId,   // concurrency: route to MY episode
+            step_index: teachingStepIndex,
+            frame_hash: '',
+            action: head.action,
+            reasoning: head.reasoning,
+            confidence: 0.7,
+            tags: head.tags,
+          }),
+        });
+        ok = r.ok;
+      } catch(e) { /* retry */ }
+    }
+    if (ok) {
+      teachingStepIndex++;
+    } else {
+      // a hole in the recording = the score replay WILL diverge; be loud
+      log('RECORDING LOST A STEP after 4 attempts — this level will not score '
+          + 'correctly. Check your connection and replay the level.', 'err');
+    }
+    stepQueue.shift();
+  }
+}
+
 async function startTeachingEpisode(gameId, levelIndex) {
   try {
     const res = await fetch('/api/teaching/start_episode', {
@@ -704,35 +764,22 @@ async function startTeachingEpisode(gameId, levelIndex) {
     const data = await res.json();
     teachingEpisodeId = data.episode_id;
     teachingStepIndex = 0;
+    episodeEpoch = recEpoch;           // steps tagged with this epoch may flush now
     log(`Teaching episode started: ${data.episode_id}`, 'info');
+    flushSteps();                      // release anything queued during the rotation
   } catch(e) {
     log(`Failed to start teaching episode: ${e.message}`, 'err');
   }
 }
 
-async function recordTeachingStep(actionId, reasoning, tags) {
-  if (!teachingEpisodeId) return;
-  try {
-    await fetch('/api/teaching/step', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        episode_id: teachingEpisodeId,   // concurrency: route to MY episode
-        step_index: teachingStepIndex++,
-        frame_hash: '',  // server-side hashing would be ideal
-        action: actionId,
-        reasoning: reasoning || '',
-        confidence: 0.7,
-        tags: tags || [],
-      }),
-    });
-  } catch(e) {
-    log(`Failed to record teaching step: ${e.message}`, 'err');
-  }
-}
-
 async function finishTeachingEpisode(outcome) {
   if (!teachingEpisodeId) return;
+  const closingEpoch = episodeEpoch;
+  recEpoch = closingEpoch + 1;         // presses from here on belong to the NEXT episode
+  // drain every remaining step of the closing epoch into the episode first
+  while (stepQueue.length && stepQueue[0].epoch === closingEpoch) {
+    await flushSteps();
+  }
   try {
     const body = outcome || {
       game_id: currentGameId || '',
@@ -748,10 +795,12 @@ async function finishTeachingEpisode(outcome) {
     });
     const data = await res.json();
     log(`Teaching episode finished: ${data.episode_id} (${data.steps} steps)`, 'ok');
-    teachingEpisodeId = null;
-    teachingStepIndex = 0;
   } catch(e) {
     log(`Failed to finish teaching episode: ${e.message}`, 'err');
+  } finally {
+    teachingEpisodeId = null;
+    teachingStepIndex = 0;
+    episodeEpoch = -1;
   }
 }
 
