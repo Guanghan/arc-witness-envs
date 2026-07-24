@@ -112,7 +112,7 @@ const statusEl = document.getElementById('status');
 const logEl = document.getElementById('log');
 const selectEl = document.getElementById('game-select');
 
-const FRONTEND_BUILD = '2026-07-23 tw12-cap4';  // bump on behavior changes
+const FRONTEND_BUILD = '2026-07-23 multiplayer-1';  // bump on behavior changes
 let cardId = null;
 let currentGameId = null;
 let guid = null;
@@ -668,6 +668,7 @@ async function recordTeachingStep(actionId, reasoning, tags) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        episode_id: teachingEpisodeId,   // concurrency: route to MY episode
         step_index: teachingStepIndex++,
         frame_hash: '',  // server-side hashing would be ideal
         action: actionId,
@@ -690,6 +691,7 @@ async function finishTeachingEpisode(outcome) {
       completed: false,
       total_steps: teachingStepIndex,
     };
+    body.episode_id = teachingEpisodeId;   // concurrency: finish MY episode
     const res = await fetch('/api/teaching/outcome', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

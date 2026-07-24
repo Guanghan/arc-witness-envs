@@ -148,15 +148,17 @@ def add_frontend_routes(arcade, app):
     def teaching_step():
         """Record one step with reasoning annotation."""
         body = request.get_json(force=True)
+        episode_id = body.get("episode_id")   # concurrency: route by episode
         step = TeachingStep(
-            step_index=body.get("step_index", _teaching_collector.step_count),
+            step_index=body.get("step_index",
+                                _teaching_collector.step_count(episode_id)),
             frame_hash=body.get("frame_hash", ""),
             action=body.get("action", 0),
             reasoning=body.get("reasoning", ""),
             confidence=body.get("confidence", 0.7),
             tags=body.get("tags", []),
         )
-        ok = _teaching_collector.record_step(step)
+        ok = _teaching_collector.record_step(step, episode_id=episode_id)
         if not ok:
             return jsonify({"error": "No active episode"}), 400
         return jsonify({"status": "recorded", "step_index": step.step_index})
@@ -175,7 +177,8 @@ def add_frontend_routes(arcade, app):
             rules_discovered=body.get("rules_discovered", []),
             difficulty_rating=body.get("difficulty_rating", 3),
         )
-        episode = _teaching_collector.finish_episode(outcome)
+        episode = _teaching_collector.finish_episode(
+            outcome, episode_id=body.get("episode_id"))
         if not episode:
             return jsonify({"error": "No active episode"}), 400
         return jsonify({
