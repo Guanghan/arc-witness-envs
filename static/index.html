@@ -13,6 +13,39 @@
   #game-select button { background: #16213e; color: #eee; border: 1px solid #e94560; padding: 8px 16px; margin: 0 5px; cursor: pointer; font-family: inherit; border-radius: 4px; }
   #game-select button:hover, #game-select button.active { background: #e94560; }
   canvas { border: 2px solid #e94560; image-rendering: pixelated; }
+  /* CRT tube look — same recipe as the trace-vis viewer: pure CSS overlay +
+     filters, game pixels untouched. Toggle chip next to the canvas. */
+  #crt-frame { position: relative; display: inline-block; }
+  #crt-frame.crt-on canvas {
+    filter: saturate(1.15) contrast(1.06) brightness(1.03)
+            drop-shadow(0 0 6px rgba(120,200,255,.18));
+    border-radius: 10px;
+  }
+  #crt-frame #crt-fx { display: none; }
+  #crt-frame.crt-on #crt-fx {
+    display: block; position: absolute; inset: 2px; pointer-events: none;
+    border-radius: 9px;
+    background:
+      repeating-linear-gradient(to bottom,
+        rgba(0,0,0,.28) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(to right,
+        rgba(255,60,60,.05) 0 1px, rgba(60,255,60,.04) 1px 2px,
+        rgba(60,120,255,.05) 2px 3px),
+      radial-gradient(ellipse at center,
+        transparent 58%, rgba(0,0,0,.28) 100%);
+  }
+  #crt-frame.crt-on #crt-fx::after {
+    content: ""; position: absolute; inset: 0; border-radius: 9px;
+    background: linear-gradient(to bottom, transparent 0%,
+      rgba(255,255,255,.045) 48%, rgba(255,255,255,.075) 50%,
+      rgba(255,255,255,.045) 52%, transparent 100%);
+    background-size: 100% 220%;
+    animation: crt-roll 7s linear infinite;
+  }
+  @keyframes crt-roll { from { background-position: 0 -110%; } to { background-position: 0 110%; } }
+  @media (prefers-reduced-motion: reduce) { #crt-frame.crt-on #crt-fx::after { animation: none; } }
+  .crt-toggle { font-size: 0.8em; color: #888; cursor: pointer; user-select: none; margin-left: 10px; }
+  .crt-toggle input { vertical-align: middle; accent-color: #e94560; }
   #status { margin: 15px 0; font-size: 1.1em; min-height: 1.5em; }
   #controls { display: flex; gap: 20px; margin: 10px 0; }
   .key-group { text-align: center; }
@@ -52,7 +85,8 @@
 <h1>ARC-AGI-3 Witness Games</h1>
 <div class="info">Arrow keys = move | Space = confirm/submit | R = reset</div>
 <div id="game-select"></div>
-<canvas id="game" width="512" height="512"></canvas>
+<div id="crt-frame" class="crt-on"><canvas id="game" width="512" height="512"></canvas><div id="crt-fx" aria-hidden="true"></div></div>
+<div><label class="crt-toggle" title="CRT tube look — purely cosmetic"><input type="checkbox" id="crt-toggle" checked> CRT screen</label></div>
 <div id="status">Select a game to start</div>
 <div id="controls">
   <div class="key-group">
@@ -112,7 +146,7 @@ const statusEl = document.getElementById('status');
 const logEl = document.getElementById('log');
 const selectEl = document.getElementById('game-select');
 
-const FRONTEND_BUILD = '2026-07-23 multiplayer-1';  // bump on behavior changes
+const FRONTEND_BUILD = '2026-07-23 crt-1';  // bump on behavior changes
 let cardId = null;
 let currentGameId = null;
 let guid = null;
@@ -415,6 +449,20 @@ async function autoValidateLevel(levelIdx, actions) {
 }
 
 log(`frontend build: ${FRONTEND_BUILD} — if you changed the code, REFRESH this tab to load it`, 'info');
+// CRT look toggle (cosmetic only; persisted per browser)
+(() => {
+  const box = document.getElementById('crt-toggle');
+  const frame = document.getElementById('crt-frame');
+  if (!box || !frame) return;
+  const saved = localStorage.getItem('crtLook');
+  box.checked = saved === null ? true : saved === '1';
+  const apply = () => {
+    frame.classList.toggle('crt-on', box.checked);
+    localStorage.setItem('crtLook', box.checked ? '1' : '0');
+  };
+  box.addEventListener('change', apply);
+  apply();
+})();
 async function loadGames() {
   try {
     const res = await fetch('/api/games');
