@@ -147,7 +147,7 @@ const statusEl = document.getElementById('status');
 const logEl = document.getElementById('log');
 const selectEl = document.getElementById('game-select');
 
-const FRONTEND_BUILD = '2026-07-24 rec-2';  // bump on behavior changes
+const FRONTEND_BUILD = '2026-07-24 rec-3';  // bump on behavior changes
 let cardId = null;
 let currentGameId = null;
 let guid = null;
@@ -240,6 +240,9 @@ async function sendAction(action) {
   const body = { game_id: currentGameId };
   if (cardId) body.card_id = cardId;
   if (guid) body.guid = guid;
+  // game-boot RESET (no guid yet) = plumbing, not a player action: it must
+  // NOT be recorded (rec-2 regression: recording it desynced score replays)
+  const wasBoot = !guid;
   if (action === 'RESET') {
     // Mid-game RESET keeps the guid → the env performs a LEVEL reset (current
     // level restarts, levels_completed preserved) — the same semantics the
@@ -275,7 +278,7 @@ async function sendAction(action) {
         const inp = document.getElementById('reasoning-input');
         if (inp) inp.value = '';
       }
-    } else if (action === 'RESET' && (teachingMode || hiscoreMode)) {
+    } else if (action === 'RESET' && !wasBoot && (teachingMode || hiscoreMode)) {
       // Record mid-level RESET as action 0: without it the trace REPLAYS
       // divergently (the engine never resets → wrong board for every later
       // move), and the step accounting would under-count vs the agent's
